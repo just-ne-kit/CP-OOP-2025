@@ -18,11 +18,13 @@ public:
 			std::cerr << "Файл \"" << m_filename << "\" не удалось открыть для записи.\n";
 			return;
 		}
+		
 		for (const auto& client : clients) {
-			if (fwrite(client.get(), sizeof(Client), 1, file) != 1) {
+			if (fwrite(client.get(), sizeof(User), 1, file) != 1) {
 				std::cerr << "Ошибка записи клиента с ID " << client->id() << "\n";
 			}
 		}
+		
 		fclose(file);
 	}
 	std::vector<std::shared_ptr<User>> loadFromFile() const

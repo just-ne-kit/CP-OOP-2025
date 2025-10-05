@@ -11,10 +11,13 @@ AuthResult AuthService::login(const std::string& name, const std::string& passwo
 }
 AuthResult AuthService::registerUser(const std::string& name, const std::string& password)
 {
-	return m_clientRepository.addClient(std::make_shared<User>(
+	if (m_clientRepository.exists(name)) return AuthResult::AlreadyExists;
+
+	m_clientRepository.addClient(std::make_shared<User>(
 		m_clientsIdGen.next(),
 		name,
 		PasswordHasher::encrypt(password),
 		Role::Client
-	)) ? AuthResult::Success : AuthResult::AlreadyExists;
+	));
+	return AuthResult::Success;
 }

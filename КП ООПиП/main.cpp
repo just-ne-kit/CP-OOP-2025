@@ -54,7 +54,10 @@ int main()
 	{
 		std::cout << "Говно пароль\n";
 	}
-
+	for (const auto& obj : cr.getAll())
+	{
+		std::cout << obj->login();
+	}
 	csm.saveToFile(cr.getAll());
 
 	return 0;

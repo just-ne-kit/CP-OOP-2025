@@ -18,21 +18,15 @@ public:
 		
 		unsigned int res = 0;
 
-		if (file != nullptr)
-		{
+		if (file != nullptr) {
 			//Считываем текущий максимальный id
 			fread(&res, sizeof(res), 1, file);
-
 			res++;
-
 			fseek(file, 0, SEEK_SET);
-
 			fwrite(&res, sizeof(res), 1, file);
-			
 			fclose(file);
 		}
-		else
-		{
+		else {
 			std::cerr << "Файл \"" << m_filename << "\" не удалось открыть для чтения.\n";
 		}
 
