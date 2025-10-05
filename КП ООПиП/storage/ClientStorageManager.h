@@ -30,7 +30,7 @@ public:
 		FILE* file = fopen(m_filename.c_str(), "rb");
 		if (file == nullptr) {
 			std::cerr << "Файл \"" << m_filename << "\" не удалось открыть для чтения.\n";
-			return;
+			return {};
 		}
 
 		User client;

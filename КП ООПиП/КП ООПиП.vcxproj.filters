@@ -37,7 +37,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="strorage\ClientStorageManager.h">
+    <ClInclude Include="storage\ClientStorageManager.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="repositories\ClientRepository.h">

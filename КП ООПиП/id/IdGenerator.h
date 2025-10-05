@@ -8,11 +8,11 @@ class IdGenerator
 private:
 	std::string m_filename;
 public:
-	IdGenerator(std::string filename)
+	explicit IdGenerator(std::string filename)
 		: m_filename(filename) { }
 
 	//Вернет 0 в случае ошибки
-	const unsigned int getNewId() const
+	const unsigned int next() const
 	{
 		FILE* file = fopen(m_filename.c_str(), "rb+");
 		
