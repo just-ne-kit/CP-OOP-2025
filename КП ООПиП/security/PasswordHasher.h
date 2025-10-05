@@ -4,10 +4,9 @@
 
 class PasswordHasher
 {
+private:
+    static const std::string encryptionKey;
 public:
-	static std::string hash(const std::string& password)
-	{
-
-	}
-	static bool verify(const std::string& password, const std::string& hashed) { return hash(password) == hashed; }
+    static std::string encrypt(const std::string& password);
+    static std::string decrypt(const std::string& encrypted);
 };

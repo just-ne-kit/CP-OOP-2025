@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="core\User.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="security\PasswordHasher.cpp" />
     <ClCompile Include="services\AuthService.cpp" />
   </ItemGroup>
   <ItemGroup>

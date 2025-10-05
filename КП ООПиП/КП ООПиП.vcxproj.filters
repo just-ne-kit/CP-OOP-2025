@@ -24,6 +24,9 @@
     <ClCompile Include="services\AuthService.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="security\PasswordHasher.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\clients\id.bin">
