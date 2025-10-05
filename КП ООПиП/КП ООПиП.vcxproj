@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="core\User.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="services\AuthService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\clients\clients.bin" />
@@ -132,6 +133,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="repositories\ClientRepository.h" />
+    <ClInclude Include="security\PasswordHasher.h" />
+    <ClInclude Include="services\AuthService.h" />
     <ClInclude Include="strorage\ClientStorageManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

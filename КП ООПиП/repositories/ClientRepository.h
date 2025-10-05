@@ -9,9 +9,9 @@ class ClientRepository
 private:
 	std::vector<std::shared_ptr<User>> m_clients;
 public:
-	const std::vector<std::shared_ptr<User>> getAll() const { return m_clients; }
-	
+	ClientRepository(){}
+
 	void addClient(const std::shared_ptr<User>& client) { m_clients.push_back(client); }
 
-
+	const std::vector<std::shared_ptr<User>> getAll() const { return m_clients; }
 };
