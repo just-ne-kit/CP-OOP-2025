@@ -49,5 +49,8 @@
     <ClInclude Include="services\AuthService.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="id\IdGenerator.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

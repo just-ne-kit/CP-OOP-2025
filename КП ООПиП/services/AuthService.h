@@ -8,7 +8,8 @@ class AuthService
 private:
 	ClientRepository& m_clientRepository;
 public:
-	AuthService(ClientRepository clientRepository) : m_clientRepository(clientRepository){}
+	AuthService(ClientRepository clientRepository)
+		: m_clientRepository(clientRepository) {}
 
 	bool login(const std::string& name, const std::string& password);
 	bool registerUser(const std::string& name, const std::string& password);

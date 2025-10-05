@@ -24,4 +24,13 @@ public:
 	const char* login() const { return m_login; }
 	const char* hashedPassword() const { return m_hashedPassword; }
 	const Role role() const { return m_role; }
+
+	bool operator==(const User& user)
+	{
+		return
+			this->m_hashedPassword	== user.m_hashedPassword &&
+			this->m_id				== user.m_id &&
+			this->m_login			== user.m_login &&
+			this->m_role			== user.m_role;
+	}
 };

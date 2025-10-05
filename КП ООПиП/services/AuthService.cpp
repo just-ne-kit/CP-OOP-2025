@@ -2,9 +2,13 @@
 
 bool AuthService::login(const std::string& name, const std::string& password)
 {
-	return false;
+
 }
 bool AuthService::registerUser(const std::string& name, const std::string& password)
 {
-	return false;
+	if (m_clientRepository.exists(name)) return false;
+
+	m_clientRepository.addClient()
+
+	return true;
 }

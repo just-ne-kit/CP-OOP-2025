@@ -133,6 +133,7 @@
     <None Include="data\clients\id.bin" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="id\IdGenerator.h" />
     <ClInclude Include="repositories\ClientRepository.h" />
     <ClInclude Include="security\PasswordHasher.h" />
     <ClInclude Include="services\AuthService.h" />
