@@ -21,4 +21,7 @@ public:
 		m_role = role;
 	}
 	const unsigned int id() const { return m_id; }
+	const char* login() const { return m_login; }
+	const char* hashedPassword() const { return m_hashedPassword; }
+	const Role role() const { return m_role; }
 };
