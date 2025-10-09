@@ -129,12 +129,17 @@
     <ClCompile Include="services\AuthService.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\ads\ads.bin" />
+    <None Include="data\ads\id.bin" />
     <None Include="data\clients\clients.bin" />
     <None Include="data\clients\id.bin" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\Ad.h" />
     <ClInclude Include="id\IdGenerator.h" />
+    <ClInclude Include="repositories\AdRepository.h" />
     <ClInclude Include="repositories\ClientRepository.h" />
+    <ClInclude Include="repositories\Repository.h" />
     <ClInclude Include="security\PasswordHasher.h" />
     <ClInclude Include="services\AuthService.h" />
     <ClInclude Include="storage\ClientStorageManager.h" />

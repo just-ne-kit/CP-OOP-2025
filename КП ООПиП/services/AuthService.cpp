@@ -1,11 +1,11 @@
 #include "AuthService.h"
 
-AuthResult AuthService::login(const std::string& name, const std::string& password)
+AuthResult AuthService::login(const std::string& name, const std::string& password, std::shared_ptr<User>& out_user)
 {
-	auto client = m_clientRepository.getByLogin(name);
+	out_user = m_clientRepository.getByLogin(name);
 
-	if (client == nullptr) return AuthResult::UserNotFound;
-	else if (PasswordHasher::encrypt(password) != client->hashedPassword()) return AuthResult::WrongPassword;
+	if (out_user == nullptr) return AuthResult::UserNotFound;
+	else if (PasswordHasher::encrypt(password) != out_user->hashedPassword()) return AuthResult::WrongPassword;
 
 	return AuthResult::Success;
 }

@@ -40,8 +40,8 @@ int main()
 	std::getline(std::cin, login);
 	std::getline(std::cin, password);
 
-	res = as.login(login, password);
-
+	std::shared_ptr<User> cur_user;
+	res = as.login(login, password, cur_user);
 	if (res == AuthResult::Success)
 	{
 		std::cout << "Гуляй\n";
@@ -53,10 +53,6 @@ int main()
 	else if (res == AuthResult::WrongPassword)
 	{
 		std::cout << "Говно пароль\n";
-	}
-	for (const auto& obj : cr.getAll())
-	{
-		std::cout << obj->login();
 	}
 	csm.saveToFile(cr.getAll());
 

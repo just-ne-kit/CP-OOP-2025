@@ -20,6 +20,6 @@ public:
 	AuthService(ClientRepository& clientRepository, const std::string& clientsIdGenPath)
 		: m_clientRepository(clientRepository), m_clientsIdGen(clientsIdGenPath) { }
 
-	AuthResult login(const std::string& name, const std::string& password);
+	AuthResult login(const std::string& name, const std::string& password, std::shared_ptr<User>& out_user);
 	AuthResult registerUser(const std::string& name, const std::string& password);
 };

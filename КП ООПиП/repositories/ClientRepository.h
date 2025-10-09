@@ -1,30 +1,25 @@
 #pragma once
 
 #include "../core/User.h"
-#include <memory>
-#include <vector>
+#include "Repository.h"
 
-class ClientRepository
+class ClientRepository : public Repository<User>
 {
-private:
-	std::vector<std::shared_ptr<User>> m_clients;
-
-	const std::shared_ptr<User> findByLogin(const std::string& login) const {
-		for (const auto& client : m_clients)
-			if (login == client->login())
-				return client;
-		return nullptr;
-	}
 public:
 	ClientRepository(const std::vector<std::shared_ptr<User>>& clients)
-		: m_clients(clients){}
+		: Repository(clients) {
+	}
 
 	//Вернет false если имя занято
-	bool addClient(const std::shared_ptr<User>& client) { return !exists(client->login()) ? (m_clients.push_back(client), true) : false; }
+	bool addClient(const std::shared_ptr<User>& client) {
+		return Repository::add(client, [&](const auto& user) { return user->login() == client->login(); });
+	}
 
-	const std::vector<std::shared_ptr<User>> getAll() const { return m_clients; }
+	const std::shared_ptr<User> getByLogin(const std::string& login) const {
+		return Repository::get([&](const auto& client) { return client->login() == login; });
+	}
 
-	const std::shared_ptr<User> getByLogin(const std::string& login) const { return findByLogin(login); }
-
-	const bool exists(const std::string& name) const { return findByLogin(name) != nullptr; }
+	const bool exists(const std::string& login) const {
+		return Repository::exists([&](const auto& client) { return client->login() == login; });
+	}
 };
