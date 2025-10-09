@@ -1,4 +1,4 @@
-//Для начала работы программы необходимо во все файлы id.bin записать число 0 в стандарте unsigned int(4 байта)
+п»ї//Р”Р»СЏ РЅР°С‡Р°Р»Р° СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ РЅРµРѕР±С…РѕРґРёРјРѕ РІРѕ РІСЃРµ С„Р°Р№Р»С‹ id.bin Р·Р°РїРёСЃР°С‚СЊ С‡РёСЃР»Рѕ 0 РІ СЃС‚Р°РЅРґР°СЂС‚Рµ unsigned int(4 Р±Р°Р№С‚Р°)
 
 #include <iostream>
 #include <Windows.h>
@@ -11,7 +11,7 @@
 
 void Test_Auth()
 {
-	std::cout << "Регайтесь\n";
+	std::cout << "Р РµРіР°Р№С‚РµСЃСЊ\n";
 
 	std::string login;
 	std::string password;
@@ -28,14 +28,14 @@ void Test_Auth()
 
 	if (res == AuthResult::Success)
 	{
-		std::cout << "Акк создан\n";
+		std::cout << "РђРєРє СЃРѕР·РґР°РЅ\n";
 	}
 	else if (res == AuthResult::AlreadyExists)
 	{
-		std::cout << "Сори уже есть такой тип\n";
+		std::cout << "РЎРѕСЂРё СѓР¶Рµ РµСЃС‚СЊ С‚Р°РєРѕР№ С‚РёРї\n";
 	}
 
-	std::cout << "Вход, так что будь добр введи логин и пароль\n";
+	std::cout << "Р’С…РѕРґ, С‚Р°Рє С‡С‚Рѕ Р±СѓРґСЊ РґРѕР±СЂ РІРІРµРґРё Р»РѕРіРёРЅ Рё РїР°СЂРѕР»СЊ\n";
 
 	std::getline(std::cin, login);
 	std::getline(std::cin, password);
@@ -44,15 +44,15 @@ void Test_Auth()
 	res = as.login(login, password, cur_user);
 	if (res == AuthResult::Success)
 	{
-		std::cout << "Гуляй\n";
+		std::cout << "Р“СѓР»СЏР№\n";
 	}
 	else if (res == AuthResult::UserNotFound)
 	{
-		std::cout << "Тебя не нашло\n";
+		std::cout << "РўРµР±СЏ РЅРµ РЅР°С€Р»Рѕ\n";
 	}
 	else if (res == AuthResult::WrongPassword)
 	{
-		std::cout << "Говно пароль\n";
+		std::cout << "Р“РѕРІРЅРѕ РїР°СЂРѕР»СЊ\n";
 	}
 	csm.saveToFile(cr.getAll());
 }
@@ -69,12 +69,13 @@ void Test_Ad()
 	adsm.saveToFile(ar.getAll());
 }
 
+#include "conio.h"
+
 int main()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	Test_Ad();
 
 	return 0;
 }
