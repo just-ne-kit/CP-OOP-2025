@@ -142,7 +142,9 @@
     <ClInclude Include="repositories\Repository.h" />
     <ClInclude Include="security\PasswordHasher.h" />
     <ClInclude Include="services\AuthService.h" />
+    <ClInclude Include="storage\AdStorageManager.h" />
     <ClInclude Include="storage\ClientStorageManager.h" />
+    <ClInclude Include="storage\StorageManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

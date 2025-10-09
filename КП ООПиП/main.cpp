@@ -6,11 +6,11 @@
 #include "services/AuthService.h"
 #include "storage/ClientStorageManager.h"
 
-int main()
-{
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+#include "storage/AdStorageManager.h"
+#include "repositories/AdRepository.h"
 
+void Test_Auth()
+{
 	std::cout << "Регайтесь\n";
 
 	std::string login;
@@ -19,10 +19,10 @@ int main()
 	std::getline(std::cin, login);
 	std::getline(std::cin, password);
 
-	ClientStorageManager csm{"data/clients/clients.bin"};
-	ClientRepository cr{csm.loadFromFile()};
+	ClientStorageManager csm{ "data/clients/clients.bin" };
+	ClientRepository cr{ csm.loadFromFile() };
 
-	AuthService as{cr,"data/clients/id.bin"};
+	AuthService as{ cr,"data/clients/id.bin" };
 
 	AuthResult res = as.registerUser(login, password);
 
@@ -55,6 +55,26 @@ int main()
 		std::cout << "Говно пароль\n";
 	}
 	csm.saveToFile(cr.getAll());
+}
+
+void Test_Ad()
+{
+	
+	AdStorageManager adsm{ "data/ads/ads.bin" };
+	AdRepository ar{ adsm.loadFromFile() };
+	
+	if(ar.addAd(std::make_shared<Ad>(2))) std::cout << "added_1\n";
+	if(ar.addAd(std::make_shared<Ad>(2))) std::cout << "added_2\n";
+
+	adsm.saveToFile(ar.getAll());
+}
+
+int main()
+{
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	Test_Ad();
 
 	return 0;
 }

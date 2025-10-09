@@ -67,5 +67,11 @@
     <ClInclude Include="repositories\Repository.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="storage\AdStorageManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\StorageManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

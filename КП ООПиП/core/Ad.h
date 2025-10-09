@@ -18,5 +18,9 @@ private:
 	bool isNewBuilding;
 	char address[64];
 public:
+	Ad(){}
+	Ad(const unsigned int id)
+		: m_id(id) { }
 
+	const unsigned int id() const { return m_id; }
 };
