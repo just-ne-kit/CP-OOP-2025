@@ -41,6 +41,12 @@
     <None Include="data\ads\ads.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
+    <None Include="data\favorites\favorites.bin">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="data\userads\userads.bin">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="storage\ClientStorageManager.h">
@@ -80,6 +86,24 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="session\UserSession.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Favorites.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="repositories\FavoritesRepository.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\FavoritesStorageManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\UserAds.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\UserAdsStorageManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="repositories\UserAdsRepository.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

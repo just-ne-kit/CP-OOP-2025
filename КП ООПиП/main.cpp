@@ -4,13 +4,32 @@
 #include <Windows.h>
 
 #include "services/AuthService.h"
-#include "storage/ClientStorageManager.h"
 
+#include "storage/ClientStorageManager.h"
 #include "storage/AdStorageManager.h"
+#include "storage/FavoritesStorageManager.h"
+#include "storage/UserAdsStorageManager.h"
+
+#include "repositories//UserAdsRepository.h"
 #include "repositories/AdRepository.h"
+
+#include "ui/ConsoleInterface.h"
 
 void Test_Auth()
 {
+	AdStorageManager adsm{ "data/ads/ads.bin" };
+	AdRepository ar{ adsm.loadFromFile() };
+	IdGenerator ad_id_gen{ "data/ads/id.bin" };
+
+	ClientStorageManager csm{ "data/clients/clients.bin" };
+	std::shared_ptr < ClientRepository> cr = std::make_shared<ClientRepository>( csm.loadFromFile() );
+
+	FavoritesStorageManager fsm{ "data/favorites/favorites.bin" };
+	std::shared_ptr<FavoritesRepository> fr = std::make_shared<FavoritesRepository>( fsm.loadFromFile() );
+
+	UserAdsStorageManager usm{ "data/userads/userads.bin" };
+	std::shared_ptr<UserAdsRepository> ur = std::make_shared<UserAdsRepository>( usm.loadFromFile() );
+
 	std::cout << "Регайтесь\n";
 
 	std::string login;
@@ -19,11 +38,7 @@ void Test_Auth()
 	std::getline(std::cin, login);
 	std::getline(std::cin, password);
 
-	ClientStorageManager csm{ "data/clients/clients.bin" };
-	ClientRepository cr{ csm.loadFromFile() };
-
-	AuthService as{ cr,"data/clients/id.bin" };
-
+	AuthService as{ cr, fr, ur, "data/clients/id.bin" };
 	AuthResult res = as.registerUser(login, password);
 
 	if (res == AuthResult::Success)
@@ -54,8 +69,37 @@ void Test_Auth()
 	{
 		std::cout << "Говно пароль\n";
 	}
-	csm.saveToFile(cr.getAll());
-}
+
+	//ar.addAd(std::make_shared<Ad>(ad_id_gen.next(), cur_user->id(), "Дом 1"));
+	//ar.addAd(std::make_shared<Ad>(ad_id_gen.next(), cur_user->id(), "Дом 2"));
+
+	std::shared_ptr<Favorites> fav = std::make_shared<Favorites>(cur_user->id());
+
+
+	fr->getById(cur_user->id())->addFavorites(2);
+	fr->getById(cur_user->id())->addFavorites(1);
+	fr->getById(cur_user->id())->addFavorites(66);
+
+
+	//for (const auto& a : ar.getAll())
+	//{
+	//	cout << a->id() << ' ' << a->ownerId() << ' ' << a->title() << std::endl;
+	//}
+
+	for (const auto& f : fr->getAll())
+	{
+		for (const auto i : f->favorites())
+		{
+			std::cout << i << std::endl;
+		}
+	}
+
+	adsm.saveToFile(ar.getAll());
+	csm.saveToFile(cr->getAll());
+	fsm.saveToFile(fr->getAll());
+
+	system("pause");
+} 
 
 void Test_Ad()
 {
@@ -63,18 +107,21 @@ void Test_Ad()
 	AdStorageManager adsm{ "data/ads/ads.bin" };
 	AdRepository ar{ adsm.loadFromFile() };
 	
-	if(ar.addAd(std::make_shared<Ad>(2))) std::cout << "added_1\n";
-	if(ar.addAd(std::make_shared<Ad>(2))) std::cout << "added_2\n";
+	//if(ar.addAd(std::make_shared<Ad>(2))) std::cout << "added_1\n";
+	//if(ar.addAd(std::make_shared<Ad>(2))) std::cout << "added_2\n";
 
 	adsm.saveToFile(ar.getAll());
 }
 
-#include "conio.h"
+#include <conio.h>
+//int key = getch()
 
 int main()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
+
+	//Test_Auth();
 
 
 	return 0;

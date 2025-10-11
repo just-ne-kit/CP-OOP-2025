@@ -9,7 +9,6 @@ public:
 	AdRepository(const std::vector<std::shared_ptr<Ad>>& ads)
 		: Repository(ads) {}
 
-	//Вернет false если имя занято
 	bool addAd(const std::shared_ptr<Ad>& ad) {
 		return Repository::add(ad, [&](const auto& a) { return a->id() == ad->id(); });
 	}
