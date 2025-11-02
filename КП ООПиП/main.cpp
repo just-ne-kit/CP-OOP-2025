@@ -257,9 +257,10 @@ int main() {
 
 	//Test();
 
-	Field f("string1234", 10);
+	Screen s;
 
-	std::cout << f.to_str();
+	std::string s1, s2;
+	s.auth_1(s1, s2);
 
 	return 0;
 }
