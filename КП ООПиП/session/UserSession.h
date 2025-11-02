@@ -1,16 +1,16 @@
 #pragma once
 
 #include "../core/User.h"
-#include "../core/Favorites.h"
+#include "../core/FavoriteAds.h"
 #include <memory>
 
 class UserSession
 {
 private:
 	std::shared_ptr<User> m_user;
-	std::shared_ptr<Favorites> m_favorites;
+	std::shared_ptr<FavoriteAds> m_favorites;
 public:
-	UserSession(std::shared_ptr<User> user, std::shared_ptr <Favorites> favorites)
+	UserSession(std::shared_ptr<User> user, std::shared_ptr <FavoriteAds> favorites)
 		:m_user(user), m_favorites(favorites) {
 	}
 
@@ -20,7 +20,7 @@ public:
 	void Logout() {
 
 	}
-	void Initialize(std::shared_ptr<User> user, std::shared_ptr<Favorites> favorites) {
+	void Initialize(std::shared_ptr<User> user, std::shared_ptr<FavoriteAds> favorites) {
 		Logout();
 		m_user = user;
 		m_favorites = favorites;

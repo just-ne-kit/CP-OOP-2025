@@ -27,6 +27,9 @@
     <ClCompile Include="security\PasswordHasher.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="ui\ConsoleInterface.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\clients\id.bin">
@@ -88,7 +91,7 @@
     <ClInclude Include="session\UserSession.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="core\Favorites.h">
+    <ClInclude Include="core\FavoriteAds.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="repositories\FavoritesRepository.h">
@@ -104,6 +107,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="repositories\UserAdsRepository.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Screen.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

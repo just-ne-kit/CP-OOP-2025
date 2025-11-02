@@ -2,14 +2,15 @@
 
 #include <vector>
 
-class Favorites
+class FavoriteAds
 {
 private:
 	unsigned int m_id;
 	std::vector<unsigned int> m_favorites;
 public:
-	Favorites(){}
-	Favorites(unsigned int id)
+	FavoriteAds()
+		: m_id(0) {}
+	FavoriteAds(unsigned int id)
 		: m_id(id) {}
 
 	const unsigned int id() const { return m_id; }

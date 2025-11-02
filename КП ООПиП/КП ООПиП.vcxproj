@@ -127,6 +127,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="security\PasswordHasher.cpp" />
     <ClCompile Include="services\AuthService.cpp" />
+    <ClCompile Include="ui\ConsoleInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\ads\ads.bin" />
@@ -138,7 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Ad.h" />
-    <ClInclude Include="core\Favorites.h" />
+    <ClInclude Include="core\FavoriteAds.h" />
     <ClInclude Include="core\UserAds.h" />
     <ClInclude Include="id\IdGenerator.h" />
     <ClInclude Include="repositories\AdRepository.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="storage\UserAdsStorageManager.h" />
     <ClInclude Include="ui\ConsoleInterface.h" />
     <ClInclude Include="ui\InputReader.h" />
+    <ClInclude Include="ui\Screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

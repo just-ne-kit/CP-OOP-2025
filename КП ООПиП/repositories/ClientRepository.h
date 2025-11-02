@@ -19,6 +19,10 @@ public:
 		return Repository::get([&](const auto& client) { return client->login() == login; });
 	}
 
+	const std::shared_ptr<User> getById(const unsigned int id) const {
+		return Repository::get([&](const auto& client) { return client->id() == id; });
+	}
+
 	const bool exists(const std::string& login) const {
 		return Repository::exists([&](const auto& client) { return client->login() == login; });
 	}

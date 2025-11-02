@@ -14,7 +14,7 @@ public:
         std::getline(std::cin >> std::ws, input);
         return input;
     }
-    int ReadInt(const std::string& prompt, const std::string& errmsg) const {
+    int ReadInt(const std::string& prompt, const std::string& errmsg = "¬ведите целое число.\n") const {
         std::cout << prompt;
         int value;
         while (!(std::cin >> value)) {
@@ -49,4 +49,21 @@ public:
         std::getline(std::cin >> std::ws, answer);
         return answer == "y" || answer == "Y";
     }
+
+    std::string ReadString(unsigned int maxSize) {
+        std::string res = "";
+
+        char ch;
+        while (true) {
+            ch = _getch();
+
+            if (ch == '\r') break;
+            else if (ch == 27) return "";
+            else if (ch == '\b') if (!res.empty()) res.pop_back();
+            else if(res.size() < maxSize) res += ch;
+        }
+
+        return res;
+    }
+   
 };
