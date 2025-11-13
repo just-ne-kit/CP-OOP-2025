@@ -1,170 +1,7 @@
-﻿#include "ConsoleInterface.h"
+﻿#include <algorithm>
 
-#include <conio.h>
-
-enum FieldType {
-	Input,
-	Password,
-	Button
-};
-
-class Field {
-private:
-	const char fillCh = ' ';
-	const char passwordCh = '*';
-	std::string WrapWithFocus(const std::string& s) const { return ">" + s + "<"; }
-public:
-	FieldType type;
-
-	std::string left;
-	std::string right;
-
-	std::string prev;
-	std::string cur;
-	unsigned int maxLength;
-
-	Field(
-		FieldType type,
-		unsigned int maxLength,
-		const std::string& left,
-		const std::string& cur,
-		const std::string& right = ""
-	){
-		this->type = type;
-		this->left = left;
-		this->right = right;
-		this->prev = cur;
-		this->cur = cur;
-		this->maxLength = maxLength;
-	}
-
-	void commit() { prev = cur; }
-	void rollback() { cur = prev; }
-
-	void append(const char ch) {
-		if (type == FieldType::Button) return;
-		if (cur.size() < maxLength) cur += ch;
-	}
-	void backspace() {
-		if (type == FieldType::Button) return;
-		if (!cur.empty()) cur.pop_back();
-	}
-
-	std::string to_str(bool focused) const
-	{
-		if (type == FieldType::Password) {
-			std::string size = std::string(maxLength - cur.size(), fillCh) + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
-			return left + std::string(cur.size(), passwordCh) + size + right;
-		}
-		else if (type == FieldType::Button) {
-			return left + (focused ? WrapWithFocus(cur) : cur) + right;
-		}
-		else if (type == FieldType::Input) {
-			std::string size = std::string(maxLength - cur.size(), fillCh) + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
-			return left + cur + size + right;
-		}
-		return "";
-	}
-};
-
-class FieldContext
-{
-public:
-	unsigned int count;
-	unsigned int currentY; //index [0, ... , count - 1]
-	unsigned int currentX;
-	std::vector<std::vector<Field>> fields;
-
-	FieldContext(std::vector<std::vector<Field>> fields) : currentY(0), fields(fields) {
-		count = fields.size();
-	}
-
-	void handleInput() {
-		int ch = _getch();
-
-		// спец-клавиши: стрелки и т.п.
-		if (ch == 0 || ch == 224) {
-			ch = _getch(); // второй байт
-
-			Field& f = fields[currentY][currentX];
-			f.commit();
-
-			switch (ch) {
-			case 72: up(); break;
-			case 80: down(); break;
-			case 75: left(); break;
-			case 77: right(); break;
-			}
-			return; // ← ВАЖНО: не продолжаем дальше!
-		}
-
-		// обычные клавиши
-		Field& f = fields[currentY][currentX];
-
-		switch (ch) {
-		case '\r': f.commit(); break;
-		case '\b': f.backspace(); break;
-		case 27:   f.rollback(); break;
-		default:   f.append(static_cast<char>(ch)); break;
-		}
-	}
-
-	void down() {
-		currentY = (currentY + 1) % count; 
-		if (currentX > fields[currentY].size()) currentX = fields[currentY].size() - 1;
-	}
-	void up() {
-		currentY = (currentY + count - 1) % count;
-		if (currentX > fields[currentY].size()) currentX = fields[currentY].size() - 1;
-	}
-	void left() {
-		currentX = (currentX + fields[currentY].size() - 1) % fields[currentY].size();
-	}
-	void right() {
-		currentX = (currentX + 1) % fields[currentY].size();
-	}
-
-	void commitAll() {
-		for (unsigned int i = 0; i < count; i++)
-			for (unsigned int j = 0; j < fields[i].size(); j++)
-				fields[i][j].commit();
-	}
-
-	std::vector<std::string> getLines()
-	{
-		std::vector<std::string> res;
-		
-		for (unsigned int i = 0; i < count; i++) {
-			res.push_back("");
-			for (unsigned int j = 0; j < fields[i].size(); j++) {
-				res[i] += fields[i][j].to_str(i == currentY && j == currentX);
-			}
-		}
-
-		return res;
-	}
-};
-
-class FormBuilder {
-private:
-	std::vector<std::vector<Field>> rows;
-
-public:
-	FormBuilder& row(FieldType type, unsigned int maxLength, const std::string& left, const std::string& cur, const std::string& right = "") {
-		rows.push_back({ Field(type, maxLength, left, cur, right) });
-		return *this;
-	}
-
-	FormBuilder& row(std::vector<Field> fieldsInRow) {
-		rows.push_back(std::move(fieldsInRow));
-		return *this;
-	}
-
-	FieldContext build() {
-		return FieldContext(rows);
-	}
-};
-
+#include "ConsoleInterface.h"
+#include "../form/FormBuilder.h"
 
 class Screen
 {
@@ -174,9 +11,66 @@ private:
 	void run(FieldContext& fc) {
 		while (true) {
 			gui.drawLines(fc.getLines());
+
+			Field& f = fc.fields[fc.currentY][fc.currentX];
+
+			if (f.type == FieldType::Str || f.type == FieldType::Password) {
+				gui.showCursor();
+
+				// вычисляем позицию курсора
+				int x = 0;
+				int y = fc.currentY;
+
+				for (int i = 0; i < fc.currentX; i++)
+					x += fc.fields[y][i].to_str(false).size();
+
+				x += f.left.size() + f.cur.size();
+
+				gui.move_cursor(x, y);
+			}
+			else if (f.type == FieldType::Int || f.type == FieldType::Float)
+			{
+				gui.showCursor();
+
+				// вычисляем позицию курсора
+				int x = 0;
+				int y = fc.currentY;
+
+				for (int i = 0; i < fc.currentX; i++)
+					x += fc.fields[y][i].to_str(false).size();
+
+				//x += f.left.size() + f.maxLength - f.cur.size(); // ____|12
+				x += f.left.size() + f.cur.size(); // 12|____
+
+				gui.move_cursor(x, y);
+			}
+			else if (f.type == FieldType::Phone)
+			{
+				gui.showCursor();
+
+				int x = 0;
+				int y = fc.currentY;
+				int n = f.cur.size();
+
+				for (int i = 0; i < fc.currentX; i++)
+					x += fc.fields[y][i].to_str(false).size();
+
+				x += f.left.size() + std::string("+375 (").size() + std::min(n, 2);
+
+				if (n > 1) x += std::string(") ").size() + std::min(n - 2, 3);
+				else if (n > 4) x += 1 + std::min(n - 5, 2);
+				else if (n > 5) x += 1 + std::min(n - 7, 2);
+
+				gui.move_cursor(x, y);
+			}
+			else {
+				gui.hideCursor();
+			}
+			
 			fc.handleInput();
 		}
 	}
+
 public:
 	Screen(){}
 
@@ -188,7 +82,7 @@ public:
 	int auth_1(std::string& outLogin, std::string& outPassword) {
 
 		FieldContext fc = FormBuilder()
-			.row(Input, 20, "Введите новый логин: ", "")
+			.row(Str, 20, "Введите новый логин: ", "")
 			.row(Password, 20, "Введите новый пароль: ", "")
 			.row(Password, 20, "Повторите пароль: ", "")
 			.row(Button, 0, "", "[Регистрация]")
@@ -201,5 +95,24 @@ public:
 		
 		//заглушка
 		return 0;
+	}
+
+	void test_screen() {
+		FieldContext fc = FormBuilder()
+			.row({ Field(Str, 3, "Введите текст: ", ""), Field(Password, 2, "Введите пароль: ", "") })
+			.row({
+				Field(Float, 20, "Float1: ", ""),
+				Field(Float, 20, "Float2: ", "")
+				}
+			)
+			.row({
+	Field(Int, 15, "Int:", ""),
+	Field(Phone, 15, " | Phone:", "|right|"),
+	Field(Str, 15, "Номер телефона:", "")
+				})
+			.row(Button, 0, "", "", "[Button1]")
+			.build();
+
+		run(fc);
 	}
 };

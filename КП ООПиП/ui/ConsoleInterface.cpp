@@ -1,39 +1,55 @@
 #include "ConsoleInterface.h"
 
-void ConsoleInterface::auth_0() {
-    drawLines({
-        "1 - Регистрация",
-        "2 - Вход"
-        });
+ConsoleInterface::ConsoleInterface() {
+    buffers[0] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL,
+        CONSOLE_TEXTMODE_BUFFER, NULL);
+    buffers[1] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL,
+        CONSOLE_TEXTMODE_BUFFER, NULL);
+    SetConsoleActiveScreenBuffer(buffers[active]);
 }
-void ConsoleInterface::auth_1(const std::string& login, const std::string& password_1, const std::string& password_2) {
-    drawLines({
-        "Введите новый логин: " + login,
-        "Введите новый пароль: " + password_1,
-        "Повторите пароль: " + password_2
-        });
+
+void ConsoleInterface::clearBuffer() {
+    DWORD written;
+    COORD origin = { 0, 0 };
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(buffers[1 - active], &info);
+    DWORD size = info.dwSize.X * info.dwSize.Y;
+
+    FillConsoleOutputCharacterA(buffers[1 - active], ' ', size, origin, &written);
 }
-void ConsoleInterface::auth_1_error_1() {
-    drawLines({
-        "Пользователь с таким логином уже существует.",
-        "Нажмите любую клавишу для продолжения..."
-        });
+void ConsoleInterface::drawLines(const std::vector<std::string>& lines) {
+    clearBuffer();
+    DWORD written;
+    COORD pos;
+    for (int i = 0; i < lines.size(); ++i) {
+        pos = { 0, static_cast<SHORT>(i) };
+        WriteConsoleOutputCharacterA(buffers[1 - active], lines[i].c_str(), lines[i].size(), pos, &written);
+    }
+    swapBuffers();
 }
-void ConsoleInterface::auth_1_error_2() {
-    drawLines({
-        "Повторный пароль введен неверно.",
-        "Нажмите любую клавишу для продолжения..."
-        });
+void ConsoleInterface::hideCursor(){
+        for (int i = 0; i < 2; i++)
+        {
+            CONSOLE_CURSOR_INFO cursorInfo;
+            GetConsoleCursorInfo(buffers[i], &cursorInfo);
+            cursorInfo.bVisible = FALSE;
+            SetConsoleCursorInfo(buffers[i], &cursorInfo);
+        }
 }
-void ConsoleInterface::auth_2(const std::string& login, const std::string& password) {
-    drawLines({
-        "Логин: " + login,
-        "Пароль: " + password
-        });
+void ConsoleInterface::move_cursor(int x, int y){
+        COORD pos = { static_cast<SHORT>(x), static_cast<SHORT>(y) };
+        SetConsoleCursorPosition(buffers[active], pos);
 }
-void ConsoleInterface::auth_2_error_1() {
-    drawLines({
-        "Неверный логин или пароль.",
-        "Нажмите любую клавишу для продолжения..."
-        });
+void ConsoleInterface::showCursor(){
+        for (int i = 0; i < 2; i++)
+        {
+            CONSOLE_CURSOR_INFO cursorInfo;
+            GetConsoleCursorInfo(buffers[i], &cursorInfo);
+            cursorInfo.bVisible = TRUE;
+            SetConsoleCursorInfo(buffers[i], &cursorInfo);
+        }
+    }
+void ConsoleInterface::swapBuffers(){
+        active = 1 - active;
+        SetConsoleActiveScreenBuffer(buffers[active]);
 }

@@ -123,11 +123,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\Client.cpp" />
     <ClCompile Include="core\User.h" />
+    <ClCompile Include="form\FieldContext.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="security\PasswordHasher.cpp" />
     <ClCompile Include="services\AuthService.cpp" />
     <ClCompile Include="ui\ConsoleInterface.cpp" />
+    <ClCompile Include="ui\Field.cpp" />
+    <ClCompile Include="utils\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\ads\ads.bin" />
@@ -139,8 +143,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Ad.h" />
+    <ClInclude Include="core\Client.h" />
     <ClInclude Include="core\FavoriteAds.h" />
     <ClInclude Include="core\UserAds.h" />
+    <ClInclude Include="form\FieldContext.h" />
+    <ClInclude Include="form\FormBuilder.h" />
     <ClInclude Include="id\IdGenerator.h" />
     <ClInclude Include="repositories\AdRepository.h" />
     <ClInclude Include="repositories\ClientRepository.h" />
@@ -156,8 +163,10 @@
     <ClInclude Include="storage\StorageManager.h" />
     <ClInclude Include="storage\UserAdsStorageManager.h" />
     <ClInclude Include="ui\ConsoleInterface.h" />
+    <ClInclude Include="ui\Field.h" />
     <ClInclude Include="ui\InputReader.h" />
     <ClInclude Include="ui\Screen.h" />
+    <ClInclude Include="utils\Parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

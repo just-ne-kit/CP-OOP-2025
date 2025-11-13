@@ -216,41 +216,6 @@ void Run()
 	system("pause");
 }
 
-void Test() {
-	ConsoleInterface gui;
-	std::string s;
-	gui.draw_screen_1(s);
-	while (true) {
-		char ch = _getch();
-
-		if (ch == '\r') {
-			// Enter — завершить ввод
-			break;
-		}
-		else if (ch == '\b') {
-			if (!s.empty()) s.pop_back();
-		}
-		else if (ch == 27) {
-			// Esc — выход
-			return;
-		}
-		else {
-			s += ch;
-		}
-		gui.draw_screen_1(s);
-	}
-
-	// Финальный экран
-
-	_getch(); // ожидание перед выходом
-	gui.auth_0();
-	_getch(); // ожидание перед выходом
-	gui.auth_1_error_1();
-	_getch(); // ожидание перед выходом
-	gui.auth_1_error_2();
-	_getch(); // ожидание перед выходом
-}
-
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
@@ -260,7 +225,7 @@ int main() {
 	Screen s;
 
 	std::string s1, s2;
-	s.auth_1(s1, s2);
-
+	//s.auth_1(s1, s2);
+	s.test_screen();
 	return 0;
 }
