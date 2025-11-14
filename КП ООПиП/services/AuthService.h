@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../repositories/ClientRepository.h"
-#include "../repositories/FavoritesRepository.h"
-#include "../repositories/UserAdsRepository.h"
+#include "../core/Realtor.h"
+#include "../core/Admin.h"
+#include "../repositories/Repository.h"
 #include "../security/PasswordHasher.h"
 #include "../id/IdGenerator.h"
 
@@ -16,13 +16,11 @@ enum class AuthResult {
 class AuthService
 {
 private:
-	ClientRepository& m_clientRepository;
-	FavoritesRepository& m_favoritesRepository;
-	UserAdsRepository& m_userAdsRepository;
-	IdGenerator m_clientsIdGen;
+	Repository<Realtor>& m_realtorRepository;
+	IdGenerator m_usersIdGen;
 public:
-	AuthService(ClientRepository& clientRepository, FavoritesRepository& favoritesRepository, UserAdsRepository& userAdsRepository, const std::string& clientsIdGenPath)
-		: m_clientRepository(clientRepository), m_favoritesRepository(favoritesRepository), m_userAdsRepository(userAdsRepository), m_clientsIdGen(clientsIdGenPath) { }
+	AuthService(Repository<Realtor>& realtorRepository, const std::string& usersIdGenPath)
+		: m_realtorRepository(realtorRepository), m_usersIdGen(usersIdGenPath) { }
 
 	AuthResult login(const std::string& name, const std::string& password, std::shared_ptr<User>& out_user);
 	AuthResult registerUser(const std::string& name, const std::string& password);

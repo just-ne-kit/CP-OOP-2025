@@ -1,23 +1,6 @@
 ﻿//Для начала работы программы необходимо во все файлы id.bin записать число 0 в стандарте unsigned int(4 байта)
-#define NOMINMAX
 
-#include <iostream>
-#include <Windows.h>
-
-#include "services/AuthService.h"
-
-#include "storage/ClientStorageManager.h"
-#include "storage/AdStorageManager.h"
-#include "storage/FavoritesStorageManager.h"
-#include "storage/UserAdsStorageManager.h"
-
-#include "repositories/UserAdsRepository.h"
-#include "repositories/AdRepository.h"
-
-#include "ui/ConsoleInterface.h"
-#include "ui/Screen.h"
-#include "ui/InputReader.h"
-
+/*
 void Test_Auth()
 {
 	IdGenerator ad_id_gen{ "data/ads/id.bin" };
@@ -94,10 +77,10 @@ void Test_Ad()
 
 	adsm.saveToFile(ar.getAll());
 }
-
-#include <conio.h>
+*/
 //int key = getch()
 
+/*
 void DrawAd(const Ad& ad, const ClientRepository& cr)
 {
 	std::cout << std::endl << "Продавец: " << cr.getById(ad.ownerId())->login();
@@ -215,17 +198,97 @@ void Run()
 
 	system("pause");
 }
+*/
+
+#include "ui/Screen.h"
+#include "storage/StorageManager.h"
+#include "services/AuthService.h"
+
+
+void Run()
+{
+	Screen screen;
+
+	StorageManager<Realtor> storage{ "data/realtors/realtors.bin" };
+	Repository<Realtor> repo{ storage.load() };
+
+	AuthService as{ repo, "data/realtors/id.bin" };
+
+	while (true)
+	{
+		std::string login, password;
+
+		if (screen.auth(login, password) == 2) break;
+		
+		std::shared_ptr<User> out_user;
+
+		AuthResult res = as.login(login, password, out_user);
+
+		if (res == AuthResult::Success)
+		{
+			if (Role::AdminRole == out_user->role())
+			{
+				while (true)
+				{
+					int res = screen.admin_main();
+
+					if (res == 1)
+					{
+						while (true)
+						{
+							std::string l, p1, p2;
+							if (screen.admin_create_realtor(l, p1, p2) == 1)
+							{
+								break;
+							}
+
+							if (p1 == p2)
+							{
+								screen.admin_create_realtor_failed_password();
+							}
+							else if (as.registerUser(l, p1) == AuthResult::AlreadyExists)
+							{
+								screen.admin_create_realtor_failed_login();
+							}
+							else
+							{
+								screen.admin_create_realtor_success();
+								break;
+							}
+						}
+					}
+					if (res == 2)
+					{
+						break;
+					}
+				}
+			}
+			else if (out_user->role() == Role::RealtorRole)
+			{
+				bool realtor_exit = false;
+
+				while (!realtor_exit)
+				{
+
+
+
+				}
+			}
+		}
+		else if (res == AuthResult::UserNotFound || res == AuthResult::WrongPassword) screen.auth_error();
+	}
+}
 
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
 	//Test();
+	Run();
+	//Screen s;
 
-	Screen s;
-
-	std::string s1, s2;
-	//s.auth_1(s1, s2);
-	s.test_screen();
+	//std::string s1, s2;
+	////s.auth_1(s1, s2);
+	//s.test_screen();
 	return 0;
 }

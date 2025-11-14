@@ -7,8 +7,8 @@ private:
 	std::vector<std::vector<Field>> rows;
 
 public:
-	FormBuilder& row(FieldType type, unsigned int maxLength, const std::string& left, const std::string& cur, const std::string& right = "") {
-		rows.push_back({ Field(type, maxLength, left, cur, right) });
+	FormBuilder& row(FieldType type, unsigned int maxLength, const std::string& left, const std::string& right = "", const std::string& cur = "") {
+		rows.push_back({ Field(type, maxLength, left, right, cur) });
 		return *this;
 	}
 

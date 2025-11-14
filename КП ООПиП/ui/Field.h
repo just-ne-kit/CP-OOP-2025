@@ -9,8 +9,11 @@ enum FieldType {
     Float,
     Text,
     Password,
-    Button,
-    Phone
+    ButtonExit,
+    ButtonToogle,
+    Phone,
+    Incrementer,
+    Decrementer
 };
 
 class Field {
@@ -31,6 +34,8 @@ public:
     std::string prev;
     std::string cur;
     unsigned int maxLength;
+
+    bool isActivated = false;
 
     Field(FieldType type, unsigned int maxLength,
         const std::string& left,

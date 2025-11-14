@@ -42,34 +42,31 @@
     <ClCompile Include="core\Client.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="core\Property.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Realtor.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="core\User.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\clients\id.bin">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="data\clients\clients.bin">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
     <None Include="data\ads\id.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
     <None Include="data\ads\ads.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
-    <None Include="data\favorites\favorites.bin">
+    <None Include="data\realtors\realtors.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
-    <None Include="data\userads\userads.bin">
+    <None Include="data\realtors\id.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="storage\ClientStorageManager.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="repositories\ClientRepository.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="security\PasswordHasher.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -82,13 +79,7 @@
     <ClInclude Include="core\Ad.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="repositories\AdRepository.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="repositories\Repository.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="storage\AdStorageManager.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="storage\StorageManager.h">
@@ -98,27 +89,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ui\InputReader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="session\UserSession.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="core\FavoriteAds.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="repositories\FavoritesRepository.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="storage\FavoritesStorageManager.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="core\UserAds.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="storage\UserAdsStorageManager.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="repositories\UserAdsRepository.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ui\Screen.h">
@@ -137,6 +107,15 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="core\Client.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Property.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Realtor.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Admin.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

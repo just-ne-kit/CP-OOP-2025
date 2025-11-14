@@ -28,7 +28,10 @@ void FieldContext::handleInput() {
     Field& f = fields[currentY][currentX];
 
     switch (ch) {
-    case '\r': f.commit(); break;
+    case '\r':
+        if(f.type == FieldType::ButtonExit || f.type == FieldType::ButtonToogle) f.isActivated = !f.isActivated;
+        else f.commit();
+        break;
     case '\b': f.backspace(); break;
     case 27:   f.rollback(); break;
     default:   f.append(static_cast<unsigned char>(ch)); break;

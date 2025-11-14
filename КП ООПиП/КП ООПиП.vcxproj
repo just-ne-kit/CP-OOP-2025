@@ -124,6 +124,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\Client.cpp" />
+    <ClCompile Include="core\Property.cpp" />
+    <ClCompile Include="core\Realtor.cpp" />
+    <ClCompile Include="core\User.cpp" />
     <ClCompile Include="core\User.h" />
     <ClCompile Include="form\FieldContext.cpp" />
     <ClCompile Include="main.cpp" />
@@ -136,32 +139,22 @@
   <ItemGroup>
     <None Include="data\ads\ads.bin" />
     <None Include="data\ads\id.bin" />
-    <None Include="data\clients\clients.bin" />
-    <None Include="data\clients\id.bin" />
-    <None Include="data\favorites\favorites.bin" />
-    <None Include="data\userads\userads.bin" />
+    <None Include="data\realtors\id.bin" />
+    <None Include="data\realtors\realtors.bin" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Ad.h" />
+    <ClInclude Include="core\Admin.h" />
     <ClInclude Include="core\Client.h" />
-    <ClInclude Include="core\FavoriteAds.h" />
-    <ClInclude Include="core\UserAds.h" />
+    <ClInclude Include="core\Property.h" />
+    <ClInclude Include="core\Realtor.h" />
     <ClInclude Include="form\FieldContext.h" />
     <ClInclude Include="form\FormBuilder.h" />
     <ClInclude Include="id\IdGenerator.h" />
-    <ClInclude Include="repositories\AdRepository.h" />
-    <ClInclude Include="repositories\ClientRepository.h" />
-    <ClInclude Include="repositories\FavoritesRepository.h" />
     <ClInclude Include="repositories\Repository.h" />
-    <ClInclude Include="repositories\UserAdsRepository.h" />
     <ClInclude Include="security\PasswordHasher.h" />
     <ClInclude Include="services\AuthService.h" />
-    <ClInclude Include="session\UserSession.h" />
-    <ClInclude Include="storage\AdStorageManager.h" />
-    <ClInclude Include="storage\ClientStorageManager.h" />
-    <ClInclude Include="storage\FavoritesStorageManager.h" />
     <ClInclude Include="storage\StorageManager.h" />
-    <ClInclude Include="storage\UserAdsStorageManager.h" />
     <ClInclude Include="ui\ConsoleInterface.h" />
     <ClInclude Include="ui\Field.h" />
     <ClInclude Include="ui\InputReader.h" />

@@ -10,7 +10,7 @@ Field::Field(FieldType type, unsigned int maxLength,
     const std::string& cur)
     : type(type), left(left), right(right), prev(cur), cur(cur), maxLength(maxLength)
 {
-    //TODO поля зависят от типов
+    //TODO пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     if (type == FieldType::Phone) {
         this->maxLength = 9;
     }
@@ -25,7 +25,7 @@ void Field::rollback() {
 }
 
 void Field::append(const char ch) {
-    if (type == FieldType::Button) return;
+    if (type == FieldType::ButtonExit || type == FieldType::ButtonToogle) return;
     if (cur.size() >= maxLength) return;
 
     std::string str = cur + ch;
@@ -43,7 +43,7 @@ void Field::append(const char ch) {
     case FieldType::Str:
     case FieldType::Text:
     case FieldType::Password:
-        cur = str; // для строк и паролей проверка не нужна
+        cur = str; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         break;
     default:
         break;
@@ -51,7 +51,7 @@ void Field::append(const char ch) {
 }
 
 void Field::backspace() {
-    if (type == FieldType::Button) return;
+    if (type == FieldType::ButtonExit || type == FieldType::ButtonToogle) return;
     if (!cur.empty()) cur.pop_back();
 }
 
@@ -67,17 +67,17 @@ std::string Field::to_str(bool focused) const {
         return left + "+375 (" + s.substr(0, 2) + ") " + s.substr(2, 3) + "-" + s.substr(5, 2) + "-" + s.substr(7, 2) + right;
     }
     if (type == FieldType::Password) {
-        std::string size = std::string(maxLength - cur.size(), fillCh)
-            + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
-        return left + std::string(cur.size(), passwordCh) + size + right;
+        //std::string size = std::string(maxLength - cur.size(), fillCh)
+        //    + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
+        return left + std::string(cur.size(), passwordCh) + right;
     }
-    else if (type == FieldType::Button) {
+    else if (type == FieldType::ButtonExit || type == FieldType::ButtonToogle) {
         return left + (focused ? WrapWithFocus(cur) : " " + cur + " ") + right;
     }
-    else if (type == FieldType::Str) {
-        std::string size = std::string(maxLength - cur.size(), fillCh)
-            + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
-        return left + cur + size + right;
+    else if (type == FieldType::Str || type == FieldType::Text) {
+        //std::string size = std::string(maxLength - cur.size(), fillCh)
+        //    + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
+        return left + cur + right;
     }
     return "";
 }
