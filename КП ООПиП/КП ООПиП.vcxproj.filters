@@ -39,9 +39,6 @@
     <ClCompile Include="ui\Field.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="core\Client.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="core\Property.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -53,12 +50,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\ads\id.bin">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="data\ads\ads.bin">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
     <None Include="data\realtors\realtors.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
@@ -86,9 +77,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ui\ConsoleInterface.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\InputReader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ui\Screen.h">

@@ -10,7 +10,6 @@ Field::Field(FieldType type, unsigned int maxLength,
     const std::string& cur)
     : type(type), left(left), right(right), prev(cur), cur(cur), maxLength(maxLength)
 {
-    //TODO ���� ������� �� �����
     if (type == FieldType::Phone) {
         this->maxLength = 9;
     }
@@ -43,7 +42,7 @@ void Field::append(const char ch) {
     case FieldType::Str:
     case FieldType::Text:
     case FieldType::Password:
-        cur = str; // ��� ����� � ������� �������� �� �����
+        cur = str;
         break;
     default:
         break;
@@ -67,16 +66,12 @@ std::string Field::to_str(bool focused) const {
         return left + "+375 (" + s.substr(0, 2) + ") " + s.substr(2, 3) + "-" + s.substr(5, 2) + "-" + s.substr(7, 2) + right;
     }
     if (type == FieldType::Password) {
-        //std::string size = std::string(maxLength - cur.size(), fillCh)
-        //    + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
         return left + std::string(cur.size(), passwordCh) + right;
     }
     else if (type == FieldType::ButtonExit || type == FieldType::ButtonToogle) {
         return left + (focused ? WrapWithFocus(cur) : " " + cur + " ") + right;
     }
     else if (type == FieldType::Str || type == FieldType::Text) {
-        //std::string size = std::string(maxLength - cur.size(), fillCh)
-        //    + "<" + std::to_string(cur.size()) + "/" + std::to_string(maxLength) + ">";
         return left + cur + right;
     }
     return "";

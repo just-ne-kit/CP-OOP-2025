@@ -151,7 +151,7 @@ public:
 		p1 = fc.fields[1][0].cur;
 		p2 = fc.fields[2][0].cur;
 
-		return fc.fields[2][0].isActivated ? 1 : 0;
+		return fc.fields[4][0].isActivated ? 1 : 0;
 	}
 	void admin_create_realtor_failed_login()
 	{
@@ -181,16 +181,24 @@ public:
 		run(fc);
 	}
 	
-	void realtor_main(const std::string& fullName)
+	int realtor_main(const std::string& fullName)
 	{
 		FieldContext fc = FormBuilder()
 							  .row(ButtonExit, 0, "", "", "[" + fullName + "]")
 							  .row(ButtonExit, 0, "", "", "[Мои]")
 							  .row({
-								{Decrementer, 0, "", "", "[ <- ]"},
+								{ButtonExit, 0, "", "", "[ <- ]"},
 								{ButtonExit, 0, "", "", "[Подробнее]" },
-								{Incrementer, 0, "", "", "[ -> ]"}})
+								{ButtonExit, 0, "", "", "[ -> ]"}})
+							  .row(Text, 0, "", "", "")
+							  .row(ButtonExit, 0, "", "", "[Выход]")
 							  .build();
 		run(fc);
+
+		int res = 0;
+		if (fc.fields[1][0].isActivated) res = 1;
+		if (fc.fields[4][0].isActivated) res = 2;
+
+		return res;
 	}
 };

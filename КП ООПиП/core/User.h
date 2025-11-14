@@ -27,6 +27,7 @@ public:
 		 Role role);
 	User();
 	User(const User& user);
+	virtual ~User() = default;
 	
 	const unsigned int id() const;
 	const char *login() const;

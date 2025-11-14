@@ -1,5 +1,4 @@
 #include "Realtor.h"
-//#include <algorithm>
 
 Realtor::Realtor()
     : User(), m_phoneNumber(0)

@@ -1,7 +1,6 @@
 #include "Property.h"
 #include <cstring>
 
-// --- Конструктор по умолчанию ---
 Property::Property()
     : m_id(0), m_realtorId(0), m_price(0.0f),
       m_areaTotal(0.0f), m_areaLiving(0.0f), m_areaKitchen(0.0f),
@@ -15,7 +14,6 @@ Property::Property()
     m_currency[0] = '\0';
 }
 
-// --- Конструктор с параметрами ---
 Property::Property(unsigned int id,
                    const std::string& title,
                    const std::string& description,
@@ -50,7 +48,6 @@ Property::Property(unsigned int id,
     m_currency[sizeof(m_currency) - 1] = '\0';
 }
 
-// --- Сериализация ---
 void Property::serialize(std::ofstream& ofs) const {
     ofs.write(reinterpret_cast<const char*>(&m_id), sizeof(m_id));
     ofs.write(reinterpret_cast<const char*>(&m_realtorId), sizeof(m_realtorId));
@@ -71,7 +68,6 @@ void Property::serialize(std::ofstream& ofs) const {
     ofs.write(reinterpret_cast<const char*>(&m_updatedAt), sizeof(m_updatedAt));
 }
 
-// --- Десериализация ---
 void Property::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(&m_id), sizeof(m_id));
     ifs.read(reinterpret_cast<char*>(&m_realtorId), sizeof(m_realtorId));
@@ -92,7 +88,6 @@ void Property::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(&m_updatedAt), sizeof(m_updatedAt));
 }
 
-// --- Геттеры ---
 unsigned int Property::getId() const { return m_id; }
 unsigned int Property::getRealtorId() const { return m_realtorId; }
 const char* Property::getTitle() const { return m_title; }
@@ -111,7 +106,6 @@ Status Property::getStatus() const { return m_status; }
 std::time_t Property::getCreatedAt() const { return m_createdAt; }
 std::time_t Property::getUpdatedAt() const { return m_updatedAt; }
 
-// --- Сеттеры ---
 void Property::setTitle(const std::string& title) {
     std::strncpy(m_title, title.c_str(), sizeof(m_title) - 1);
     m_title[sizeof(m_title) - 1] = '\0';

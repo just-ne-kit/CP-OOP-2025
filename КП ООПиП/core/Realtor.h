@@ -4,8 +4,6 @@
 #include "Property.h"
 #include <fstream>
 
-//[User]
-
 class Realtor : public User
 {
 private:
@@ -13,7 +11,7 @@ private:
 	char m_firstName[32];  // Имя
 	char m_middleName[32]; // Отчество
 	char m_email[32];
-	unsigned int m_phoneNumber; // 9 ���� (12) 345-67-89
+	unsigned int m_phoneNumber; // (12) 345-67-89
 
 	std::vector<unsigned int> m_properties;
 

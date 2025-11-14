@@ -123,7 +123,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="core\Client.cpp" />
     <ClCompile Include="core\Property.cpp" />
     <ClCompile Include="core\Realtor.cpp" />
     <ClCompile Include="core\User.cpp" />
@@ -137,8 +136,6 @@
     <ClCompile Include="utils\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\ads\ads.bin" />
-    <None Include="data\ads\id.bin" />
     <None Include="data\realtors\id.bin" />
     <None Include="data\realtors\realtors.bin" />
   </ItemGroup>
@@ -157,7 +154,6 @@
     <ClInclude Include="storage\StorageManager.h" />
     <ClInclude Include="ui\ConsoleInterface.h" />
     <ClInclude Include="ui\Field.h" />
-    <ClInclude Include="ui\InputReader.h" />
     <ClInclude Include="ui\Screen.h" />
     <ClInclude Include="utils\Parser.h" />
   </ItemGroup>

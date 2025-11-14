@@ -22,12 +22,12 @@ enum class Status {
 
 class Property {
 private:
-    unsigned int m_id;                // Уникальный ID
-    unsigned int m_realtorId;         // ID владельца/риэлтора
+    unsigned int m_id;                // ID
+    unsigned int m_realtorId;         // ID риэлтора
     char m_title[32];                 // Заголовок объявления
     char m_description[32];           // Описание
     char m_address[32];               // Адрес
-    char m_currency[4];               // Валюта (BYN, USD, EUR)
+    char m_currency[4];               // Валюта
     float m_price;                    // Цена
     float m_areaTotal;                // Общая площадь
     float m_areaLiving;               // Жилая площадь
@@ -41,7 +41,6 @@ private:
     std::time_t m_updatedAt;          // Дата обновления
 
 public:
-    // --- Конструкторы ---
     Property();
     Property(unsigned int id,
              const std::string& title,
@@ -59,11 +58,9 @@ public:
              Status status,
              unsigned int realtorId);
 
-    // --- Сериализация / десериализация ---
     void serialize(std::ofstream& ofs) const;
     void deserialize(std::ifstream& ifs);
 
-    // --- Геттеры ---
     unsigned int getId() const;
     unsigned int getRealtorId() const;
     const char* getTitle() const;
@@ -82,7 +79,6 @@ public:
     std::time_t getCreatedAt() const;
     std::time_t getUpdatedAt() const;
 
-    // --- Сеттеры ---
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     void setAddress(const std::string& address);

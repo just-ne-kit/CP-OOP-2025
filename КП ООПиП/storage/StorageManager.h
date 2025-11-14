@@ -17,8 +17,6 @@ public:
     std::vector<std::shared_ptr<T>> load() const;
 };
 
-// ================== –еализаци€ ==================
-
 template<class T>
 StorageManager<T>::StorageManager(const std::string& filename)
     : m_filename(filename) {
@@ -43,13 +41,12 @@ std::vector<std::shared_ptr<T>> StorageManager<T>::load() const {
     std::vector<std::shared_ptr<T>> objects;
 
     while (true) {
-        // провер€ем, есть ли ещЄ данные
         if (ifs.peek() == EOF) break;
 
         auto obj = std::make_shared<T>();
         obj->deserialize(ifs);
 
-        if (!ifs) break; // если чтение не удалось Ч выходим
+        if (!ifs) break;
         objects.push_back(obj);
     }
 
