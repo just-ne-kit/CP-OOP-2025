@@ -16,7 +16,7 @@ class User
 {
 protected:
 	unsigned int m_id;
-	char m_username[32];
+	char m_login[32];
 	char m_hashedPassword[32];
 	Role m_role;
 
@@ -29,10 +29,10 @@ public:
 	User(const User& user);
 	virtual ~User() = default;
 	
-	unsigned int id() const;
-	const char *username() const;
+	const unsigned int id() const;
+	const char *login() const;
 	const char *hashedPassword() const;
-	Role role() const;
+	const Role role() const;
 
 	bool operator==(const User &user);
 };

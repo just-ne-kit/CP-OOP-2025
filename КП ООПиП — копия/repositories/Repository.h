@@ -26,10 +26,6 @@ public:
         return m_objects;
     }
 
-    int count() const {
-        return m_objects.size();
-    }
-
     template<typename Lambda>
     bool add(const std::shared_ptr<T>& obj, Lambda&& lambda) {
         if (!exists(lambda)) {
@@ -69,14 +65,5 @@ public:
             }
         }
         return false;
-    }
-
-    std::shared_ptr<T> operator[](int index) {
-        return m_objects[index];
-    }
-
-    template<typename Lambda>
-    void sort(Lambda&& lambda) {
-        std::sort(m_objects.begin(), m_objects.end(), lambda);
     }
 };

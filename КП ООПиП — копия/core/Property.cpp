@@ -11,6 +11,7 @@ Property::Property()
     m_title[0] = '\0';
     m_description[0] = '\0';
     m_address[0] = '\0';
+    m_currency[0] = '\0';
 }
 
 Property::Property(unsigned int id,
@@ -42,6 +43,9 @@ Property::Property(unsigned int id,
 
     std::strncpy(m_address, address.c_str(), sizeof(m_address) - 1);
     m_address[sizeof(m_address) - 1] = '\0';
+
+    std::strncpy(m_currency, currency.c_str(), sizeof(m_currency) - 1);
+    m_currency[sizeof(m_currency) - 1] = '\0';
 }
 
 void Property::serialize(std::ofstream& ofs) const {
@@ -50,6 +54,7 @@ void Property::serialize(std::ofstream& ofs) const {
     ofs.write(reinterpret_cast<const char*>(m_title), sizeof(m_title));
     ofs.write(reinterpret_cast<const char*>(m_description), sizeof(m_description));
     ofs.write(reinterpret_cast<const char*>(m_address), sizeof(m_address));
+    ofs.write(reinterpret_cast<const char*>(m_currency), sizeof(m_currency));
     ofs.write(reinterpret_cast<const char*>(&m_price), sizeof(m_price));
     ofs.write(reinterpret_cast<const char*>(&m_areaTotal), sizeof(m_areaTotal));
     ofs.write(reinterpret_cast<const char*>(&m_areaLiving), sizeof(m_areaLiving));
@@ -69,6 +74,7 @@ void Property::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(m_title), sizeof(m_title));
     ifs.read(reinterpret_cast<char*>(m_description), sizeof(m_description));
     ifs.read(reinterpret_cast<char*>(m_address), sizeof(m_address));
+    ifs.read(reinterpret_cast<char*>(m_currency), sizeof(m_currency));
     ifs.read(reinterpret_cast<char*>(&m_price), sizeof(m_price));
     ifs.read(reinterpret_cast<char*>(&m_areaTotal), sizeof(m_areaTotal));
     ifs.read(reinterpret_cast<char*>(&m_areaLiving), sizeof(m_areaLiving));
@@ -87,7 +93,8 @@ unsigned int Property::getRealtorId() const { return m_realtorId; }
 const char* Property::getTitle() const { return m_title; }
 const char* Property::getDescription() const { return m_description; }
 const char* Property::getAddress() const { return m_address; }
-float Property::getPrice() const { return m_price; }
+double Property::getPrice() const { return m_price; }
+const char* Property::getCurrency() const { return m_currency; }
 float Property::getAreaTotal() const { return m_areaTotal; }
 float Property::getAreaLiving() const { return m_areaLiving; }
 float Property::getAreaKitchen() const { return m_areaKitchen; }
@@ -111,8 +118,11 @@ void Property::setAddress(const std::string& address) {
     std::strncpy(m_address, address.c_str(), sizeof(m_address) - 1);
     m_address[sizeof(m_address) - 1] = '\0';
 }
-void Property::setPrice(float price) { m_price = static_cast<float>(price); }
-
+void Property::setPrice(double price) { m_price = static_cast<float>(price); }
+void Property::setCurrency(const std::string& currency) {
+    std::strncpy(m_currency, currency.c_str(), sizeof(m_currency) - 1);
+    m_currency[sizeof(m_currency) - 1] = '\0';
+}
 void Property::setAreaTotal(float area) { m_areaTotal = area; }
 void Property::setAreaLiving(float area) { m_areaLiving = area; }
 void Property::setAreaKitchen(float area) { m_areaKitchen = area; }

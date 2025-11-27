@@ -27,6 +27,7 @@ private:
     char m_title[32];                 // Заголовок объявления
     char m_description[32];           // Описание
     char m_address[32];               // Адрес
+    char m_currency[4];               // Валюта
     float m_price;                    // Цена
     float m_areaTotal;                // Общая площадь
     float m_areaLiving;               // Жилая площадь
@@ -65,7 +66,8 @@ public:
     const char* getTitle() const;
     const char* getDescription() const;
     const char* getAddress() const;
-    float getPrice() const;
+    double getPrice() const;
+    const char* getCurrency() const;
     float getAreaTotal() const;
     float getAreaLiving() const;
     float getAreaKitchen() const;
@@ -80,7 +82,7 @@ public:
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     void setAddress(const std::string& address);
-    void setPrice(float price);
+    void setPrice(double price);
     void setCurrency(const std::string& currency);
     void setAreaTotal(float area);
     void setAreaLiving(float area);

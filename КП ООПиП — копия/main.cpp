@@ -1,6 +1,7 @@
-﻿//#include "ui/Screen.h"
+﻿#include "ui/Screen.h"
+#include "storage/StorageManager.h"
+#include "services/AuthService.h"
 
-/*
 void Run()
 {
 	Screen screen;
@@ -57,17 +58,10 @@ void Run()
 		else if (res == AuthResult::UserNotFound || res == AuthResult::WrongPassword) screen.auth_error();
 	}
 }
-*/
-
-#include <windows.h>
-#include "core/Application.h"
 
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-
-	Application app;
-	app.run();
-
+	Run();
 	return 0;
 }

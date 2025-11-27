@@ -23,6 +23,7 @@ public:
             const std::string &middleName,
             const std::string &email,
             unsigned int phoneNumber);
+    Realtor(const User &user);
     Realtor(const Realtor &other);
 
 	void serialize(std::ofstream &ofs) const;

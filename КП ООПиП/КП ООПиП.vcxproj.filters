@@ -48,12 +48,18 @@
     <ClCompile Include="core\User.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="ui\InputReader.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\realtors\realtors.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
     <None Include="data\realtors\id.bin">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="data\properties\properties.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
   </ItemGroup>
@@ -104,6 +110,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="core\Admin.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\InputReader.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Application.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
