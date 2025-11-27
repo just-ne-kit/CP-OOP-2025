@@ -22,8 +22,7 @@ AuthResult AuthService::registerUser(const std::string& name, const std::string&
 
 	unsigned int id = m_usersIdGen.next();
 
-	//todo
-	std::shared_ptr<Realtor> new_user = std::make_shared<Realtor>(User(id, name, PasswordHasher::encrypt(password), Role::RealtorRole), "", "", "", "", 0);
+	std::shared_ptr<Realtor> new_user = std::make_shared<Realtor>(id, name, PasswordHasher::encrypt(password), "", "", "", "", 0);
 
 	m_realtorRepository.add(new_user, [](const std::shared_ptr<Realtor>& obj) { return false; });
 

@@ -11,6 +11,8 @@ public:
 	Admin()
 	{
 		strcpy_s(m_hashedPassword, PasswordHasher::encrypt("1111").c_str());
-		m_role = Role::AdminRole;
+	}
+	Role role() const override {
+		return Role::AdminRole;
 	}
 };

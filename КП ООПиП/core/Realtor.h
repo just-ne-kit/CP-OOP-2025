@@ -17,7 +17,9 @@ private:
 
 public:
 	Realtor();  
-    Realtor(const User &base,
+    Realtor(unsigned int id,
+			const std::string& login,
+			const std::string& hashedPassword,
             const std::string &lastName,
             const std::string &firstName,
             const std::string &middleName,
@@ -43,4 +45,6 @@ public:
 	void setMiddleName(const std::string &middleName);
 	void setEmail(const std::string &email);
 	void setPhoneNumber(unsigned int phoneNumber);
+
+	Role role() const override;
 };

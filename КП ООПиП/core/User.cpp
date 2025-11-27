@@ -1,17 +1,16 @@
 #include "User.h"
 
-User::User() : User(0, "", "", NoneRole) {}
-User::User(unsigned int id, const std::string &login, const std::string &hashedPassword, Role role)
+User::User(unsigned int id, const std::string &login, const std::string &hashedPassword)
 {
 	m_id = id;
 	strcpy_s(m_username, login.c_str());
 	strcpy_s(m_hashedPassword, hashedPassword.c_str());
-	m_role = role;
 }
+User::User() : User(0, "", "") {}
 
 
 User::User(const User &user)
-	: User(user.m_id, user.m_username, user.m_hashedPassword, user.m_role) {}
+	: User(user.m_id, user.m_username, user.m_hashedPassword) {}
 
 unsigned int User::id() const
 {
@@ -25,15 +24,10 @@ const char *User::hashedPassword() const
 {
 	return m_hashedPassword;
 }
-Role User::role() const
-{
-	return m_role;
-}
 
 bool User::operator==(const User &user)
 {
 	return this->m_hashedPassword == user.m_hashedPassword &&
-		   this->m_id == user.m_id &&
-		   this->m_username == user.m_username &&
-		   this->m_role == user.m_role;
+		this->m_id == user.m_id &&
+		this->m_username == user.m_username;
 }

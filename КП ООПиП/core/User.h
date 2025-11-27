@@ -7,7 +7,6 @@
 
 enum Role
 {
-	NoneRole,
 	AdminRole,
 	RealtorRole
 };
@@ -18,13 +17,10 @@ protected:
 	unsigned int m_id;
 	char m_username[32];
 	char m_hashedPassword[32];
-	Role m_role;
-
 public:
 	User(unsigned int id,
 		 const std::string &login,
-		 const std::string &hashedPassword,
-		 Role role);
+		 const std::string &hashedPassword);
 	User();
 	User(const User& user);
 	virtual ~User() = default;
@@ -32,7 +28,7 @@ public:
 	unsigned int id() const;
 	const char *username() const;
 	const char *hashedPassword() const;
-	Role role() const;
+	virtual Role role() const = 0;
 
 	bool operator==(const User &user);
 };

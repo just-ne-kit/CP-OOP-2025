@@ -8,13 +8,15 @@ Realtor::Realtor()
     m_middleName[0] = '\0';
     m_email[0] = '\0';
 }
-Realtor::Realtor(const User &base,
+Realtor::Realtor(unsigned int id,
+                 const std::string& login,
+                 const std::string& hashedPassword,
                  const std::string &lastName,
                  const std::string &firstName,
                  const std::string &middleName,
                  const std::string &email,
                  unsigned int phoneNumber)
-    : User(base), m_phoneNumber(phoneNumber)
+    : User(id, login, hashedPassword), m_phoneNumber(phoneNumber)
 {
     std::strncpy(m_lastName, lastName.c_str(), sizeof(m_lastName) - 1);
     m_lastName[sizeof(m_lastName) - 1] = '\0';
@@ -42,7 +44,6 @@ void Realtor::serialize(std::ofstream &ofs) const
     ofs.write(reinterpret_cast<const char*>(&m_id), sizeof(m_id));
     ofs.write(reinterpret_cast<const char*>(m_username), sizeof(m_username));
     ofs.write(reinterpret_cast<const char*>(m_hashedPassword), sizeof(m_hashedPassword));
-    ofs.write(reinterpret_cast<const char*>(&m_role), sizeof(m_role));
 
     ofs.write(reinterpret_cast<const char*>(m_lastName), sizeof(m_lastName));
     ofs.write(reinterpret_cast<const char*>(m_firstName), sizeof(m_firstName));
@@ -58,7 +59,6 @@ void Realtor::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(&m_id), sizeof(m_id));
     ifs.read(reinterpret_cast<char*>(m_username), sizeof(m_username));
     ifs.read(reinterpret_cast<char*>(m_hashedPassword), sizeof(m_hashedPassword));
-    ifs.read(reinterpret_cast<char*>(&m_role), sizeof(m_role));
     ifs.read(reinterpret_cast<char*>(m_lastName), sizeof(m_lastName));
     ifs.read(reinterpret_cast<char*>(m_firstName), sizeof(m_firstName));
     ifs.read(reinterpret_cast<char*>(m_middleName), sizeof(m_middleName));
@@ -68,7 +68,7 @@ void Realtor::deserialize(std::ifstream& ifs) {
     size_t adsSize = 0;
     ifs.read(reinterpret_cast<char*>(&adsSize), sizeof(adsSize));
 
-    if (!ifs) return; // если не удалось прочитать Ч выходим
+    if (!ifs) return;
 
     m_properties.resize(adsSize);
     ifs.read(reinterpret_cast<char*>(m_properties.data()), adsSize * sizeof(int));
@@ -109,3 +109,7 @@ void Realtor::setPhoneNumber(unsigned int phoneNumber) {
     m_phoneNumber = phoneNumber;
 }
 
+Role Realtor::role() const
+{
+    return Role::RealtorRole;
+}
