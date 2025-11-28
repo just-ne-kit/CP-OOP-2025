@@ -6,6 +6,34 @@
 #include <ctime>
 #include <cstring>
 
+namespace config
+{
+    const std::size_t TITLE_MAX_LEN = 64;
+    const std::size_t DESCRIPTION_MAX_LEN = 256;
+    const std::size_t ADDRESS_MAX_LEN = 128;
+
+    const float PRICE_MIN = 0.0f;
+    const float PRICE_MAX = 100'000'000.0f;
+
+    const float AREA_TOTAL_MIN = 0.0f;
+    const float AREA_TOTAL_MAX = 10'000.0f;
+
+    const float AREA_LIVING_MIN = 0.0f;
+    const float AREA_LIVING_MAX = 5'000.0f;
+
+    const float AREA_KITCHEN_MIN = 0.0f;
+    const float AREA_KITCHEN_MAX = 500.0f;
+
+    const unsigned int ROOMS_MIN = 0;
+    const unsigned int ROOMS_MAX = 100;
+
+    const unsigned int FLOOR_MIN = 0;
+    const unsigned int FLOOR_MAX = 200;
+
+    const unsigned int FLOORS_TOTAL_MIN = 0;
+    const unsigned int FLOORS_TOTAL_MAX = 200;
+}
+
 enum class PropertyType {
     Apartment,
     House,
@@ -22,22 +50,22 @@ enum class Status {
 
 class Property {
 private:
-    unsigned int m_id;                // ID
-    unsigned int m_realtorId;         // ID риэлтора
-    char m_title[32];                 // Заголовок объявления
-    char m_description[32];           // Описание
-    char m_address[32];               // Адрес
-    float m_price;                    // Цена
-    float m_areaTotal;                // Общая площадь
-    float m_areaLiving;               // Жилая площадь
-    float m_areaKitchen;              // Площадь кухни
-    unsigned int m_rooms;             // Количество комнат
-    unsigned int m_floor;             // Этаж
-    unsigned int m_floorsTotal;       // Всего этажей в доме
-    PropertyType m_type;              // Тип недвижимости
-    Status m_status;                  // Статус объявления
-    std::time_t m_createdAt;          // Дата создания
-    std::time_t m_updatedAt;          // Дата обновления
+    unsigned int m_id;                                      // ID
+    unsigned int m_realtorId;                               // ID риэлтора
+    char m_title[config::TITLE_MAX_LEN];                    // Заголовок объявления
+    char m_description[config::DESCRIPTION_MAX_LEN];        // Описание
+    char m_address[config::ADDRESS_MAX_LEN];                // Адрес
+    float m_price;                                          // Цена
+    float m_areaTotal;                                      // Общая площадь
+    float m_areaLiving;                                     // Жилая площадь
+    float m_areaKitchen;                                    // Площадь кухни
+    unsigned int m_rooms;                                   // Количество комнат
+    unsigned int m_floor;                                   // Этаж
+    unsigned int m_floorsTotal;                             // Всего этажей в доме
+    PropertyType m_type;                                    // Тип недвижимости
+    Status m_status;                                        // Статус объявления
+    std::time_t m_createdAt;                                // Дата создания
+    std::time_t m_updatedAt;                                // Дата обновления
 
 public:
     Property();

@@ -6,6 +6,38 @@
 #include "../ui/InputReader.h"
 #include "conio.h"
 
+namespace Sort {
+	void by_price(Repository<Property>& repo) {
+		repo.sort([](const auto& a, const auto& b) {
+			return a->getPrice() < b->getPrice();
+			});
+	}
+
+	void by_area(Repository<Property>& repo) {
+		repo.sort([](const auto& a, const auto& b) {
+			return a->getAreaTotal() < b->getAreaTotal();
+			});
+	}
+
+	void by_rooms(Repository<Property>& repo) {
+		repo.sort([](const auto& a, const auto& b) {
+			return a->getRooms() < b->getRooms();
+			});
+	}
+
+	void by_floor(Repository<Property>& repo) {
+		repo.sort([](const auto& a, const auto& b) {
+			return a->getFloor() < b->getFloor();
+			});
+	}
+
+	void by_status(Repository<Property>& repo) {
+		repo.sort([](const auto& a, const auto& b) {
+			return a->getStatus() < b->getStatus();
+			});
+	}
+}
+
 class Application
 {
 private:
@@ -16,128 +48,333 @@ private:
 	Repository<Realtor> realtor_repo{ realtor_storage.load() };
 	AuthService authService{ realtor_repo, "data/realtors/id.bin" };
 
-public:
-	void pause() {
+	static void pause() {
 		_getch();
 	}
-	void clear() {
+	static void clear() {
 		system("cls");
 	}
-	void pause_clear(const std::string& msg)
+	static void pause_clear(const std::string& msg)
 	{
 		std::cout << msg;
 		pause();
 		clear();
 	}
 
-	void realtor_prop()
+	class Filter {
+	private:
+		std::pair<float, float> priceRange{ 0.0f, 5'000'000.0f };
+		std::pair<float, float> areaRange{ 0.0f, 1'000.0f };
+		std::pair<unsigned int, unsigned int> roomsRange{ 0, 99 };
+		std::pair<unsigned int, unsigned int> floorRange{ 0, 99 };
+		Status statusValue{};
+
+		template<typename T>
+		void set_pair(std::pair<T, T>& p, const T& min, const T& max, const std::string& msg1, const std::string& msg2, const std::string& errMsg = "")
+		{
+			clear();
+			p.first = InputReader::read<T>(min, max, msg1, errMsg);
+			p.second = InputReader::read<T>(min, max, msg2, errMsg);
+			clear();
+		}
+
+		Status get_status() {
+			clear();
+			std::cout << "Выберете статус объявления:\n";
+			std::cout << "1 - Активно\n";
+			std::cout << "2 - Продано\n";
+			std::cout << "3 - Арендовано\n";
+			std::cout << "4 - Архивировано\n";
+
+			int choice = InputReader::read<int>(1, 4, ">");
+			clear();
+
+			return Status(choice - 1);
+		}
+
+	public:
+		bool price = false;
+		bool area = false;
+		bool rooms = false;
+		bool floor = false;
+		bool status = false;
+
+		void default_filters() {
+			price = area = rooms = floor = status = false;
+			priceRange = { 0.0f, 5'000'000.0f };
+			areaRange = { 0.0f, 1'000.0f };
+			roomsRange = { 0, 99 };
+			floorRange = { 0, 99 };
+			statusValue = Status{};
+		}
+
+		void flip_price() { price = !price; }
+		void flip_area() { area = !area; }
+		void flip_rooms() { rooms = !rooms; }
+		void flip_floor() { floor = !floor; }
+		void flip_status() { status = !status; }
+
+		void set_price_range() {
+			set_pair<float>(priceRange, 0.0f, 5'000'000.0f,
+				"Введите минимальную стоимость(BYN): ",
+				"Введите максимальную стоимость(BYN): ",
+				"Ошибка: число от 0 до 5'000'000");
+		}
+
+		void set_area_range() {
+			set_pair<float>(areaRange, 0.0f, 1'000.0f,
+				"Введите минимальную площадь(кв. м): ",
+				"Введите максимальную площадь(кв. м): ",
+				"Ошибка: число от 0 до 1'000");
+		}
+
+		void set_rooms_range() {
+			set_pair<unsigned int>(roomsRange, 0, 99,
+				"Введите минимальное число комнат: ",
+				"Введите максимальное число комнат: ",
+				"Ошибка: целое число от 0 до 99");
+		}
+
+		void set_floor_range() {
+			set_pair<unsigned int>(floorRange, 0, 99,
+				"Введите минимальный этаж: ",
+				"Введите максимальный этаж: ",
+				"Ошибка: целое число от 0 до 99");
+		}
+
+		void set_status() {
+			statusValue = get_status();
+		}
+
+		void apply_filters(Repository<Property>& repo) {
+			if (price)  repo.remove([&](const auto& a) { return !between(a->getPrice(), priceRange); });
+			if (area)   repo.remove([&](const auto& a) { return !between(a->getAreaTotal(), areaRange); });
+			if (rooms)  repo.remove([&](const auto& a) { return !between(a->getRooms(), roomsRange); });
+			if (floor)  repo.remove([&](const auto& a) { return !between(a->getFloor(), floorRange); });
+			if (status) repo.remove([&](const auto& a) { return a->getStatus() != statusValue; });
+		}
+	};
+
+	void view_prop(const Repository<Property>& default_repo)
+	{
+		if (default_repo.count() <= 0) {
+			pause_clear("Нет объявлений. Нажмите любую клавишу для продолжения.");
+			return;
+		}
+
+		Filter filter;
+
+		bool is_asc = true;
+		int current = 0;
+		Repository<Property> repo = default_repo;
+		auto reset_repo = [&]() {repo = default_repo; current = 0; };
+
+		bool exit = false;
+		while (!exit) {
+			if (repo.count() <= 0) {
+				pause_clear("Нет объявлений. Нажмите любую клавишу для сброса фильтров.");
+				filter.default_filters();
+				reset_repo();
+			}
+
+			{
+				std::cout << repo[is_asc ? current : repo.count() - current - 1] << std::endl;
+				std::cout << current + 1 << "й из " << repo.count() << "\n\n";
+
+				std::cout << " 1 - Лево\n";
+				std::cout << " 2 - Право\n";
+				std::cout << " 3 - Сортировка по [Убыванию/Возрастанию]\n";
+				std::cout << " 4 - Сортировать по цене\n";
+				std::cout << " 5 - Сортировать по площади\n";
+				std::cout << " 6 - Сортировать по количеству комнат\n";
+				std::cout << " 7 - Сортировать по этажу\n";
+				std::cout << " 8 - Сортировать по статусу\n";
+				std::cout << " 9 - Фильтр по цене\n";
+				std::cout << "10 - Фильтр по площади\n";
+				std::cout << "11 - Фильтр по количеству комнат\n";
+				std::cout << "12 - Фильтр по этажу\n";
+				std::cout << "13 - Фильтр по статусу\n";
+				std::cout << "14 - Сбросить фильтры\n";
+				std::cout << " 0 - Назад\n";
+			}
+
+			int choice = InputReader::read<int>(">");
+
+			switch (choice) {
+			case 1: current = (current - 1 + repo.count()) % repo.count(); break;
+			case 2: current = (current + 1) % repo.count(); break;
+			case 3: is_asc = !is_asc; break;
+			case 4: Sort::by_price(repo);  current = 0; break;
+			case 5: Sort::by_area(repo);   current = 0; break;
+			case 6: Sort::by_rooms(repo);  current = 0; break;
+			case 7: Sort::by_floor(repo);  current = 0; break;
+			case 8: Sort::by_status(repo); current = 0; break;
+			case 9:  filter.flip_price();  if (filter.price)  filter.set_price_range();  break;
+			case 10: filter.flip_area();   if (filter.area)   filter.set_area_range();   break;
+			case 11: filter.flip_rooms();  if (filter.rooms)  filter.set_rooms_range();  break;
+			case 12: filter.flip_floor();  if (filter.floor)  filter.set_floor_range();  break;
+			case 13: filter.flip_status(); if (filter.status) filter.set_status();       break;
+			case 14: filter.default_filters(); reset_repo(); break;
+			case 0: exit = true; break;
+			default:break;
+			}
+
+			if (9 <= choice && choice <= 13)
+			{
+				reset_repo();
+				filter.apply_filters(repo);
+			}
+		}
+	}
+
+	void view_my_prop(std::shared_ptr<Realtor> realtor)
+	{
+		Repository<Property> default_repo = property_repo;
+
+		default_repo.remove([&](const std::shared_ptr<Property>& r) { return r->getRealtorId() == realtor->id(); });
+
+		view_prop(default_repo);
+	}
+
+	template<typename T>
+	std::string create_err_msg(const std::string& msg, const T& min, const T& max)
+	{
+		return msg + " от " + min + " до " + max;
+	}
+
+	void add_prop(std::shared_ptr<Realtor> realtor)
+	{
+		using namespace config;
+
+		Property prop;
+
+		std::string int_error = "Ошибка. Необходимо ввести целое число";
+		std::string uint_error = "Ошибка. Необходимо ввести целое беззнаковое число";
+		std::string float_error = "Ошибка. Необходимо ввести число";
+		std::string str_error = "Ошибка. Пустая строка";
+
+		// Количество комнат
+		prop.setRooms(InputReader::read<unsigned int>(
+			ROOMS_MIN, ROOMS_MAX,
+			"Введите количество комнат: ",
+			create_err_msg(uint_error, ROOMS_MIN, ROOMS_MAX)));
+
+		// Заголовок
+		prop.setTitle(InputReader::read<std::string>(
+			"Введите заголовок объявления: ", str_error));
+
+		// Описание
+		prop.setDescription(InputReader::read<std::string>(
+			"Введите описание: ", str_error));
+
+		// Адрес
+		prop.setAddress(InputReader::read<std::string>(
+			"Введите адрес: ", str_error));
+
+		// Цена
+		prop.setPrice(InputReader::read<float>(
+			PRICE_MIN, PRICE_MAX,
+			"Введите цену (BYN): ",
+			create_err_msg(float_error, PRICE_MIN, PRICE_MAX)));
+
+		// Общая площадь
+		prop.setAreaTotal(InputReader::read<float>(
+			AREA_TOTAL_MIN, AREA_TOTAL_MAX,
+			"Введите общую площадь (кв. м): ",
+			create_err_msg(float_error, AREA_TOTAL_MIN, AREA_TOTAL_MAX)));
+
+		// Жилая площадь
+		prop.setAreaLiving(InputReader::read<float>(
+			AREA_LIVING_MIN, AREA_LIVING_MAX,
+			"Введите жилую площадь (кв. м): ",
+			create_err_msg(float_error, AREA_LIVING_MIN, AREA_LIVING_MAX)));
+
+		// Площадь кухни
+		prop.setAreaKitchen(InputReader::read<float>(
+			AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
+			"Введите площадь кухни (кв. м): ",
+			create_err_msg(float_error, AREA_KITCHEN_MIN, AREA_KITCHEN_MAX)));
+
+		// Этаж
+		prop.setFloor(InputReader::read<unsigned int>(
+			FLOOR_MIN, FLOOR_MAX,
+			"Введите этаж: ",
+			create_err_msg(uint_error, FLOOR_MIN, FLOOR_MAX)));
+
+		// Всего этажей
+		prop.setFloorsTotal(InputReader::read<unsigned int>(
+			FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
+			"Введите количество этажей в доме: ",
+			create_err_msg(uint_error, FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX)));
+
+		// Тип недвижимости (enum)
+		// Здесь можно сделать меню выбора, например:
+		// 1 - Квартира, 2 - Дом, 3 - Офис и т.д.
+		// prop.setType(...);
+
+		// Статус объявления (enum)
+		// prop.setStatus(...);
+
+		// Дата создания/обновления задаётся автоматически
+		// prop.setCreatedAt(std::time(nullptr));
+		// prop.setUpdatedAt(std::time(nullptr));
+	}
+
+
+	void edit_prop(std::shared_ptr<Realtor> realtor)
 	{
 
 	}
 
-	Status get_status() {
-		std::cout << "Выберете статус объявления:\n";
-		std::cout << "1 - Активно\n";
-		std::cout << "2 - Продано\n";
-		std::cout << "3 - Арендовано\n";
-		std::cout << "4 - Архивировано\n";
+	void delete_prop(std::shared_ptr<Realtor> realtor)
+	{
 
-		int choice = InputReader::read_int(1, 4, ">");
+	}
 
-		clear();
+	void realtor_prop(std::shared_ptr<Realtor> realtor)
+	{
+		bool exit = false;
 
-		return Status(choice - 1);
+		while (!exit)
+		{
+			std::cout << "Выберете операцию:\n";
+			std::cout << "1 - Просмотр объявлений\n";
+			std::cout << "2 - Добавление\n";
+			std::cout << "3 - Редактирование\n";
+			std::cout << "4 - Удаление\n";
+			std::cout << "0 - Назад\n";
+
+			int choice = InputReader::read<int>(1, 4, ">");
+
+			switch (choice)
+			{
+			case 1: break;
+			case 2: add_prop(realtor); break;
+			case 3: edit_prop(realtor); break;
+			case 4: delete_prop(realtor); break;
+			case 0: exit = true; break;
+			default: break;
+			}
+		}
 	}
 
 	template<typename T>
-	bool between(const T& a, const std::pair<T, T>& pair) {
+	static bool between(const T& a, const std::pair<T, T>& pair) {
 		return pair.first <= a && a <= pair.second;
 	}
 
 	void realtor_all_prop()
 	{
-		int count = property_repo.count();
+		view_prop(property_repo);
+	}
 
-		if (count <= 0) {
-			pause_clear("Нет объявлений. Нажмите любую клавишу для продолжения.");
-			return;
-		}
+	void realtor_report()
+	{
+		//создание отчета
 
-		Repository<Property> repo = property_repo;
+		//вывод в консоль
 
-		bool exit = false;
-
-		bool is_asc = true;
-
-		bool filter_price = false;
-		bool filter_area = false;
-		bool filter_rooms = false;
-		bool filter_floor = false;
-		bool filter_status = false;
-
-		std::pair<float, float> priceRange;
-		std::pair<float, float> areaRange;
-		std::pair<unsigned int, unsigned int> roomsRange;
-		std::pair<unsigned int, unsigned int> floorRange;
-		Status status;
-
-		int current = 0;
-
-		while (!exit) {
-			std::cout << repo[current] << std::endl;
-			std::cout << current << "й из " << count << "\n\n";
-
-			std::cout << " 1 - Лево\n";
-			std::cout << " 2 - Право\n";
-			std::cout << " 3 - Сортировка по [Убыванию/Возрастанию]\n";
-			std::cout << " 4 - Сортировать по цене\n";
-			std::cout << " 5 - Сортировать по площади\n";
-			std::cout << " 6 - Сортировать по количеству комнат\n";
-			std::cout << " 7 - Сортировать по этажу\n";
-			std::cout << " 8 - Сортировать по статусу\n";
-			std::cout << " 9 - Фильтр по цене\n";
-			std::cout << "10 - Фильтр по площади\n";
-			std::cout << "11 - Фильтр по количеству комнат\n";
-			std::cout << "12 - Фильтр по этажу\n";
-			std::cout << "13 - Фильтр по статусу\n";
-			std::cout << "14 - Сбросить фильтры\n";
-			std::cout << " 0 - Выход\n";
-
-			int choice = InputReader::read_int(">");
-
-			switch (choice) {
-			case 1: current = (current - 1 + count) % count; break;
-			case 2: current = (current + 1) % count; break;
-			case 3: is_asc = !is_asc; break;
-			case 4: repo.sort([&](const auto& a, const auto& b) { return is_asc && (a->getPrice() < b->getPrice()); }); break;
-			case 5: repo.sort([&](const auto& a, const auto& b) { return is_asc && (a->getAreaTotal() < b->getAreaTotal()); }); break;
-			case 6: repo.sort([&](const auto& a, const auto& b) { return is_asc && (a->getRooms() < b->getRooms()); }); break;
-			case 7: repo.sort([&](const auto& a, const auto& b) { return is_asc && (a->getFloor() < b->getFloor()); }); break;
-			case 8: repo.sort([&](const auto& a, const auto& b) { return is_asc && (a->getStatus() < b->getStatus()); }); break;
-			case 9:  filter_price = !filter_price;  repo = property_repo; break;
-			case 10: filter_area = !filter_area;   repo = property_repo; break;
-			case 11: filter_rooms = !filter_rooms;  repo = property_repo; break;
-			case 12: filter_floor = !filter_floor;  repo = property_repo; break;
-			case 13: filter_status = !filter_status; repo = property_repo; break;
-			case 14:
-				filter_price = false;
-				filter_area = false;
-				filter_rooms = false;
-				filter_floor = false;
-				filter_status = false;
-
-				repo = property_repo;
-				break;
-			case 0: exit = true; break;
-			default:break;
-			}
-
-			if (filter_price) repo.remove([&](const std::shared_ptr<Property>& a) { return !between(a->getPrice(), priceRange); });
-			if (filter_area)  repo.remove([&](const std::shared_ptr<Property>& a) { return !between(a->getAreaTotal(), areaRange); });
-			if (filter_rooms) repo.remove([&](const std::shared_ptr<Property>& a) { return !between(a->getRooms(), roomsRange); });
-			if (filter_floor) repo.remove([&](const std::shared_ptr<Property>& a) { return !between(a->getFloor(), floorRange); });
-			if (filter_status)repo.remove([&](const std::shared_ptr<Property>& a) { return a->getStatus() != status; });
-		}
+		pause_clear("Нажмите любую клавишу для продолжения.");
 	}
 
 	void realtor(std::shared_ptr<Realtor> realtor)
@@ -148,17 +385,17 @@ public:
 
 			std::cout << "1 - Мои объявления\n";
 			std::cout << "2 - Все объявления\n";
-			std::cout << "3 - \n";
-			std::cout << "4 - \n";
+			std::cout << "3 - Создать отчет\n";
+			std::cout << "0 - Назад\n";
 
-			int choice = InputReader::read_int(">");
+			int choice = InputReader::read<int>(">");
 
 			switch (choice)
 			{
-			case 1: realtor_prop(); break;
+			case 1: realtor_prop(realtor); break;
 			case 2: realtor_all_prop(); break;
-			case 3: break;
-			case 4: break;
+			case 3: realtor_report(); break;
+			case 0: exit = true; break;
 			default:break;
 			}
 		}
@@ -171,7 +408,7 @@ public:
 
 	void register_user()
 	{
-		std::string login = InputReader::read_str("Введите новый логин:");
+		std::string login = InputReader::read<std::string>("Введите новый логин:");
 		std::string password1 = InputReader::read_password("Введите пароль:");
 		std::string password2 = InputReader::read_password("Повторите пароль:");
 
@@ -192,7 +429,7 @@ public:
 
 	void login()
 	{
-		std::string login = InputReader::read_str("Введите логин:");
+		std::string login = InputReader::read<std::string>("Введите логин:");
 		std::string password = InputReader::read_password("Введите пароль:");
 
 		std::shared_ptr<User> out_user;
@@ -212,6 +449,7 @@ public:
 		}
 	}
 
+public:
 	void run()
 	{
 		bool exit_program = false;
@@ -219,15 +457,15 @@ public:
 
 			std::cout << "1 - Регистрация\n";
 			std::cout << "2 - Вход\n";
-			std::cout << "3 - Выход из программы\n";
+			std::cout << "0 - Выход из программы\n";
 
-			int choice = InputReader::read_int(">");
+			int choice = InputReader::read<int>(">");
 
 			switch (choice)
 			{
 			case 1: register_user(); break;
 			case 2: login(); break;
-			case 3: exit_program = true; break;
+			case 0: exit_program = true; break;
 			default: clear(); break;
 			}
 		}
