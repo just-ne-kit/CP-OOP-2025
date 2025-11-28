@@ -62,6 +62,9 @@
     <None Include="data\properties\properties.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
+    <None Include="data\properties\id.bin">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="security\PasswordHasher.h">

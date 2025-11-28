@@ -67,6 +67,29 @@ template int InputReader::read<int>(const int&, const int&, const std::string&, 
 template unsigned int InputReader::read<unsigned int>(const unsigned int&, const unsigned int&, const std::string&, const std::string&);
 template float InputReader::read<float>(const float&, const float&, const std::string&, const std::string&);
 
+template<typename T>
+T InputReader::read(std::size_t maxCount, const std::string& msg, const std::string& errMsg)
+{
+    return T{};
+}
+
+template<>
+std::string InputReader::read<std::string>(std::size_t maxCount, const std::string& msg, const std::string& errMsg) {
+    std::string value;
+    while (true) {
+        if (!msg.empty()) std::cout << msg;
+        std::getline(std::cin, value);
+
+        if (value.empty() || value.size() > maxCount) {
+            if (!errMsg.empty()) {
+                std::cout << errMsg;
+            }
+            continue;
+        }
+        return value;
+    }
+}
+
 std::string InputReader::read_password(const std::string& msg, const std::string& errMsg)
 {
     std::string password;

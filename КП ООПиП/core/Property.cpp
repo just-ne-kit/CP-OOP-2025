@@ -1,5 +1,7 @@
 #include "Property.h"
 #include <cstring>
+#include "../ui/InputReader.h"
+#include <iostream>
 
 Property::Property()
     : m_id(0), m_realtorId(0), m_price(0.0f),
@@ -99,6 +101,11 @@ Status Property::getStatus() const { return m_status; }
 std::time_t Property::getCreatedAt() const { return m_createdAt; }
 std::time_t Property::getUpdatedAt() const { return m_updatedAt; }
 
+void Property::setId(unsigned int id)
+{
+    m_id = id;
+}
+
 void Property::setTitle(const std::string& title) {
     std::strncpy(m_title, title.c_str(), sizeof(m_title) - 1);
     m_title[sizeof(m_title) - 1] = '\0';
@@ -124,3 +131,112 @@ void Property::setStatus(Status status) { m_status = status; }
 void Property::setRealtorId(unsigned int realtorId) { m_realtorId = realtorId; }
 void Property::setCreatedAt(std::time_t createdAt) { m_createdAt = createdAt; }
 void Property::setUpdatedAt(std::time_t updatedAt) { m_updatedAt = updatedAt; }
+
+template<typename T>
+std::string create_err_msg(const std::string& msg, const T& min, const T& max)
+{
+    return msg + " от " + std::to_string(min) + " до " + std::to_string(max);
+}
+
+std::string create_str_err_msg(std::size_t maxCount) {
+    return "Ошибка. Необходимо ввести строку не превышающую "
+        + std::to_string(maxCount) + " символов";
+}
+
+Property Property::create(unsigned int id, unsigned int realtorId)
+{
+    using namespace config;
+
+    Property prop;
+
+    std::string int_error = "Ошибка. Необходимо ввести целое число";
+    std::string uint_error = "Ошибка. Необходимо ввести целое беззнаковое число";
+    std::string float_error = "Ошибка. Необходимо ввести число";
+
+    prop.m_id = id;
+    prop.m_realtorId = realtorId;
+
+    prop.m_rooms = InputReader::read<unsigned int>(
+        ROOMS_MIN, ROOMS_MAX,
+        "Введите количество комнат: ",
+        create_err_msg(uint_error, ROOMS_MIN, ROOMS_MAX));
+
+    std::string title = InputReader::read<std::string>(
+        TITLE_MAX_LEN - 1,
+        "Введите заголовок объявления: ",
+        create_str_err_msg(TITLE_MAX_LEN - 1));
+    std::strncpy(prop.m_title, title.c_str(), TITLE_MAX_LEN);
+
+    std::string description = InputReader::read<std::string>(
+        DESCRIPTION_MAX_LEN - 1,
+        "Введите описание: ",
+        create_str_err_msg(DESCRIPTION_MAX_LEN - 1));
+    std::strncpy(prop.m_description, description.c_str(), DESCRIPTION_MAX_LEN);
+
+    std::string address = InputReader::read<std::string>(
+        ADDRESS_MAX_LEN - 1,
+        "Введите адрес: ",
+        create_str_err_msg(ADDRESS_MAX_LEN - 1));
+    std::strncpy(prop.m_address, address.c_str(), ADDRESS_MAX_LEN);
+
+    prop.m_price = InputReader::read<float>(
+        PRICE_MIN, PRICE_MAX,
+        "Введите цену (BYN): ",
+        create_err_msg(float_error, PRICE_MIN, PRICE_MAX));
+
+    // площади с проверкой
+    while (true) {
+        prop.m_areaTotal = InputReader::read<float>(
+            AREA_TOTAL_MIN, AREA_TOTAL_MAX,
+            "Введите общую площадь (кв. м): ",
+            create_err_msg(float_error, AREA_TOTAL_MIN, AREA_TOTAL_MAX));
+
+        prop.m_areaLiving = InputReader::read<float>(
+            AREA_LIVING_MIN, AREA_LIVING_MAX,
+            "Введите жилую площадь (кв. м): ",
+            create_err_msg(float_error, AREA_LIVING_MIN, AREA_LIVING_MAX));
+
+        if (prop.m_areaLiving <= prop.m_areaTotal) break;
+        std::cout << "Ошибка. Жилая площадь не может превышать общую!" << std::endl;
+    }
+
+    prop.m_areaKitchen = InputReader::read<float>(
+        AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
+        "Введите площадь кухни (кв. м): ",
+        create_err_msg(float_error, AREA_KITCHEN_MIN, AREA_KITCHEN_MAX));
+
+    // этажи с проверкой
+    while (true) {
+        prop.m_floorsTotal = InputReader::read<unsigned int>(
+            FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
+            "Введите количество этажей в доме: ",
+            create_err_msg(uint_error, FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX));
+
+        prop.m_floor = InputReader::read<unsigned int>(
+            FLOOR_MIN, FLOOR_MAX,
+            "Введите этаж: ",
+            create_err_msg(uint_error, FLOOR_MIN, FLOOR_MAX));
+
+        if (prop.m_floor <= prop.m_floorsTotal) break;
+        std::cout << "Ошибка. Этаж не может быть больше количества этажей!" << std::endl;
+    }
+
+    // тип недвижимости
+    std::cout << "Выберите тип недвижимости:\n";
+    std::cout << "1 - Квартира\n";
+    std::cout << "2 - Дом\n";
+    std::cout << "3 - Офис\n";
+    std::cout << "4 - Земельный участок\n";
+
+    int typeChoice = InputReader::read<int>(
+        1, 4,
+        ">",
+        create_err_msg(int_error, 1, 4));
+    prop.m_type = static_cast<PropertyType>(typeChoice - 1);
+
+    prop.m_status = Status::Active;
+    prop.m_createdAt = std::time(nullptr);
+    prop.m_updatedAt = std::time(nullptr);
+
+    return prop;
+}

@@ -105,11 +105,12 @@ public:
     std::time_t getCreatedAt() const;
     std::time_t getUpdatedAt() const;
 
+    void setId(unsigned int id);
+    void setRealtorId(unsigned int id);
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     void setAddress(const std::string& address);
     void setPrice(float price);
-    void setCurrency(const std::string& currency);
     void setAreaTotal(float area);
     void setAreaLiving(float area);
     void setAreaKitchen(float area);
@@ -118,7 +119,8 @@ public:
     void setFloorsTotal(unsigned int floors);
     void setType(PropertyType type);
     void setStatus(Status status);
-    void setRealtorId(unsigned int realtorId);
     void setCreatedAt(std::time_t createdAt);
     void setUpdatedAt(std::time_t updatedAt);
+
+    static Property create(unsigned int id, unsigned int realtorId);
 };

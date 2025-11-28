@@ -137,6 +137,7 @@
     <ClCompile Include="utils\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\properties\id.bin" />
     <None Include="data\properties\properties.bin" />
     <None Include="data\realtors\id.bin" />
     <None Include="data\realtors\realtors.bin" />

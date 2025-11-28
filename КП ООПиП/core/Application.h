@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../core/Property.h"
 #include "../storage/StorageManager.h"
@@ -41,11 +41,13 @@ namespace Sort {
 class Application
 {
 private:
+	IdGenerator id_gen_prop{"data/properties/id.bin"};
 	StorageManager<Property> property_storage{ "data/properties/properties.bin" };
 	Repository<Property> property_repo{ property_storage.load() };
 
 	StorageManager<Realtor> realtor_storage{ "data/realtors/realtors.bin" };
 	Repository<Realtor> realtor_repo{ realtor_storage.load() };
+	
 	AuthService authService{ realtor_repo, "data/realtors/id.bin" };
 
 	static void pause() {
@@ -80,11 +82,11 @@ private:
 
 		Status get_status() {
 			clear();
-			std::cout << "Выберете статус объявления:\n";
-			std::cout << "1 - Активно\n";
-			std::cout << "2 - Продано\n";
-			std::cout << "3 - Арендовано\n";
-			std::cout << "4 - Архивировано\n";
+			std::cout << "Р’С‹Р±РµСЂРµС‚Рµ СЃС‚Р°С‚СѓСЃ РѕР±СЉСЏРІР»РµРЅРёСЏ:\n";
+			std::cout << "1 - РђРєС‚РёРІРЅРѕ\n";
+			std::cout << "2 - РџСЂРѕРґР°РЅРѕ\n";
+			std::cout << "3 - РђСЂРµРЅРґРѕРІР°РЅРѕ\n";
+			std::cout << "4 - РђСЂС…РёРІРёСЂРѕРІР°РЅРѕ\n";
 
 			int choice = InputReader::read<int>(1, 4, ">");
 			clear();
@@ -116,30 +118,30 @@ private:
 
 		void set_price_range() {
 			set_pair<float>(priceRange, 0.0f, 5'000'000.0f,
-				"Введите минимальную стоимость(BYN): ",
-				"Введите максимальную стоимость(BYN): ",
-				"Ошибка: число от 0 до 5'000'000");
+				"Р’РІРµРґРёС‚Рµ РјРёРЅРёРјР°Р»СЊРЅСѓСЋ СЃС‚РѕРёРјРѕСЃС‚СЊ(BYN): ",
+				"Р’РІРµРґРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅСѓСЋ СЃС‚РѕРёРјРѕСЃС‚СЊ(BYN): ",
+				"РћС€РёР±РєР°: С‡РёСЃР»Рѕ РѕС‚ 0 РґРѕ 5'000'000");
 		}
 
 		void set_area_range() {
 			set_pair<float>(areaRange, 0.0f, 1'000.0f,
-				"Введите минимальную площадь(кв. м): ",
-				"Введите максимальную площадь(кв. м): ",
-				"Ошибка: число от 0 до 1'000");
+				"Р’РІРµРґРёС‚Рµ РјРёРЅРёРјР°Р»СЊРЅСѓСЋ РїР»РѕС‰Р°РґСЊ(РєРІ. Рј): ",
+				"Р’РІРµРґРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅСѓСЋ РїР»РѕС‰Р°РґСЊ(РєРІ. Рј): ",
+				"РћС€РёР±РєР°: С‡РёСЃР»Рѕ РѕС‚ 0 РґРѕ 1'000");
 		}
 
 		void set_rooms_range() {
 			set_pair<unsigned int>(roomsRange, 0, 99,
-				"Введите минимальное число комнат: ",
-				"Введите максимальное число комнат: ",
-				"Ошибка: целое число от 0 до 99");
+				"Р’РІРµРґРёС‚Рµ РјРёРЅРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ РєРѕРјРЅР°С‚: ",
+				"Р’РІРµРґРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ РєРѕРјРЅР°С‚: ",
+				"РћС€РёР±РєР°: С†РµР»РѕРµ С‡РёСЃР»Рѕ РѕС‚ 0 РґРѕ 99");
 		}
 
 		void set_floor_range() {
 			set_pair<unsigned int>(floorRange, 0, 99,
-				"Введите минимальный этаж: ",
-				"Введите максимальный этаж: ",
-				"Ошибка: целое число от 0 до 99");
+				"Р’РІРµРґРёС‚Рµ РјРёРЅРёРјР°Р»СЊРЅС‹Р№ СЌС‚Р°Р¶: ",
+				"Р’РІРµРґРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЌС‚Р°Р¶: ",
+				"РћС€РёР±РєР°: С†РµР»РѕРµ С‡РёСЃР»Рѕ РѕС‚ 0 РґРѕ 99");
 		}
 
 		void set_status() {
@@ -158,7 +160,7 @@ private:
 	void view_prop(const Repository<Property>& default_repo)
 	{
 		if (default_repo.count() <= 0) {
-			pause_clear("Нет объявлений. Нажмите любую клавишу для продолжения.");
+			pause_clear("РќРµС‚ РѕР±СЉСЏРІР»РµРЅРёР№. РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.");
 			return;
 		}
 
@@ -172,30 +174,30 @@ private:
 		bool exit = false;
 		while (!exit) {
 			if (repo.count() <= 0) {
-				pause_clear("Нет объявлений. Нажмите любую клавишу для сброса фильтров.");
+				pause_clear("РќРµС‚ РѕР±СЉСЏРІР»РµРЅРёР№. РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ СЃР±СЂРѕСЃР° С„РёР»СЊС‚СЂРѕРІ.");
 				filter.default_filters();
 				reset_repo();
 			}
 
 			{
 				std::cout << repo[is_asc ? current : repo.count() - current - 1] << std::endl;
-				std::cout << current + 1 << "й из " << repo.count() << "\n\n";
+				std::cout << current + 1 << "Р№ РёР· " << repo.count() << "\n\n";
 
-				std::cout << " 1 - Лево\n";
-				std::cout << " 2 - Право\n";
-				std::cout << " 3 - Сортировка по [Убыванию/Возрастанию]\n";
-				std::cout << " 4 - Сортировать по цене\n";
-				std::cout << " 5 - Сортировать по площади\n";
-				std::cout << " 6 - Сортировать по количеству комнат\n";
-				std::cout << " 7 - Сортировать по этажу\n";
-				std::cout << " 8 - Сортировать по статусу\n";
-				std::cout << " 9 - Фильтр по цене\n";
-				std::cout << "10 - Фильтр по площади\n";
-				std::cout << "11 - Фильтр по количеству комнат\n";
-				std::cout << "12 - Фильтр по этажу\n";
-				std::cout << "13 - Фильтр по статусу\n";
-				std::cout << "14 - Сбросить фильтры\n";
-				std::cout << " 0 - Назад\n";
+				std::cout << " 1 - Р›РµРІРѕ\n";
+				std::cout << " 2 - РџСЂР°РІРѕ\n";
+				std::cout << " 3 - РЎРѕСЂС‚РёСЂРѕРІРєР° РїРѕ [РЈР±С‹РІР°РЅРёСЋ/Р’РѕР·СЂР°СЃС‚Р°РЅРёСЋ]\n";
+				std::cout << " 4 - РЎРѕСЂС‚РёСЂРѕРІР°С‚СЊ РїРѕ С†РµРЅРµ\n";
+				std::cout << " 5 - РЎРѕСЂС‚РёСЂРѕРІР°С‚СЊ РїРѕ РїР»РѕС‰Р°РґРё\n";
+				std::cout << " 6 - РЎРѕСЂС‚РёСЂРѕРІР°С‚СЊ РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ РєРѕРјРЅР°С‚\n";
+				std::cout << " 7 - РЎРѕСЂС‚РёСЂРѕРІР°С‚СЊ РїРѕ СЌС‚Р°Р¶Сѓ\n";
+				std::cout << " 8 - РЎРѕСЂС‚РёСЂРѕРІР°С‚СЊ РїРѕ СЃС‚Р°С‚СѓСЃСѓ\n";
+				std::cout << " 9 - Р¤РёР»СЊС‚СЂ РїРѕ С†РµРЅРµ\n";
+				std::cout << "10 - Р¤РёР»СЊС‚СЂ РїРѕ РїР»РѕС‰Р°РґРё\n";
+				std::cout << "11 - Р¤РёР»СЊС‚СЂ РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ РєРѕРјРЅР°С‚\n";
+				std::cout << "12 - Р¤РёР»СЊС‚СЂ РїРѕ СЌС‚Р°Р¶Сѓ\n";
+				std::cout << "13 - Р¤РёР»СЊС‚СЂ РїРѕ СЃС‚Р°С‚СѓСЃСѓ\n";
+				std::cout << "14 - РЎР±СЂРѕСЃРёС‚СЊ С„РёР»СЊС‚СЂС‹\n";
+				std::cout << " 0 - РќР°Р·Р°Рґ\n";
 			}
 
 			int choice = InputReader::read<int>(">");
@@ -236,90 +238,12 @@ private:
 		view_prop(default_repo);
 	}
 
-	template<typename T>
-	std::string create_err_msg(const std::string& msg, const T& min, const T& max)
-	{
-		return msg + " от " + min + " до " + max;
-	}
-
 	void add_prop(std::shared_ptr<Realtor> realtor)
 	{
-		using namespace config;
+		Property prop = Property::create(id_gen_prop.next(), realtor->id());
 
-		Property prop;
-
-		std::string int_error = "Ошибка. Необходимо ввести целое число";
-		std::string uint_error = "Ошибка. Необходимо ввести целое беззнаковое число";
-		std::string float_error = "Ошибка. Необходимо ввести число";
-		std::string str_error = "Ошибка. Пустая строка";
-
-		// Количество комнат
-		prop.setRooms(InputReader::read<unsigned int>(
-			ROOMS_MIN, ROOMS_MAX,
-			"Введите количество комнат: ",
-			create_err_msg(uint_error, ROOMS_MIN, ROOMS_MAX)));
-
-		// Заголовок
-		prop.setTitle(InputReader::read<std::string>(
-			"Введите заголовок объявления: ", str_error));
-
-		// Описание
-		prop.setDescription(InputReader::read<std::string>(
-			"Введите описание: ", str_error));
-
-		// Адрес
-		prop.setAddress(InputReader::read<std::string>(
-			"Введите адрес: ", str_error));
-
-		// Цена
-		prop.setPrice(InputReader::read<float>(
-			PRICE_MIN, PRICE_MAX,
-			"Введите цену (BYN): ",
-			create_err_msg(float_error, PRICE_MIN, PRICE_MAX)));
-
-		// Общая площадь
-		prop.setAreaTotal(InputReader::read<float>(
-			AREA_TOTAL_MIN, AREA_TOTAL_MAX,
-			"Введите общую площадь (кв. м): ",
-			create_err_msg(float_error, AREA_TOTAL_MIN, AREA_TOTAL_MAX)));
-
-		// Жилая площадь
-		prop.setAreaLiving(InputReader::read<float>(
-			AREA_LIVING_MIN, AREA_LIVING_MAX,
-			"Введите жилую площадь (кв. м): ",
-			create_err_msg(float_error, AREA_LIVING_MIN, AREA_LIVING_MAX)));
-
-		// Площадь кухни
-		prop.setAreaKitchen(InputReader::read<float>(
-			AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
-			"Введите площадь кухни (кв. м): ",
-			create_err_msg(float_error, AREA_KITCHEN_MIN, AREA_KITCHEN_MAX)));
-
-		// Этаж
-		prop.setFloor(InputReader::read<unsigned int>(
-			FLOOR_MIN, FLOOR_MAX,
-			"Введите этаж: ",
-			create_err_msg(uint_error, FLOOR_MIN, FLOOR_MAX)));
-
-		// Всего этажей
-		prop.setFloorsTotal(InputReader::read<unsigned int>(
-			FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
-			"Введите количество этажей в доме: ",
-			create_err_msg(uint_error, FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX)));
-
-		// Тип недвижимости (enum)
-		// Здесь можно сделать меню выбора, например:
-		// 1 - Квартира, 2 - Дом, 3 - Офис и т.д.
-		// prop.setType(...);
-
-		// Статус объявления (enum)
-		// prop.setStatus(...);
-
-		// Дата создания/обновления задаётся автоматически
-		// prop.setCreatedAt(std::time(nullptr));
-		// prop.setUpdatedAt(std::time(nullptr));
+		property_repo.add(std::make_shared<Property>(prop), [&](const auto& obj) {return obj->getId() != prop.getId(); });
 	}
-
 
 	void edit_prop(std::shared_ptr<Realtor> realtor)
 	{
@@ -337,18 +261,18 @@ private:
 
 		while (!exit)
 		{
-			std::cout << "Выберете операцию:\n";
-			std::cout << "1 - Просмотр объявлений\n";
-			std::cout << "2 - Добавление\n";
-			std::cout << "3 - Редактирование\n";
-			std::cout << "4 - Удаление\n";
-			std::cout << "0 - Назад\n";
+			std::cout << "Р’С‹Р±РµСЂРµС‚Рµ РѕРїРµСЂР°С†РёСЋ:\n";
+			std::cout << "1 - РџСЂРѕСЃРјРѕС‚СЂ РѕР±СЉСЏРІР»РµРЅРёР№\n";
+			std::cout << "2 - Р”РѕР±Р°РІР»РµРЅРёРµ\n";
+			std::cout << "3 - Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ\n";
+			std::cout << "4 - РЈРґР°Р»РµРЅРёРµ\n";
+			std::cout << "0 - РќР°Р·Р°Рґ\n";
 
-			int choice = InputReader::read<int>(1, 4, ">");
+			int choice = InputReader::read<int>(0, 4, ">");
 
 			switch (choice)
 			{
-			case 1: break;
+			case 1: view_my_prop(realtor); break;
 			case 2: add_prop(realtor); break;
 			case 3: edit_prop(realtor); break;
 			case 4: delete_prop(realtor); break;
@@ -370,11 +294,11 @@ private:
 
 	void realtor_report()
 	{
-		//создание отчета
+		//СЃРѕР·РґР°РЅРёРµ РѕС‚С‡РµС‚Р°
 
-		//вывод в консоль
+		//РІС‹РІРѕРґ РІ РєРѕРЅСЃРѕР»СЊ
 
-		pause_clear("Нажмите любую клавишу для продолжения.");
+		pause_clear("РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.");
 	}
 
 	void realtor(std::shared_ptr<Realtor> realtor)
@@ -383,10 +307,10 @@ private:
 
 		while (!exit) {
 
-			std::cout << "1 - Мои объявления\n";
-			std::cout << "2 - Все объявления\n";
-			std::cout << "3 - Создать отчет\n";
-			std::cout << "0 - Назад\n";
+			std::cout << "1 - РњРѕРё РѕР±СЉСЏРІР»РµРЅРёСЏ\n";
+			std::cout << "2 - Р’СЃРµ РѕР±СЉСЏРІР»РµРЅРёСЏ\n";
+			std::cout << "3 - РЎРѕР·РґР°С‚СЊ РѕС‚С‡РµС‚\n";
+			std::cout << "0 - РќР°Р·Р°Рґ\n";
 
 			int choice = InputReader::read<int>(">");
 
@@ -408,36 +332,36 @@ private:
 
 	void register_user()
 	{
-		std::string login = InputReader::read<std::string>("Введите новый логин:");
-		std::string password1 = InputReader::read_password("Введите пароль:");
-		std::string password2 = InputReader::read_password("Повторите пароль:");
+		std::string login = InputReader::read<std::string>("Р’РІРµРґРёС‚Рµ РЅРѕРІС‹Р№ Р»РѕРіРёРЅ:");
+		std::string password1 = InputReader::read_password("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ:");
+		std::string password2 = InputReader::read_password("РџРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ:");
 
 		if (password1 != password2) {
-			pause_clear("Пароли не совпадают. Нажмите любую клавишу для продолжения.");
+			pause_clear("РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚. РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.");
 			return;
 		}
 
 		AuthResult authRes = authService.registerUser(login, password1);
 
 		if (authRes == AuthResult::AlreadyExists) {
-			pause_clear("Логин уже занят. Нажмите любую клавишу для продолжения.");
+			pause_clear("Р›РѕРіРёРЅ СѓР¶Рµ Р·Р°РЅСЏС‚. РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.");
 			return;
 		}
 
-		pause_clear("Успешно зарегистрированы. Нажмите любую клавишу для продолжения.");
+		pause_clear("РЈСЃРїРµС€РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹. РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.");
 	}
 
 	void login()
 	{
-		std::string login = InputReader::read<std::string>("Введите логин:");
-		std::string password = InputReader::read_password("Введите пароль:");
+		std::string login = InputReader::read<std::string>("Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ:");
+		std::string password = InputReader::read_password("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ:");
 
 		std::shared_ptr<User> out_user;
 
 		AuthResult authRes = authService.login(login, password, out_user);
 
 		if (authRes != AuthResult::Success) {
-			pause_clear("Логин или пароль неверный. Нажмите любую клавишу для продолжения.");
+			pause_clear("Р›РѕРіРёРЅ РёР»Рё РїР°СЂРѕР»СЊ РЅРµРІРµСЂРЅС‹Р№. РќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.");
 			return;
 		}
 
@@ -455,9 +379,9 @@ public:
 		bool exit_program = false;
 		while (!exit_program) {
 
-			std::cout << "1 - Регистрация\n";
-			std::cout << "2 - Вход\n";
-			std::cout << "0 - Выход из программы\n";
+			std::cout << "1 - Р РµРіРёСЃС‚СЂР°С†РёСЏ\n";
+			std::cout << "2 - Р’С…РѕРґ\n";
+			std::cout << "0 - Р’С‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹\n";
 
 			int choice = InputReader::read<int>(">");
 
