@@ -5,6 +5,8 @@
 #include <memory>
 #include <fstream>
 
+#include "config.h"
+
 enum Role
 {
 	AdminRole,
@@ -15,8 +17,8 @@ class User
 {
 protected:
 	unsigned int m_id;
-	char m_username[32];
-	char m_hashedPassword[32];
+	char m_username[user_config::USERNAME];
+	char m_hashedPassword[user_config::HASHED_PASSWORD];
 public:
 	User(unsigned int id,
 		 const std::string &login,

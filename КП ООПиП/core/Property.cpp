@@ -156,7 +156,7 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     prop.m_rooms = InputReader::read<unsigned int>(
         ROOMS_MIN, ROOMS_MAX,
         "Введите количество комнат: ",
-        create_err_msg(input_config::ERR_UINT, ROOMS_MIN, ROOMS_MAX));
+        ROOMS_ERR_MSG);
 
     std::string title = InputReader::read<std::string>(
         TITLE_MAX_LEN - 1,
@@ -179,19 +179,19 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     prop.m_price = InputReader::read<float>(
         PRICE_MIN, PRICE_MAX,
         "Введите цену (BYN): ",
-        create_err_msg(input_config::ERR_FLOAT, PRICE_MIN, PRICE_MAX));
+        PRICE_ERR_MSG);
 
     // площади с проверкой
     while (true) {
         prop.m_areaTotal = InputReader::read<float>(
             AREA_TOTAL_MIN, AREA_TOTAL_MAX,
             "Введите общую площадь (кв. м): ",
-            create_err_msg(float_error, AREA_TOTAL_MIN, AREA_TOTAL_MAX));
+            AREA_TOTAL_ERR_MSG);
 
         prop.m_areaLiving = InputReader::read<float>(
             AREA_LIVING_MIN, AREA_LIVING_MAX,
             "Введите жилую площадь (кв. м): ",
-            create_err_msg(float_error, AREA_LIVING_MIN, AREA_LIVING_MAX));
+           AREA_LIVING_ERR_MSG);
 
         if (prop.m_areaLiving <= prop.m_areaTotal) break;
         std::cout << "Ошибка. Жилая площадь не может превышать общую!" << std::endl;
@@ -200,19 +200,19 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     prop.m_areaKitchen = InputReader::read<float>(
         AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
         "Введите площадь кухни (кв. м): ",
-        create_err_msg(float_error, AREA_KITCHEN_MIN, AREA_KITCHEN_MAX));
+        AREA_KITCHEN_ERR_MSG);
 
     // этажи с проверкой
     while (true) {
         prop.m_floorsTotal = InputReader::read<unsigned int>(
             FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
             "Введите количество этажей в доме: ",
-            create_err_msg(uint_error, FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX));
+            FLOORS_TOTAL_ERR_MSG);
 
         prop.m_floor = InputReader::read<unsigned int>(
             FLOOR_MIN, FLOOR_MAX,
             "Введите этаж: ",
-            create_err_msg(uint_error, FLOOR_MIN, FLOOR_MAX));
+            FLOOR_ERR_MSG);
 
         if (prop.m_floor <= prop.m_floorsTotal) break;
         std::cout << "Ошибка. Этаж не может быть больше количества этажей!" << std::endl;
@@ -238,47 +238,54 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     return prop;
 }
 
-std::ostream& operator<<(std::ostream& out, const Property& prop)
-{
-    out << "=== Объявление недвижимости ===\n";
-    out << "ID: " << prop.getId() << "\n";
-    out << "Риэлтор ID: " << prop.getRealtorId() << "\n";
-    out << "Заголовок: " << prop.getTitle() << "\n";
-    out << "Описание: " << prop.getDescription() << "\n";
-    out << "Адрес: " << prop.getAddress() << "\n";
-    out << "Цена: " << std::fixed << std::setprecision(2) << prop.getPrice() << " BYN\n";
-    out << "Комнат: " << prop.getRooms() << "\n";
-    out << "Этаж: " << prop.getFloor() << " из " << prop.getFloorsTotal() << "\n";
-    out << "Общая площадь: " << prop.getAreaTotal() << " кв.м\n";
-    out << "Жилая площадь: " << prop.getAreaLiving() << " кв.м\n";
-    out << "Площадь кухни: " << prop.getAreaKitchen() << " кв.м\n";
+std::string Property::to_str() const {
+    std::string result;
+    result.reserve(512);
 
-    // Тип недвижимости
-    out << "Тип: ";
-    switch (prop.getType()) {
-    case PropertyType::Apartment: out << "Квартира"; break;
-    case PropertyType::House:     out << "Дом"; break;
-    case PropertyType::Office:    out << "Офис"; break;
-    case PropertyType::Land:      out << "Земельный участок"; break;
+    result += "=== Объявление недвижимости ===\n";
+    result += "ID: " + std::to_string(getId()) + "\n";
+    result += "Риэлтор ID: " + std::to_string(getRealtorId()) + "\n";
+    result += "Заголовок: " + std::string(getTitle()) + "\n";
+    result += "Описание: " + std::string(getDescription()) + "\n";
+    result += "Адрес: " + std::string(getAddress()) + "\n";
+
+    result += "Цена: " + std::to_string(getPrice()) + " BYN\n";
+
+    result += "Комнат: " + std::to_string(getRooms()) + "\n";
+    result += "Этаж: " + std::to_string(getFloor()) + " из " + std::to_string(getFloorsTotal()) + "\n";
+    result += "Общая площадь: " + std::to_string(getAreaTotal()) + " кв.м\n";
+    result += "Жилая площадь: " + std::to_string(getAreaLiving()) + " кв.м\n";
+    result += "Площадь кухни: " + std::to_string(getAreaKitchen()) + " кв.м\n";
+
+    // Тип
+    result += "Тип: ";
+    switch (getType()) {
+    case PropertyType::Apartment: result += "Квартира"; break;
+    case PropertyType::House:     result += "Дом"; break;
+    case PropertyType::Office:    result += "Офис"; break;
+    case PropertyType::Land:      result += "Земельный участок"; break;
     }
-    out << "\n";
+    result += "\n";
 
     // Статус
-    out << "Статус: ";
-    switch (prop.getStatus()) {
-    case Status::Active:   out << "Активно"; break;
-    case Status::Sold:     out << "Продано"; break;
-    case Status::Rented:   out << "Сдано в аренду"; break;
-    case Status::Archived: out << "Архивировано"; break;
+    result += "Статус: ";
+    switch (getStatus()) {
+    case Status::Active:   result += "Активно"; break;
+    case Status::Sold:     result += "Продано"; break;
+    case Status::Rented:   result += "Сдано в аренду"; break;
+    case Status::Archived: result += "Архивировано"; break;
     }
-    out << "\n";
+    result += "\n";
 
-    // Даты
-    std::time_t created = prop.getCreatedAt();
-    std::time_t updated = prop.getUpdatedAt();
+    // Даты (ctime добавляет \n в конце)
+    std::time_t created = getCreatedAt();
+    std::time_t updated = getUpdatedAt();
+    result += "Создано: " + std::string(std::ctime(&created));
+    result += "Обновлено: " + std::string(std::ctime(&updated));
 
-    out << "Создано: " << std::ctime(&created);
-    out << "Обновлено: " << std::ctime(&updated);
+    return result;
+}
 
-    return out;
+std::ostream& operator<<(std::ostream& os, const Property& prop) {
+    return os << prop.to_str();
 }

@@ -30,13 +30,7 @@
     <ClCompile Include="ui\ConsoleInterface.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="form\FieldContext.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="utils\Parser.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\Field.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="core\Property.cpp">
@@ -88,19 +82,7 @@
     <ClInclude Include="ui\ConsoleInterface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ui\Screen.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="utils\Parser.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\Field.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="form\FieldContext.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="form\FormBuilder.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="core\Client.h">

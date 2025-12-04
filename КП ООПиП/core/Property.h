@@ -24,9 +24,9 @@ class Property {
 private:
     unsigned int m_id;                                      // ID
     unsigned int m_realtorId;                               // ID риэлтора
-    char m_title[prop_config::TITLE_MAX_LEN];                    // Заголовок объявления
-    char m_description[prop_config::DESCRIPTION_MAX_LEN];        // Описание
-    char m_address[prop_config::ADDRESS_MAX_LEN];                // Адрес
+    char m_title[prop_config::TITLE_MAX_LEN];               // Заголовок объявления
+    char m_description[prop_config::DESCRIPTION_MAX_LEN];   // Описание
+    char m_address[prop_config::ADDRESS_MAX_LEN];           // Адрес
     float m_price;                                          // Цена
     float m_areaTotal;                                      // Общая площадь
     float m_areaLiving;                                     // Жилая площадь
@@ -95,6 +95,8 @@ public:
     void setUpdatedAt(std::time_t updatedAt);
 
     static Property create(unsigned int id, unsigned int realtorId);
+
+    std::string to_str() const;
 
     friend std::ostream& operator<<(std::ostream& out, const Property& prop);
 };

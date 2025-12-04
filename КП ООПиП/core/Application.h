@@ -176,6 +176,39 @@ private:
 		}
 	};
 
+	int scroll(const std::vector<std::string>& s, const std::string choice, int cur = 0, const std::string str = "")
+	{
+		bool exit = false;
+
+		int count = s.size();
+
+		while (!exit) {
+			clear();
+			std::string result = str;
+
+			for (int i = 0; i < count; i++)
+				result += (i == cur ? choice : std::string("")) + s[i] + "\n";
+			std::cout << result;
+
+			int res = _getch();
+			//up
+			if (res == 72)
+			{
+				cur = (cur - 1 + count) % count;
+			}
+			//down
+			else if (res == 80)
+			{
+				cur = (cur + 1) % count;
+			}
+			else if (res == '\r')
+			{
+				exit = true;
+				return cur;
+			}
+		}
+	}
+
 	void view_prop(const Repository<Property>& default_repo)
 	{
 		if (default_repo.count() <= 0) {
@@ -189,6 +222,7 @@ private:
 		int current = 0;
 		Repository<Property> repo = default_repo;
 		auto reset_repo = [&]() {repo = default_repo; current = 0; };
+		int choice = 0;
 
 		bool exit = false;
 		while (!exit) {
@@ -198,49 +232,48 @@ private:
 				reset_repo();
 			}
 
-			{
-				std::cout << *repo[is_asc ? current : repo.count() - current - 1] << std::endl;
-				std::cout << current + 1 << "й из " << repo.count() << "\n\n";
+			int index = is_asc ? current : repo.count() - current - 1;
 
-				std::cout << " 1 - Лево\n";
-				std::cout << " 2 - Право\n";
-				std::cout << " 3 - [По убыванию / По возрастанию]\n";
-				std::cout << " 4 - Сортировать по цене\n";
-				std::cout << " 5 - Сортировать по площади\n";
-				std::cout << " 6 - Сортировать по количеству комнат\n";
-				std::cout << " 7 - Сортировать по этажу\n";
-				std::cout << " 8 - Сортировать по статусу\n";
-				std::cout << " 9 - Фильтр по цене\n";
-				std::cout << "10 - Фильтр по площади\n";
-				std::cout << "11 - Фильтр по количеству комнат\n";
-				std::cout << "12 - Фильтр по этажу\n";
-				std::cout << "13 - Фильтр по статусу\n";
-				std::cout << "14 - Сбросить сортировки и фильтры\n";
-				std::cout << " 0 - Назад\n";
-			}
-
-			int choice = InputReader::read<int>(">");
+			choice = scroll({
+				"Лево",
+				"Право",
+				"[По убыванию / По возрастанию]",
+				"Сортировать по цене",
+				"Сортировать по площади",
+				"Сортировать по количеству комнат",
+				"Сортировать по этажу",
+				"Сортировать по статусу",
+				"Фильтр по цене",
+				"Фильтр по площади",
+				"Фильтр по количеству комнат",
+				"Фильтр по этажу",
+				"Фильтр по статусу",
+				"Сбросить сортировки и фильтры",
+				"Назад"},
+				">", 
+				choice,
+				repo[index]->to_str() + "\n" + std::to_string(current + 1) + "й из " + std::to_string(repo.count())+ "\n\n");
 
 			switch (choice) {
-			case 1: current = (current - 1 + repo.count()) % repo.count(); break;
-			case 2: current = (current + 1) % repo.count(); break;
-			case 3: is_asc = !is_asc; break;
-			case 4: Sort::by_price(repo);  current = 0; break;
-			case 5: Sort::by_area(repo);   current = 0; break;
-			case 6: Sort::by_rooms(repo);  current = 0; break;
-			case 7: Sort::by_floor(repo);  current = 0; break;
-			case 8: Sort::by_status(repo); current = 0; break;
-			case 9:  filter.flip_price();  if (filter.price)  filter.set_price_range();  break;
-			case 10: filter.flip_area();   if (filter.area)   filter.set_area_range();   break;
-			case 11: filter.flip_rooms();  if (filter.rooms)  filter.set_rooms_range();  break;
-			case 12: filter.flip_floor();  if (filter.floor)  filter.set_floor_range();  break;
-			case 13: filter.flip_status(); if (filter.status) filter.set_status();       break;
-			case 14: filter.default_filters(); reset_repo(); break;
-			case 0: exit = true; break;
+			case 0: current = (current - 1 + repo.count()) % repo.count(); break;
+			case 1: current = (current + 1) % repo.count(); break;
+			case 2: is_asc = !is_asc; break;
+			case 3: Sort::by_price(repo);  current = 0; break;
+			case 4: Sort::by_area(repo);   current = 0; break;
+			case 5: Sort::by_rooms(repo);  current = 0; break;
+			case 6: Sort::by_floor(repo);  current = 0; break;
+			case 7: Sort::by_status(repo); current = 0; break;
+			case 8:  filter.flip_price();  if (filter.price)  filter.set_price_range();  break;
+			case 9: filter.flip_area();   if (filter.area)   filter.set_area_range();   break;
+			case 10: filter.flip_rooms();  if (filter.rooms)  filter.set_rooms_range();  break;
+			case 11: filter.flip_floor();  if (filter.floor)  filter.set_floor_range();  break;
+			case 12: filter.flip_status(); if (filter.status) filter.set_status();       break;
+			case 13: filter.default_filters(); reset_repo(); break;
+			case 14: exit = true; break;
 			default:break;
 			}
 
-			if (9 <= choice && choice <= 13)
+			if (8 <= choice && choice <= 12)
 			{
 				reset_repo();
 				filter.apply_filters(repo);
@@ -347,20 +380,20 @@ private:
 
 		while (!exit) {
 
-			std::cout << "1 - Мои объявления\n";
-			std::cout << "2 - Все объявления\n";
-			std::cout << "3 - Создать отчет\n";
-			std::cout << "0 - Назад\n";
-
-			int choice = InputReader::read<int>(">");
-
+			int choice = scroll({
+				"Мои объявления",
+				"Все объявления",
+				"Создать отчет",
+				"Выйти из учетной записи"},
+				">");
+;
 			switch (choice)
 			{
-			case 1: realtor_prop(realtor); break;
-			case 2: realtor_all_prop(); break;
-			case 3: realtor_report(); break;
-			case 0: exit = true; break;
-			default:break;
+			case 0: realtor_prop(realtor); break;
+			case 1: realtor_all_prop(); break;
+			case 2: realtor_report(); break;
+			case 3: exit = true; break;
+			default: break;
 			}
 		}
 	}
@@ -372,6 +405,7 @@ private:
 
 	void register_user()
 	{
+		clear();
 		std::string login = InputReader::read<std::string>("Введите новый логин:");
 		std::string password1 = InputReader::read_password("Введите пароль:");
 		std::string password2 = InputReader::read_password("Повторите пароль:");
@@ -393,6 +427,7 @@ private:
 
 	void login()
 	{
+		clear();
 		std::string login = InputReader::read<std::string>("Введите логин:");
 		std::string password = InputReader::read_password("Введите пароль:");
 
@@ -409,7 +444,7 @@ private:
 		{
 		case Role::AdminRole: admin(std::dynamic_pointer_cast<Admin>(out_user)); break;
 		case Role::RealtorRole: realtor(std::dynamic_pointer_cast<Realtor>(out_user)); break;
-		default:break;
+		default: pause_clear("Такой роли нет. Нажмите любую клавишу для продолжения."); break;
 		}
 	}
 
@@ -418,18 +453,17 @@ public:
 	{
 		bool exit_program = false;
 		while (!exit_program) {
-
-			std::cout << "1 - Регистрация\n";
-			std::cout << "2 - Вход\n";
-			std::cout << "0 - Выход из программы\n";
-
-			int choice = InputReader::read<int>(">");
+			int choice = scroll({
+				"Регистрация",
+				"Вход",
+				"Выход из программы" },
+				">");
 
 			switch (choice)
 			{
-			case 1: register_user(); break;
-			case 2: login(); break;
-			case 0: exit_program = true; break;
+			case 0: register_user(); break;
+			case 1: login(); break;
+			case 2: exit_program = true; break;
 			default: clear(); break;
 			}
 		}

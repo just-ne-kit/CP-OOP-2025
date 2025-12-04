@@ -9,6 +9,12 @@ namespace input_config
     const std::string ERR_STR = "Необходимо ввести строку";
 }
 
+namespace user_config
+{
+    const std::size_t USERNAME = 32;
+    const std::size_t HASHED_PASSWORD = 32;
+}
+
 namespace prop_config
 {
     const std::size_t TITLE_MAX_LEN = 64;
