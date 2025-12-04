@@ -72,12 +72,23 @@ private:
 		Status statusValue{};
 
 		template<typename T>
-		void set_pair(std::pair<T, T>& p, const T& min, const T& max, const std::string& msg1, const std::string& msg2, const std::string& errMsg = "")
+		std::pair<T, T> set_pair(const T& min, const T& max, const std::string& msg1, const std::string& msg2, const std::string& errMsg = "")
 		{
+			std::pair<T, T> p;
+			
 			clear();
 			p.first = InputReader::read<T>(min, max, msg1, errMsg);
 			p.second = InputReader::read<T>(min, max, msg2, errMsg);
 			clear();
+
+			if (p.first > p.second)
+			{
+				T temp = p.first;
+				p.first = p.second;
+				p.second = temp;
+			}
+
+			return p;
 		}
 
 		Status get_status() {
@@ -117,31 +128,39 @@ private:
 		void flip_status() { status = !status; }
 
 		void set_price_range() {
-			set_pair<float>(priceRange, 0.0f, 5'000'000.0f,
-				"Введите минимальную стоимость(BYN): ",
-				"Введите максимальную стоимость(BYN): ",
-				"Ошибка: число от 0 до 5'000'000");
+			priceRange = set_pair<float>(
+				prop_config::PRICE_MIN,
+				prop_config::PRICE_MAX,
+				prop_config::PRICE_MIN_MSG,
+				prop_config::PRICE_MAX_MSG,
+				prop_config::PRICE_ERR_MSG);
 		}
 
 		void set_area_range() {
-			set_pair<float>(areaRange, 0.0f, 1'000.0f,
-				"Введите минимальную площадь(кв. м): ",
-				"Введите максимальную площадь(кв. м): ",
-				"Ошибка: число от 0 до 1'000");
+			areaRange = set_pair<float>(
+				prop_config::AREA_TOTAL_MIN,
+				prop_config::AREA_TOTAL_MAX,
+				prop_config::AREA_TOTAL_MIN_MSG,
+				prop_config::AREA_TOTAL_MAX_MSG,
+				prop_config::AREA_TOTAL_ERR_MSG);
 		}
 
 		void set_rooms_range() {
-			set_pair<unsigned int>(roomsRange, 0, 99,
-				"Введите минимальное число комнат: ",
-				"Введите максимальное число комнат: ",
-				"Ошибка: целое число от 0 до 99");
+			roomsRange = set_pair<unsigned int>(
+				prop_config::ROOMS_MIN,
+				prop_config::ROOMS_MAX,
+				prop_config::ROOMS_MIN_MSG,
+				prop_config::ROOMS_MAX_MSG,
+				prop_config::ROOMS_ERR_MSG);
 		}
 
 		void set_floor_range() {
-			set_pair<unsigned int>(floorRange, 0, 99,
-				"Введите минимальный этаж: ",
-				"Введите максимальный этаж: ",
-				"Ошибка: целое число от 0 до 99");
+			floorRange = set_pair<unsigned int>(
+				prop_config::FLOOR_MIN,
+				prop_config::FLOOR_MAX,
+				prop_config::FLOOR_MIN_MSG,
+				prop_config::FLOOR_MAX_MSG,
+				prop_config::FLOOR_ERR_MSG);
 		}
 
 		void set_status() {
@@ -180,12 +199,12 @@ private:
 			}
 
 			{
-				std::cout << repo[is_asc ? current : repo.count() - current - 1] << std::endl;
+				std::cout << *repo[is_asc ? current : repo.count() - current - 1] << std::endl;
 				std::cout << current + 1 << "й из " << repo.count() << "\n\n";
 
 				std::cout << " 1 - Лево\n";
 				std::cout << " 2 - Право\n";
-				std::cout << " 3 - Сортировка по [Убыванию/Возрастанию]\n";
+				std::cout << " 3 - [По убыванию / По возрастанию]\n";
 				std::cout << " 4 - Сортировать по цене\n";
 				std::cout << " 5 - Сортировать по площади\n";
 				std::cout << " 6 - Сортировать по количеству комнат\n";
@@ -196,7 +215,7 @@ private:
 				std::cout << "11 - Фильтр по количеству комнат\n";
 				std::cout << "12 - Фильтр по этажу\n";
 				std::cout << "13 - Фильтр по статусу\n";
-				std::cout << "14 - Сбросить фильтры\n";
+				std::cout << "14 - Сбросить сортировки и фильтры\n";
 				std::cout << " 0 - Назад\n";
 			}
 
@@ -233,7 +252,7 @@ private:
 	{
 		Repository<Property> default_repo = property_repo;
 
-		default_repo.remove([&](const std::shared_ptr<Property>& r) { return r->getRealtorId() == realtor->id(); });
+		default_repo.remove([&](const std::shared_ptr<Property>& r) { return r->getRealtorId() != realtor->id(); });
 
 		view_prop(default_repo);
 	}
@@ -242,17 +261,38 @@ private:
 	{
 		Property prop = Property::create(id_gen_prop.next(), realtor->id());
 
-		property_repo.add(std::make_shared<Property>(prop), [&](const auto& obj) {return obj->getId() != prop.getId(); });
+		property_repo.add(std::make_shared<Property>(prop), [&](const auto& obj) { return false; });
 	}
 
 	void edit_prop(std::shared_ptr<Realtor> realtor)
 	{
+		Repository<Property> default_repo = property_repo;
+
+		default_repo.remove([&](const std::shared_ptr<Property>& p) { return p->getRealtorId() != realtor->id(); });
+
+		if (default_repo.count() < 1) {
+			pause_clear("Нет объявлений. Нажмите любую клавишу для продолжения.");
+			return;
+		}
+
+		unsigned int id = InputReader::read<unsigned int>("Введите id редактированного объявления: ", input_config::ERR_UINT);
+
 
 	}
 
 	void delete_prop(std::shared_ptr<Realtor> realtor)
 	{
+		unsigned int del_id = InputReader::read<unsigned int>(">");
 
+		bool isFound = property_repo.exists([&](const std::shared_ptr<Property>& p) { return p->getId() == del_id; });
+
+		//todo
+
+		std::cout << (isFound ? 
+			"Удален" :
+			"Не найден") << std::endl;
+
+		property_repo.remove([&](const std::shared_ptr<Property>& p) { return p->getId() == del_id; });
 	}
 
 	void realtor_prop(std::shared_ptr<Realtor> realtor)
@@ -393,5 +433,8 @@ public:
 			default: clear(); break;
 			}
 		}
+
+		realtor_storage.save(realtor_repo.getAll());
+		property_storage.save(property_repo.getAll());
 	}
 };

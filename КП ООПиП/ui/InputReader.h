@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "../core/config.h"
 
 class InputReader
 {

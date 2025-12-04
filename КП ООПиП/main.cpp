@@ -61,6 +61,7 @@ void Run()
 
 #include <windows.h>
 #include "core/Application.h"
+#include "ui/Screen.h"
 
 int main() {
 	SetConsoleCP(1251);

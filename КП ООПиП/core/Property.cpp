@@ -2,6 +2,7 @@
 #include <cstring>
 #include "../ui/InputReader.h"
 #include <iostream>
+#include <iomanip>
 
 Property::Property()
     : m_id(0), m_realtorId(0), m_price(0.0f),
@@ -145,13 +146,9 @@ std::string create_str_err_msg(std::size_t maxCount) {
 
 Property Property::create(unsigned int id, unsigned int realtorId)
 {
-    using namespace config;
+    using namespace prop_config;
 
     Property prop;
-
-    std::string int_error = "Ошибка. Необходимо ввести целое число";
-    std::string uint_error = "Ошибка. Необходимо ввести целое беззнаковое число";
-    std::string float_error = "Ошибка. Необходимо ввести число";
 
     prop.m_id = id;
     prop.m_realtorId = realtorId;
@@ -159,7 +156,7 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     prop.m_rooms = InputReader::read<unsigned int>(
         ROOMS_MIN, ROOMS_MAX,
         "Введите количество комнат: ",
-        create_err_msg(uint_error, ROOMS_MIN, ROOMS_MAX));
+        create_err_msg(input_config::ERR_UINT, ROOMS_MIN, ROOMS_MAX));
 
     std::string title = InputReader::read<std::string>(
         TITLE_MAX_LEN - 1,
@@ -182,7 +179,7 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     prop.m_price = InputReader::read<float>(
         PRICE_MIN, PRICE_MAX,
         "Введите цену (BYN): ",
-        create_err_msg(float_error, PRICE_MIN, PRICE_MAX));
+        create_err_msg(input_config::ERR_FLOAT, PRICE_MIN, PRICE_MAX));
 
     // площади с проверкой
     while (true) {
@@ -231,7 +228,7 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     int typeChoice = InputReader::read<int>(
         1, 4,
         ">",
-        create_err_msg(int_error, 1, 4));
+        create_err_msg(input_config::ERR_INT, 1, 4));
     prop.m_type = static_cast<PropertyType>(typeChoice - 1);
 
     prop.m_status = Status::Active;
@@ -239,4 +236,49 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     prop.m_updatedAt = std::time(nullptr);
 
     return prop;
+}
+
+std::ostream& operator<<(std::ostream& out, const Property& prop)
+{
+    out << "=== Объявление недвижимости ===\n";
+    out << "ID: " << prop.getId() << "\n";
+    out << "Риэлтор ID: " << prop.getRealtorId() << "\n";
+    out << "Заголовок: " << prop.getTitle() << "\n";
+    out << "Описание: " << prop.getDescription() << "\n";
+    out << "Адрес: " << prop.getAddress() << "\n";
+    out << "Цена: " << std::fixed << std::setprecision(2) << prop.getPrice() << " BYN\n";
+    out << "Комнат: " << prop.getRooms() << "\n";
+    out << "Этаж: " << prop.getFloor() << " из " << prop.getFloorsTotal() << "\n";
+    out << "Общая площадь: " << prop.getAreaTotal() << " кв.м\n";
+    out << "Жилая площадь: " << prop.getAreaLiving() << " кв.м\n";
+    out << "Площадь кухни: " << prop.getAreaKitchen() << " кв.м\n";
+
+    // Тип недвижимости
+    out << "Тип: ";
+    switch (prop.getType()) {
+    case PropertyType::Apartment: out << "Квартира"; break;
+    case PropertyType::House:     out << "Дом"; break;
+    case PropertyType::Office:    out << "Офис"; break;
+    case PropertyType::Land:      out << "Земельный участок"; break;
+    }
+    out << "\n";
+
+    // Статус
+    out << "Статус: ";
+    switch (prop.getStatus()) {
+    case Status::Active:   out << "Активно"; break;
+    case Status::Sold:     out << "Продано"; break;
+    case Status::Rented:   out << "Сдано в аренду"; break;
+    case Status::Archived: out << "Архивировано"; break;
+    }
+    out << "\n";
+
+    // Даты
+    std::time_t created = prop.getCreatedAt();
+    std::time_t updated = prop.getUpdatedAt();
+
+    out << "Создано: " << std::ctime(&created);
+    out << "Обновлено: " << std::ctime(&updated);
+
+    return out;
 }

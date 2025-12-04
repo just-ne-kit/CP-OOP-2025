@@ -4,35 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <ctime>
-#include <cstring>
-
-namespace config
-{
-    const std::size_t TITLE_MAX_LEN = 64;
-    const std::size_t DESCRIPTION_MAX_LEN = 256;
-    const std::size_t ADDRESS_MAX_LEN = 128;
-
-    const float PRICE_MIN = 0.0f;
-    const float PRICE_MAX = 100'000'000.0f;
-
-    const float AREA_TOTAL_MIN = 0.0f;
-    const float AREA_TOTAL_MAX = 10'000.0f;
-
-    const float AREA_LIVING_MIN = 0.0f;
-    const float AREA_LIVING_MAX = 5'000.0f;
-
-    const float AREA_KITCHEN_MIN = 0.0f;
-    const float AREA_KITCHEN_MAX = 500.0f;
-
-    const unsigned int ROOMS_MIN = 0;
-    const unsigned int ROOMS_MAX = 100;
-
-    const unsigned int FLOOR_MIN = 0;
-    const unsigned int FLOOR_MAX = 200;
-
-    const unsigned int FLOORS_TOTAL_MIN = 0;
-    const unsigned int FLOORS_TOTAL_MAX = 200;
-}
+#include "config.h"
 
 enum class PropertyType {
     Apartment,
@@ -52,9 +24,9 @@ class Property {
 private:
     unsigned int m_id;                                      // ID
     unsigned int m_realtorId;                               // ID риэлтора
-    char m_title[config::TITLE_MAX_LEN];                    // Заголовок объявления
-    char m_description[config::DESCRIPTION_MAX_LEN];        // Описание
-    char m_address[config::ADDRESS_MAX_LEN];                // Адрес
+    char m_title[prop_config::TITLE_MAX_LEN];                    // Заголовок объявления
+    char m_description[prop_config::DESCRIPTION_MAX_LEN];        // Описание
+    char m_address[prop_config::ADDRESS_MAX_LEN];                // Адрес
     float m_price;                                          // Цена
     float m_areaTotal;                                      // Общая площадь
     float m_areaLiving;                                     // Жилая площадь
@@ -123,4 +95,6 @@ public:
     void setUpdatedAt(std::time_t updatedAt);
 
     static Property create(unsigned int id, unsigned int realtorId);
+
+    friend std::ostream& operator<<(std::ostream& out, const Property& prop);
 };
