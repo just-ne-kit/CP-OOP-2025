@@ -66,6 +66,10 @@ void Property::serialize(std::ofstream& ofs) const {
     ofs.write(reinterpret_cast<const char*>(&m_status), sizeof(m_status));
     ofs.write(reinterpret_cast<const char*>(&m_createdAt), sizeof(m_createdAt));
     ofs.write(reinterpret_cast<const char*>(&m_updatedAt), sizeof(m_updatedAt));
+
+    ofs.write(reinterpret_cast<const char*>(m_seller.name()), common_cfg::NAME_MAX_LEN);
+    ofs.write(reinterpret_cast<const char*>(m_seller.email()), common_cfg::EMAIL_MAX_LEN);
+    ofs.write(reinterpret_cast<const char*>(m_seller.phone()), common_cfg::PHONE_MAX_LEN);
 }
 
 void Property::deserialize(std::ifstream& ifs) {
@@ -85,7 +89,23 @@ void Property::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(&m_status), sizeof(m_status));
     ifs.read(reinterpret_cast<char*>(&m_createdAt), sizeof(m_createdAt));
     ifs.read(reinterpret_cast<char*>(&m_updatedAt), sizeof(m_updatedAt));
+
+    char name[common_cfg::NAME_MAX_LEN];
+    char email[common_cfg::EMAIL_MAX_LEN];
+    char phone[common_cfg::PHONE_MAX_LEN];
+
+    ifs.read(reinterpret_cast<char*>(name), common_cfg::NAME_MAX_LEN);
+    ifs.read(reinterpret_cast<char*>(email), common_cfg::EMAIL_MAX_LEN);
+    ifs.read(reinterpret_cast<char*>(phone), common_cfg::PHONE_MAX_LEN);
+
+    m_seller.setName(std::string(name));
+    m_seller.setEmail(std::string(email));
+    m_seller.setPhone(std::string(phone));
 }
+
+Seller Property::getSeller() const { return m_seller; }
+void Property::setSeller(const Seller& seller) { m_seller = seller; }
+
 
 unsigned int Property::getId() const { return m_id; }
 unsigned int Property::getRealtorId() const { return m_realtorId; }
@@ -201,7 +221,6 @@ float Property::readAreaKitchen(float areaTotal) {
     }
 }
 
-
 unsigned int Property::readFloorsTotal() {
     return InputReader::read<unsigned int>(
         FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
@@ -273,6 +292,13 @@ Property Property::create(unsigned int id, unsigned int realtorId) {
     prop.m_createdAt = std::time(nullptr);
     prop.m_updatedAt = std::time(nullptr);
 
+    std::cout << "Данные продавца:\n";
+    std::string sellerName = Seller::read_name();
+    std::string sellerEmail = Seller::read_email();
+    std::string sellerPhone = Seller::read_phone();
+    Seller seller(sellerName, sellerEmail, sellerPhone);
+    prop.setSeller(seller);
+
     return prop;
 }
 
@@ -319,6 +345,9 @@ std::vector<std::string> Property::to_lines() const {
     std::time_t updated = getUpdatedAt();
     lines.push_back("Создано: " + std::string(std::ctime(&created)));
     lines.push_back("Обновлено: " + std::string(std::ctime(&updated)));
+
+    auto sellerLines = m_seller.to_lines();
+    lines.insert(lines.end(), sellerLines.begin(), sellerLines.end());
 
     return lines;
 }

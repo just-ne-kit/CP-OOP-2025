@@ -8,9 +8,8 @@ class Admin : public User
 private:
 
 public:
-	Admin()
-	{
-		strcpy_s(m_hashedPassword, PasswordHasher::encrypt("1111").c_str());
+	Admin() {
+		strcpy_s(m_hashedPassword, PasswordHasher::encrypt(auth_cfg::ADMIN_PASSWORD).c_str());
 	}
 	Role role() const override {
 		return Role::AdminRole;

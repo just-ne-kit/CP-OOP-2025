@@ -9,25 +9,30 @@ namespace input_cfg
     const std::string ERR_STR = "Необходимо ввести строку";
 }
 
-namespace user_cfg
+namespace auth_cfg {
+    const std::string ADMIN_NAME = "admin";
+    const std::string ADMIN_PASSWORD = "1111";
+}
+
+namespace common_cfg
 {
     const std::size_t USERNAME_LEN = 32;
     const std::size_t HASHED_PASSWORD_LEN = 32;
-}
 
-namespace seller_cfg
-{
     const std::size_t NAME_MAX_LEN = 64;
+    const std::string NAME_MSG = "Введите имя: ";
     const std::string NAME_ERR_MSG =
         input_cfg::ERR_STR + std::string(" не превышающую ") +
         std::to_string(NAME_MAX_LEN - 1) + " символов\n";
-    
+
     const std::size_t EMAIL_MAX_LEN = 64;
+    const std::string EMAIL_MSG = "Введите электронную почту: ";
     const std::string EMAIL_ERR_MSG =
         input_cfg::ERR_STR + std::string(" не превышающую ") +
         std::to_string(EMAIL_MAX_LEN - 1) + " символов\n";
-    
+
     const std::size_t PHONE_MAX_LEN = 32;
+    const std::string PHONE_MSG = "Введите телефонный номер: ";
     const std::string PHONE_ERR_MSG =
         input_cfg::ERR_STR + std::string(" не превышающую ") +
         std::to_string(PHONE_MAX_LEN - 1) + " символов\n";

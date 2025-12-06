@@ -18,6 +18,9 @@ private:
 
 public:
 	Realtor();  
+	Realtor(unsigned int id,
+		const std::string& login,
+		const std::string& hashedPassword);
     Realtor(unsigned int id,
 			const std::string& login,
 			const std::string& hashedPassword,

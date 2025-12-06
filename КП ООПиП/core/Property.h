@@ -102,6 +102,10 @@ public:
     void setCreatedAt(std::time_t createdAt);
     void setUpdatedAt(std::time_t updatedAt);
 
+    Seller getSeller() const;
+    void setSeller(const Seller& seller);
+
+
     static unsigned int readRooms();
     static std::string readTitle();
     static std::string readDescription();

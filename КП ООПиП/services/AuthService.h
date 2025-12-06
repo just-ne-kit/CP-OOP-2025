@@ -2,6 +2,7 @@
 
 #include "../core/Realtor.h"
 #include "../core/Admin.h"
+#include "../core/Client.h"
 #include "../repositories/Repository.h"
 #include "../security/PasswordHasher.h"
 #include "../id/IdGenerator.h"
@@ -16,12 +17,23 @@ enum class AuthResult {
 class AuthService
 {
 private:
-	Repository<Realtor>& m_realtorRepository;
-	IdGenerator m_usersIdGen;
+	Repository<Client>& client_repo_;
+	Repository<Realtor>& realtor_repo_;
+	IdGenerator client_id_gen_;
+	IdGenerator realtor_id_gen_;
+	bool username_exists(const std::string& name);
 public:
-	AuthService(Repository<Realtor>& realtorRepository, const std::string& usersIdGenPath)
-		: m_realtorRepository(realtorRepository), m_usersIdGen(usersIdGenPath) { }
+	AuthService(Repository<Client>& client_repo,
+		Repository<Realtor>& realtor_repo,
+		const std::string& client_id_gen_path,
+		const std::string& realtor_id_gen_path)
+		: 
+		client_repo_(client_repo),
+		realtor_repo_(realtor_repo),
+		client_id_gen_(client_id_gen_path),
+		realtor_id_gen_(realtor_id_gen_path) { }
 
-	AuthResult login(const std::string& name, const std::string& password, std::shared_ptr<User>& out_user);
-	AuthResult registerUser(const std::string& name, const std::string& password);
+	AuthResult login(const std::string& username, const std::string& password, std::shared_ptr<User>& out_user);
+	AuthResult register_client(const std::string& username, const std::string& password);
+	AuthResult register_realtor(const std::string& username, const std::string& password);
 };

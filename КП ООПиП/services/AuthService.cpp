@@ -1,32 +1,72 @@
 #include "AuthService.h"
 
-AuthResult AuthService::login(const std::string& name, const std::string& password, std::shared_ptr<User>& out_user)
-{
-	if (name == "admin")
-	{
-		out_user = std::make_shared<Admin>();
-		if (PasswordHasher::encrypt(password) != out_user->hashedPassword()) return AuthResult::WrongPassword;
-	}
-	else
-	{
-		out_user = m_realtorRepository.get([name](const RealtorPtr& obj) { return name == obj->username(); });
-		if (out_user == nullptr) return AuthResult::UserNotFound;
-		else if (PasswordHasher::encrypt(password) != out_user->hashedPassword()) return AuthResult::WrongPassword;
-	}
+bool AuthService::username_exists(const std::string& username) {
+    if (username == auth_cfg::ADMIN_NAME) return true;
 
-	return AuthResult::Success;
+    if (client_repo_.exists([&](const ClientPtr& obj) { return obj->username() == username; }))
+        return true;
+
+    if (realtor_repo_.exists([&](const RealtorPtr& obj) { return obj->username() == username; }))
+        return true;
+
+    return false;
 }
-AuthResult AuthService::registerUser(const std::string& name, const std::string& password)
+
+AuthResult AuthService::login(const std::string& username, const std::string& password, std::shared_ptr<User>& out_user)
 {
-	if (name == "admin") return AuthResult::AlreadyExists;
+    if (username == auth_cfg::ADMIN_NAME) {
+        if (PasswordHasher::encrypt(password) != auth_cfg::ADMIN_PASSWORD) 
+            return AuthResult::WrongPassword;
+        
+        out_user = std::make_shared<Admin>();
+        return AuthResult::Success;
+    }
 
-	if (m_realtorRepository.exists([name](const RealtorPtr& obj) { return name == obj->username(); })) return AuthResult::AlreadyExists;
+    {
+        RealtorPtr realtor = realtor_repo_.get([&](const RealtorPtr& obj) {
+            return obj && obj->username() == username;});
 
-	unsigned int id = m_usersIdGen.next();
+        if (realtor) {
+            if (PasswordHasher::encrypt(password) != realtor->hashedPassword()) 
+                return AuthResult::WrongPassword;
+            
+            out_user = realtor;
+            return AuthResult::Success;
+        }
+    }
 
-	RealtorPtr new_user = std::make_shared<Realtor>(id, name, PasswordHasher::encrypt(password), "", "", "", "", 0);
+    {
+        ClientPtr client = client_repo_.get([&](const ClientPtr& obj) {
+            return obj && obj->username() == username; });
 
-	m_realtorRepository.add(new_user, [](const RealtorPtr& obj) { return false; });
+        if (client) {
+            if (PasswordHasher::encrypt(password) != client->hashedPassword())
+                return AuthResult::WrongPassword;
 
-	return AuthResult::Success;
+            out_user = client;
+            return AuthResult::Success;
+        }
+    }
+
+    out_user.reset();
+    return AuthResult::UserNotFound;
+}
+AuthResult AuthService::register_client(const std::string& username, const std::string& password) {
+    if (username_exists(username)) return AuthResult::AlreadyExists;
+
+    unsigned int id = client_id_gen_.next();
+    auto new_client = std::make_shared<Client>(id, username, PasswordHasher::encrypt(password));
+    client_repo_.add(new_client, [](const ClientPtr&) { return false; });
+
+    return AuthResult::Success;
+}
+
+AuthResult AuthService::register_realtor(const std::string& username, const std::string& password) {
+    if (username_exists(username)) return AuthResult::AlreadyExists;
+
+    unsigned int id = realtor_id_gen_.next();
+    auto new_realtor = std::make_shared<Realtor>(id, username, PasswordHasher::encrypt(password));
+    realtor_repo_.add(new_realtor, [](const RealtorPtr&) { return false; });
+
+    return AuthResult::Success;
 }

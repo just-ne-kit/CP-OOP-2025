@@ -9,6 +9,16 @@ Realtor::Realtor()
     m_email[0] = '\0';
 }
 Realtor::Realtor(unsigned int id,
+    const std::string& login,
+    const std::string& hashedPassword)
+    : User(id, login, hashedPassword), m_phoneNumber(0)
+{
+    m_lastName[0] = '\0';
+    m_firstName[0] = '\0';
+    m_middleName[0] = '\0';
+    m_email[0] = '\0';
+}
+Realtor::Realtor(unsigned int id,
                  const std::string& login,
                  const std::string& hashedPassword,
                  const std::string &lastName,

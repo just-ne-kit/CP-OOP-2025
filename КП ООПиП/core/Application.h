@@ -47,6 +47,9 @@ private:
 
 	static StorageManager<Realtor> realtor_storage;
 	static Repository<Realtor> realtor_repo;
+
+	static StorageManager<Client> client_storage;
+	static Repository<Client> client_repo;
 	
 	static AuthService authService;
 
@@ -452,9 +455,30 @@ private:
 		}
 	}
 
-	static void admin(std::shared_ptr<Admin> admin)
+	void admin_report()
 	{
 
+	}
+
+	static void admin(std::shared_ptr<Admin> admin)
+	{
+		bool exit = false;
+
+		while (!exit) {
+
+			int choice = scroll({
+				"Создать нового риэлтора",
+				"",
+				"Создать отчет",
+				"Выйти из учетной записи" },
+				">");
+			;
+			switch (choice)
+			{
+
+			default: break;
+			}
+		}
 	}
 
 	static void register_user()
@@ -464,12 +488,19 @@ private:
 		std::string password1 = InputReader::read_password("Введите пароль:");
 		std::string password2 = InputReader::read_password("Повторите пароль:");
 
+		int choice = scroll({
+			"Завершить регистрацию",
+			"Отмена"},
+			">");
+
+		if (choice == 1) return;
+
 		if (password1 != password2) {
 			pause_clear("Пароли не совпадают. Нажмите любую клавишу для продолжения.");
 			return;
 		}
 
-		AuthResult authRes = authService.registerUser(login, password1);
+		AuthResult authRes = authService.register_client(login, password1);
 
 		if (authRes == AuthResult::AlreadyExists) {
 			pause_clear("Логин уже занят. Нажмите любую клавишу для продолжения.");
@@ -540,6 +571,11 @@ public:
 IdGenerator Application::id_gen_prop{ "data/properties/id.bin" };
 StorageManager<Property> Application::property_storage{ "data/properties/properties.bin" };
 Repository<Property> Application::property_repo{ property_storage.load() };
+
 StorageManager<Realtor> Application::realtor_storage{ "data/realtors/realtors.bin" };
 Repository<Realtor> Application::realtor_repo{ realtor_storage.load() };
-AuthService Application::authService{ realtor_repo, "data/realtors/id.bin" };
+
+StorageManager<Client> Application::client_storage{ "data/clients/clients.bin" };
+Repository<Client> Application::client_repo{ client_storage.load() };
+
+AuthService Application::authService{ client_repo ,realtor_repo, "data/clients/id.bin","data/realtors/id.bin" };
