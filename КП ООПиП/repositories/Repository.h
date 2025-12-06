@@ -3,22 +3,25 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <functional>
 
 template<class T>
 class Repository {
 protected:
     std::vector<std::shared_ptr<T>> m_objects;
 
-    template<typename Lambda>
-    const std::shared_ptr<T> find(Lambda&& lambda) const {
+    std::shared_ptr<T> find(const std::function<bool(const std::shared_ptr<T>&)>& pred) const {
         for (const auto& obj : m_objects)
-            if (lambda(obj))
+            if (pred(obj))
                 return obj;
         return nullptr;
     }
 
 public:
-    Repository(const std::vector<std::shared_ptr<T>>& objects)
+    using Predicate = std::function<bool(const std::shared_ptr<T>&)>;
+    using Comparator = std::function<bool(const std::shared_ptr<T>&, const std::shared_ptr<T>&)>;
+
+    explicit Repository(const std::vector<std::shared_ptr<T>>& objects = {})
         : m_objects(objects) {
     }
 
@@ -26,33 +29,29 @@ public:
         return m_objects;
     }
 
-    int count() const {
+    std::size_t count() const {
         return m_objects.size();
     }
 
-    template<typename Lambda>
-    bool add(const std::shared_ptr<T>& obj, Lambda&& lambda) {
-        if (!exists(lambda)) {
+    bool add(const std::shared_ptr<T>& obj, const Predicate& pred) {
+        if (!exists(pred)) {
             m_objects.push_back(obj);
             return true;
         }
         return false;
     }
 
-    template<typename Lambda>
-    const std::shared_ptr<T> get(Lambda&& lambda) const {
-        return find(std::forward<Lambda>(lambda));
+    std::shared_ptr<T> get(const Predicate& pred) const {
+        return find(pred);
     }
 
-    template<typename Lambda>
-    bool exists(Lambda&& lambda) const {
-        return find(std::forward<Lambda>(lambda)) != nullptr;
+    bool exists(const Predicate& pred) const {
+        return find(pred) != nullptr;
     }
 
-    template<typename Lambda>
-    bool remove(Lambda&& lambda) {
+    bool remove(const Predicate& pred) {
         auto it = std::remove_if(m_objects.begin(), m_objects.end(),
-            [&](const std::shared_ptr<T>& obj) { return lambda(obj); });
+            [&](const std::shared_ptr<T>& obj) { return pred(obj); });
         if (it != m_objects.end()) {
             m_objects.erase(it, m_objects.end());
             return true;
@@ -60,10 +59,9 @@ public:
         return false;
     }
 
-    template<typename Lambda>
-    bool update(Lambda&& lambda, const std::shared_ptr<T>& newObj) {
+    bool update(const Predicate& pred, const std::shared_ptr<T>& newObj) {
         for (auto& obj : m_objects) {
-            if (lambda(obj)) {
+            if (pred(obj)) {
                 obj = newObj;
                 return true;
             }
@@ -71,12 +69,11 @@ public:
         return false;
     }
 
-    std::shared_ptr<T> operator[](int index) {
-        return m_objects[index];
+    std::shared_ptr<T> operator[](std::size_t index) {
+        return m_objects.at(index);
     }
 
-    template<typename Lambda>
-    void sort(Lambda&& lambda) {
-        std::sort(m_objects.begin(), m_objects.end(), lambda);
+    void sort(const Comparator& comp) {
+        std::sort(m_objects.begin(), m_objects.end(), comp);
     }
 };

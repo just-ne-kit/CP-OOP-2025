@@ -10,15 +10,16 @@
 enum Role
 {
 	AdminRole,
-	RealtorRole
+	RealtorRole,
+	BuyerRole
 };
 
 class User
 {
 protected:
 	unsigned int m_id;
-	char m_username[user_config::USERNAME];
-	char m_hashedPassword[user_config::HASHED_PASSWORD];
+	char m_username[user_config::USERNAME_LEN];
+	char m_hashedPassword[user_config::HASHED_PASSWORD_LEN];
 public:
 	User(unsigned int id,
 		 const std::string &login,

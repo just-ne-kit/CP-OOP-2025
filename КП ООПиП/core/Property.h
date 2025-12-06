@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <ctime>
+#include <memory>
 #include "config.h"
 
 enum class PropertyType {
@@ -94,9 +95,25 @@ public:
     void setCreatedAt(std::time_t createdAt);
     void setUpdatedAt(std::time_t updatedAt);
 
+    static unsigned int readRooms();
+    static std::string readTitle();
+    static std::string readDescription();
+    static std::string readAddress();
+    static float readPrice();
+    static float readAreaTotal();
+    static float readAreaLiving(float areaTotal);
+    static float readAreaKitchen(float areaTotal);
+    static unsigned int readFloorsTotal();
+    static unsigned int readFloor(unsigned int floorsTotal);
+    static PropertyType readType();
+    static Status readStatus();
+
     static Property create(unsigned int id, unsigned int realtorId);
 
+    std::vector<std::string> to_lines() const;
     std::string to_str() const;
 
     friend std::ostream& operator<<(std::ostream& out, const Property& prop);
 };
+
+using PropertyPtr = std::shared_ptr<Property>;

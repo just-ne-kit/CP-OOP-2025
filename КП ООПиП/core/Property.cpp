@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iomanip>
 
+using namespace prop_config;
+
 Property::Property()
     : m_id(0), m_realtorId(0), m_price(0.0f),
       m_areaTotal(0.0f), m_areaLiving(0.0f), m_areaKitchen(0.0f),
@@ -133,92 +135,92 @@ void Property::setRealtorId(unsigned int realtorId) { m_realtorId = realtorId; }
 void Property::setCreatedAt(std::time_t createdAt) { m_createdAt = createdAt; }
 void Property::setUpdatedAt(std::time_t updatedAt) { m_updatedAt = updatedAt; }
 
-template<typename T>
-std::string create_err_msg(const std::string& msg, const T& min, const T& max)
-{
-    return msg + " от " + std::to_string(min) + " до " + std::to_string(max);
-}
-
-std::string create_str_err_msg(std::size_t maxCount) {
-    return "Ошибка. Необходимо ввести строку не превышающую "
-        + std::to_string(maxCount) + " символов";
-}
-
-Property Property::create(unsigned int id, unsigned int realtorId)
-{
-    using namespace prop_config;
-
-    Property prop;
-
-    prop.m_id = id;
-    prop.m_realtorId = realtorId;
-
-    prop.m_rooms = InputReader::read<unsigned int>(
+unsigned int Property::readRooms() {
+    return InputReader::read<unsigned int>(
         ROOMS_MIN, ROOMS_MAX,
         "Введите количество комнат: ",
         ROOMS_ERR_MSG);
+}
 
-    std::string title = InputReader::read<std::string>(
+std::string Property::readTitle() {
+     return InputReader::read<std::string>(
         TITLE_MAX_LEN - 1,
         "Введите заголовок объявления: ",
-        create_str_err_msg(TITLE_MAX_LEN - 1));
-    std::strncpy(prop.m_title, title.c_str(), TITLE_MAX_LEN);
+        TITLE_ERR_MSG);
+}
 
-    std::string description = InputReader::read<std::string>(
+std::string Property::readDescription() {
+    return InputReader::read<std::string>(
         DESCRIPTION_MAX_LEN - 1,
         "Введите описание: ",
-        create_str_err_msg(DESCRIPTION_MAX_LEN - 1));
-    std::strncpy(prop.m_description, description.c_str(), DESCRIPTION_MAX_LEN);
+        DESCRIPTION_ERR_MSG);
+}
 
-    std::string address = InputReader::read<std::string>(
+std::string Property::readAddress() {
+    return InputReader::read<std::string>(
         ADDRESS_MAX_LEN - 1,
         "Введите адрес: ",
-        create_str_err_msg(ADDRESS_MAX_LEN - 1));
-    std::strncpy(prop.m_address, address.c_str(), ADDRESS_MAX_LEN);
+        ADDRESS_ERR_MSG);
+}
 
-    prop.m_price = InputReader::read<float>(
+float Property::readPrice() {
+    return InputReader::read<float>(
         PRICE_MIN, PRICE_MAX,
         "Введите цену (BYN): ",
         PRICE_ERR_MSG);
+}
 
-    // площади с проверкой
+float Property::readAreaTotal() {
+    return InputReader::read<float>(
+        AREA_TOTAL_MIN, AREA_TOTAL_MAX,
+        "Введите общую площадь (кв. м): ",
+        AREA_TOTAL_ERR_MSG);
+}
+
+float Property::readAreaLiving(float areaTotal) {
     while (true) {
-        prop.m_areaTotal = InputReader::read<float>(
-            AREA_TOTAL_MIN, AREA_TOTAL_MAX,
-            "Введите общую площадь (кв. м): ",
-            AREA_TOTAL_ERR_MSG);
-
-        prop.m_areaLiving = InputReader::read<float>(
+        float living = InputReader::read<float>(
             AREA_LIVING_MIN, AREA_LIVING_MAX,
             "Введите жилую площадь (кв. м): ",
-           AREA_LIVING_ERR_MSG);
-
-        if (prop.m_areaLiving <= prop.m_areaTotal) break;
+            AREA_LIVING_ERR_MSG);
+        if (living <= areaTotal) return living;
         std::cout << "Ошибка. Жилая площадь не может превышать общую!" << std::endl;
     }
+}
 
-    prop.m_areaKitchen = InputReader::read<float>(
-        AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
-        "Введите площадь кухни (кв. м): ",
-        AREA_KITCHEN_ERR_MSG);
-
-    // этажи с проверкой
+float Property::readAreaKitchen(float areaTotal) {
     while (true) {
-        prop.m_floorsTotal = InputReader::read<unsigned int>(
-            FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
-            "Введите количество этажей в доме: ",
-            FLOORS_TOTAL_ERR_MSG);
+        float kitchen = InputReader::read<float>(
+            AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
+            "Введите площадь кухни (кв. м): ",
+            AREA_KITCHEN_ERR_MSG);
 
-        prop.m_floor = InputReader::read<unsigned int>(
+        if (kitchen <= areaTotal) return kitchen;
+
+        std::cout << "Ошибка. Площадь кухни не может превышать общую!" << std::endl;
+    }
+}
+
+
+unsigned int Property::readFloorsTotal() {
+    return InputReader::read<unsigned int>(
+        FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
+        "Введите количество этажей в доме: ",
+        FLOORS_TOTAL_ERR_MSG);
+}
+
+unsigned int Property::readFloor(unsigned int floorsTotal) {
+    while (true) {
+        unsigned int floor = InputReader::read<unsigned int>(
             FLOOR_MIN, FLOOR_MAX,
             "Введите этаж: ",
             FLOOR_ERR_MSG);
-
-        if (prop.m_floor <= prop.m_floorsTotal) break;
+        if (floor <= floorsTotal) return floor;
         std::cout << "Ошибка. Этаж не может быть больше количества этажей!" << std::endl;
     }
+}
 
-    // тип недвижимости
+PropertyType Property::readType() {
     std::cout << "Выберите тип недвижимости:\n";
     std::cout << "1 - Квартира\n";
     std::cout << "2 - Дом\n";
@@ -226,10 +228,46 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     std::cout << "4 - Земельный участок\n";
 
     int typeChoice = InputReader::read<int>(
-        1, 4,
-        ">",
-        create_err_msg(input_config::ERR_INT, 1, 4));
-    prop.m_type = static_cast<PropertyType>(typeChoice - 1);
+        TYPE_MIN, TYPE_MAX,
+        ">", TYPE_ERR_MSG);
+
+    return static_cast<PropertyType>(typeChoice - 1);
+}
+
+Status Property::readStatus() {
+    std::cout << "Выберите статус объявления:\n";
+    std::cout << "1 - Активно\n";
+    std::cout << "2 - Продано\n";
+    std::cout << "3 - Сдано в аренду\n";
+    std::cout << "4 - Архивировано\n";
+
+    int choice = InputReader::read<int>(
+        STATUS_MIN, STATUS_MAX,
+        ">", STATUS_ERR_MSG);
+
+    return static_cast<Status>(choice - 1);
+}
+
+Property Property::create(unsigned int id, unsigned int realtorId) {
+    Property prop;
+
+    prop.m_id = id;
+    prop.m_realtorId = realtorId;
+
+    prop.m_rooms = readRooms();
+    prop.setTitle(readTitle());
+    prop.setDescription(readDescription());
+    prop.setAddress(readAddress());
+    prop.m_price = readPrice();
+
+    prop.m_areaTotal = readAreaTotal();
+    prop.m_areaLiving = readAreaLiving(prop.m_areaTotal);
+    prop.m_areaKitchen = readAreaKitchen(prop.m_areaTotal);
+
+    prop.m_floorsTotal = readFloorsTotal();
+    prop.m_floor = readFloor(prop.m_floorsTotal);
+
+    prop.m_type = readType();
 
     prop.m_status = Status::Active;
     prop.m_createdAt = std::time(nullptr);
@@ -238,51 +276,64 @@ Property Property::create(unsigned int id, unsigned int realtorId)
     return prop;
 }
 
+std::vector<std::string> Property::to_lines() const {
+    std::vector<std::string> lines;
+    lines.reserve(16);
+
+    lines.push_back("ID: " + std::to_string(getId()));
+    lines.push_back("Риэлтор ID: " + std::to_string(getRealtorId()));
+    lines.push_back("Заголовок: " + std::string(getTitle()));
+    lines.push_back("Описание: " + std::string(getDescription()));
+    lines.push_back("Адрес: " + std::string(getAddress()));
+
+    lines.push_back("Цена: " + std::to_string(getPrice()) + " BYN");
+
+    lines.push_back("Комнат: " + std::to_string(getRooms()));
+    lines.push_back("Этаж: " + std::to_string(getFloor()) + " из " + std::to_string(getFloorsTotal()));
+    lines.push_back("Общая площадь: " + std::to_string(getAreaTotal()) + " кв.м");
+    lines.push_back("Жилая площадь: " + std::to_string(getAreaLiving()) + " кв.м");
+    lines.push_back("Площадь кухни: " + std::to_string(getAreaKitchen()) + " кв.м");
+
+    // Тип
+    std::string typeStr = "Тип: ";
+    switch (getType()) {
+    case PropertyType::Apartment: typeStr += "Квартира"; break;
+    case PropertyType::House:     typeStr += "Дом"; break;
+    case PropertyType::Office:    typeStr += "Офис"; break;
+    case PropertyType::Land:      typeStr += "Земельный участок"; break;
+    }
+    lines.push_back(typeStr);
+
+    // Статус
+    std::string statusStr = "Статус: ";
+    switch (getStatus()) {
+    case Status::Active:   statusStr += "Активно"; break;
+    case Status::Sold:     statusStr += "Продано"; break;
+    case Status::Rented:   statusStr += "Сдано в аренду"; break;
+    case Status::Archived: statusStr += "Архивировано"; break;
+    }
+    lines.push_back(statusStr);
+
+    // Даты
+    std::time_t created = getCreatedAt();
+    std::time_t updated = getUpdatedAt();
+    lines.push_back("Создано: " + std::string(std::ctime(&created)));
+    lines.push_back("Обновлено: " + std::string(std::ctime(&updated)));
+
+    return lines;
+}
+
 std::string Property::to_str() const {
+    auto lines = to_lines();
     std::string result;
     result.reserve(512);
 
-    result += "=== Объявление недвижимости ===\n";
-    result += "ID: " + std::to_string(getId()) + "\n";
-    result += "Риэлтор ID: " + std::to_string(getRealtorId()) + "\n";
-    result += "Заголовок: " + std::string(getTitle()) + "\n";
-    result += "Описание: " + std::string(getDescription()) + "\n";
-    result += "Адрес: " + std::string(getAddress()) + "\n";
-
-    result += "Цена: " + std::to_string(getPrice()) + " BYN\n";
-
-    result += "Комнат: " + std::to_string(getRooms()) + "\n";
-    result += "Этаж: " + std::to_string(getFloor()) + " из " + std::to_string(getFloorsTotal()) + "\n";
-    result += "Общая площадь: " + std::to_string(getAreaTotal()) + " кв.м\n";
-    result += "Жилая площадь: " + std::to_string(getAreaLiving()) + " кв.м\n";
-    result += "Площадь кухни: " + std::to_string(getAreaKitchen()) + " кв.м\n";
-
-    // Тип
-    result += "Тип: ";
-    switch (getType()) {
-    case PropertyType::Apartment: result += "Квартира"; break;
-    case PropertyType::House:     result += "Дом"; break;
-    case PropertyType::Office:    result += "Офис"; break;
-    case PropertyType::Land:      result += "Земельный участок"; break;
+    for (const auto& line : lines) {
+        result += line;
+        if (line.empty() || line.back() != '\n') {
+            result += "\n";
+        }
     }
-    result += "\n";
-
-    // Статус
-    result += "Статус: ";
-    switch (getStatus()) {
-    case Status::Active:   result += "Активно"; break;
-    case Status::Sold:     result += "Продано"; break;
-    case Status::Rented:   result += "Сдано в аренду"; break;
-    case Status::Archived: result += "Архивировано"; break;
-    }
-    result += "\n";
-
-    // Даты (ctime добавляет \n в конце)
-    std::time_t created = getCreatedAt();
-    std::time_t updated = getUpdatedAt();
-    result += "Создано: " + std::string(std::ctime(&created));
-    result += "Обновлено: " + std::string(std::ctime(&updated));
-
     return result;
 }
 

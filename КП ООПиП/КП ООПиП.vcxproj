@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\Buyer.cpp" />
     <ClCompile Include="core\Property.cpp" />
     <ClCompile Include="core\Realtor.cpp" />
     <ClCompile Include="core\User.cpp" />
@@ -130,11 +131,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="security\PasswordHasher.cpp" />
     <ClCompile Include="services\AuthService.cpp" />
-    <ClCompile Include="ui\ConsoleInterface.cpp" />
     <ClCompile Include="ui\InputReader.cpp" />
-    <ClCompile Include="utils\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\buyers\buyers.bin" />
+    <None Include="data\buyers\id.bin" />
     <None Include="data\properties\id.bin" />
     <None Include="data\properties\properties.bin" />
     <None Include="data\realtors\id.bin" />
@@ -144,10 +145,12 @@
     <ClInclude Include="core\Ad.h" />
     <ClInclude Include="core\Admin.h" />
     <ClInclude Include="core\Application.h" />
+    <ClInclude Include="core\Buyer.h" />
     <ClInclude Include="core\Client.h" />
     <ClInclude Include="core\config.h" />
     <ClInclude Include="core\Property.h" />
     <ClInclude Include="core\Realtor.h" />
+    <ClInclude Include="core\Seller.h" />
     <ClInclude Include="id\IdGenerator.h" />
     <ClInclude Include="repositories\Repository.h" />
     <ClInclude Include="security\PasswordHasher.h" />
@@ -155,7 +158,6 @@
     <ClInclude Include="storage\StorageManager.h" />
     <ClInclude Include="ui\ConsoleInterface.h" />
     <ClInclude Include="ui\InputReader.h" />
-    <ClInclude Include="utils\Parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

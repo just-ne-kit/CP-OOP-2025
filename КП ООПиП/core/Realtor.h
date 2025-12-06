@@ -3,6 +3,7 @@
 #include "User.h"
 #include "Property.h"
 #include <fstream>
+#include <memory>
 
 class Realtor : public User
 {
@@ -48,3 +49,5 @@ public:
 
 	Role role() const override;
 };
+
+using RealtorPtr = std::shared_ptr<Realtor>;

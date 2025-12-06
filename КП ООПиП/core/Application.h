@@ -41,20 +41,24 @@ namespace Sort {
 class Application
 {
 private:
-	IdGenerator id_gen_prop{"data/properties/id.bin"};
-	StorageManager<Property> property_storage{ "data/properties/properties.bin" };
-	Repository<Property> property_repo{ property_storage.load() };
+	static IdGenerator id_gen_prop;
+	static StorageManager<Property> property_storage;
+	static Repository<Property> property_repo;
 
-	StorageManager<Realtor> realtor_storage{ "data/realtors/realtors.bin" };
-	Repository<Realtor> realtor_repo{ realtor_storage.load() };
+	static StorageManager<Realtor> realtor_storage;
+	static Repository<Realtor> realtor_repo;
 	
-	AuthService authService{ realtor_repo, "data/realtors/id.bin" };
+	static AuthService authService;
 
+	template<typename T>
+	static bool between(const T& a, const std::pair<T, T>& pair) {
+		return pair.first <= a && a <= pair.second;
+	}
 	static void pause() {
 		_getch();
 	}
 	static void clear() {
-		system("cls");
+		std::cout << "\033[2J" << "\033[H";
 	}
 	static void pause_clear(const std::string& msg)
 	{
@@ -164,7 +168,7 @@ private:
 		}
 
 		void set_status() {
-			statusValue = get_status();
+			statusValue = Property::readStatus();
 		}
 
 		void apply_filters(Repository<Property>& repo) {
@@ -176,53 +180,60 @@ private:
 		}
 	};
 
-	int scroll(const std::vector<std::string>& s, const std::string choice, int cur = 0, const std::string str = "")
+	static int scroll(const std::vector<std::string>& s, const std::string choice, int cur = 0, const std::string str = "")
 	{
 		bool exit = false;
 
 		int count = s.size();
 
 		while (!exit) {
-			clear();
 			std::string result = str;
 
 			for (int i = 0; i < count; i++)
 				result += (i == cur ? choice : std::string("")) + s[i] + "\n";
-			std::cout << result;
+			
+			clear();
+			std::cout << result << std::flush;
 
 			int res = _getch();
-			//up
-			if (res == 72)
-			{
-				cur = (cur - 1 + count) % count;
-			}
-			//down
-			else if (res == 80)
-			{
-				cur = (cur + 1) % count;
-			}
-			else if (res == '\r')
-			{
-				exit = true;
-				return cur;
-			}
+			if (res == 72) cur = (cur - 1 + count) % count;
+			else if (res == 80) cur = (cur + 1) % count;
+			else if (res == '\r') return cur;
 		}
 	}
 
-	void view_prop(const Repository<Property>& default_repo)
+	static void find(const Repository<Property>& repo)
 	{
+		clear();
+		unsigned int id = InputReader::read<unsigned int>("Введите id искомого объявления: ", input_config::ERR_UINT);
+
+		bool isFound = repo.exists([&](const PropertyPtr& p) { return p->getId() == id; });
+
+		if (isFound)
+		{
+			std::cout << std::endl << *repo.get([&](const PropertyPtr& p) { return p->getId() == id; });
+			pause_clear("\nНажмите любую клавишу для продолжения.");
+		}
+		else {
+			pause_clear("\nОбъявление не найдено. Нажмите любую клавишу для продолжения.");
+		}
+	}
+
+	static void view_prop(const Repository<Property>& default_repo)
+	{
+		clear();
 		if (default_repo.count() <= 0) {
 			pause_clear("Нет объявлений. Нажмите любую клавишу для продолжения.");
 			return;
 		}
 
 		Filter filter;
-
 		bool is_asc = true;
 		int current = 0;
-		Repository<Property> repo = default_repo;
-		auto reset_repo = [&]() {repo = default_repo; current = 0; };
 		int choice = 0;
+		Repository<Property> repo = default_repo;
+		
+		auto reset_repo = [&]() {repo = default_repo; current = 0; };
 
 		bool exit = false;
 		while (!exit) {
@@ -237,17 +248,18 @@ private:
 			choice = scroll({
 				"Лево",
 				"Право",
-				"[По убыванию / По возрастанию]",
+				"Поиск\n",
+				"[По убыванию / По возрастанию]\n",
 				"Сортировать по цене",
 				"Сортировать по площади",
 				"Сортировать по количеству комнат",
 				"Сортировать по этажу",
-				"Сортировать по статусу",
+				"Сортировать по статусу\n",
 				"Фильтр по цене",
 				"Фильтр по площади",
 				"Фильтр по количеству комнат",
 				"Фильтр по этажу",
-				"Фильтр по статусу",
+				"Фильтр по статусу\n",
 				"Сбросить сортировки и фильтры",
 				"Назад"},
 				">", 
@@ -255,53 +267,53 @@ private:
 				repo[index]->to_str() + "\n" + std::to_string(current + 1) + "й из " + std::to_string(repo.count())+ "\n\n");
 
 			switch (choice) {
-			case 0: current = (current - 1 + repo.count()) % repo.count(); break;
-			case 1: current = (current + 1) % repo.count(); break;
-			case 2: is_asc = !is_asc; break;
-			case 3: Sort::by_price(repo);  current = 0; break;
-			case 4: Sort::by_area(repo);   current = 0; break;
-			case 5: Sort::by_rooms(repo);  current = 0; break;
-			case 6: Sort::by_floor(repo);  current = 0; break;
-			case 7: Sort::by_status(repo); current = 0; break;
-			case 8:  filter.flip_price();  if (filter.price)  filter.set_price_range();  break;
-			case 9: filter.flip_area();   if (filter.area)   filter.set_area_range();   break;
-			case 10: filter.flip_rooms();  if (filter.rooms)  filter.set_rooms_range();  break;
-			case 11: filter.flip_floor();  if (filter.floor)  filter.set_floor_range();  break;
-			case 12: filter.flip_status(); if (filter.status) filter.set_status();       break;
-			case 13: filter.default_filters(); reset_repo(); break;
-			case 14: exit = true; break;
+			case  0: current = (current - 1 + repo.count()) % repo.count(); break;
+			case  1: current = (current + 1) % repo.count(); break;
+			case  2: find(repo); break;
+			case  3: is_asc = !is_asc; break;
+			case  4: Sort::by_price(repo);  current = 0; break;
+			case  5: Sort::by_area(repo);   current = 0; break;
+			case  6: Sort::by_rooms(repo);  current = 0; break;
+			case  7: Sort::by_floor(repo);  current = 0; break;
+			case  8: Sort::by_status(repo); current = 0; break;
+			case  9: filter.flip_price();  if (filter.price)  filter.set_price_range();  break;
+			case 10: filter.flip_area();   if (filter.area)   filter.set_area_range();   break;
+			case 11: filter.flip_rooms();  if (filter.rooms)  filter.set_rooms_range();  break;
+			case 12: filter.flip_floor();  if (filter.floor)  filter.set_floor_range();  break;
+			case 13: filter.flip_status(); if (filter.status) filter.set_status();       break;
+			case 14: filter.default_filters(); reset_repo(); break;
+			case 15: exit = true; break;
 			default:break;
 			}
 
-			if (8 <= choice && choice <= 12)
-			{
+			if (8 <= choice && choice <= 12) {
 				reset_repo();
 				filter.apply_filters(repo);
 			}
 		}
 	}
 
-	void view_my_prop(std::shared_ptr<Realtor> realtor)
+	static void view_my_prop(RealtorPtr realtor)
 	{
 		Repository<Property> default_repo = property_repo;
 
-		default_repo.remove([&](const std::shared_ptr<Property>& r) { return r->getRealtorId() != realtor->id(); });
+		default_repo.remove([&](const PropertyPtr& r) { return r->getRealtorId() != realtor->id(); });
 
 		view_prop(default_repo);
 	}
 
-	void add_prop(std::shared_ptr<Realtor> realtor)
+	static void add_prop(RealtorPtr realtor)
 	{
 		Property prop = Property::create(id_gen_prop.next(), realtor->id());
 
 		property_repo.add(std::make_shared<Property>(prop), [&](const auto& obj) { return false; });
 	}
 
-	void edit_prop(std::shared_ptr<Realtor> realtor)
+	static void edit_prop(RealtorPtr realtor)
 	{
 		Repository<Property> default_repo = property_repo;
 
-		default_repo.remove([&](const std::shared_ptr<Property>& p) { return p->getRealtorId() != realtor->id(); });
+		default_repo.remove([&](const PropertyPtr& p) { return p->getRealtorId() != realtor->id(); });
 
 		if (default_repo.count() < 1) {
 			pause_clear("Нет объявлений. Нажмите любую клавишу для продолжения.");
@@ -310,62 +322,103 @@ private:
 
 		unsigned int id = InputReader::read<unsigned int>("Введите id редактированного объявления: ", input_config::ERR_UINT);
 
+		if (!default_repo.exists([&](const PropertyPtr& p) { return p->getId() == id; })) {
+			pause_clear("У вас нет такого объявления с таким id. Нажмите любую клавишу для продолжения.");
+			return;
+		}
 
-	}
+		auto edited = std::make_shared<Property>(
+			*default_repo.get([&](const PropertyPtr& p) { return p->getId() == id; })
+		);
 
-	void delete_prop(std::shared_ptr<Realtor> realtor)
-	{
-		unsigned int del_id = InputReader::read<unsigned int>(">");
-
-		bool isFound = property_repo.exists([&](const std::shared_ptr<Property>& p) { return p->getId() == del_id; });
-
-		//todo
-
-		std::cout << (isFound ? 
-			"Удален" :
-			"Не найден") << std::endl;
-
-		property_repo.remove([&](const std::shared_ptr<Property>& p) { return p->getId() == del_id; });
-	}
-
-	void realtor_prop(std::shared_ptr<Realtor> realtor)
-	{
+		int choice = 0;
 		bool exit = false;
+		while (!exit) {
+			std::vector<std::string> v = edited->to_lines();
+			v.erase(v.begin(), v.begin() + 2);
+			v.erase(v.end() - 2, v.end());
 
-		while (!exit)
-		{
-			std::cout << "Выберете операцию:\n";
-			std::cout << "1 - Просмотр объявлений\n";
-			std::cout << "2 - Добавление\n";
-			std::cout << "3 - Редактирование\n";
-			std::cout << "4 - Удаление\n";
-			std::cout << "0 - Назад\n";
+			v.push_back("Закончить редактирование");
+			v.push_back("Выход");
 
-			int choice = InputReader::read<int>(0, 4, ">");
-
+			choice = scroll(v, ">", choice, "Выберете поле для редактирования\n");
+			clear();
 			switch (choice)
 			{
-			case 1: view_my_prop(realtor); break;
-			case 2: add_prop(realtor); break;
-			case 3: edit_prop(realtor); break;
-			case 4: delete_prop(realtor); break;
-			case 0: exit = true; break;
+			case 0: edited->setTitle(Property::readTitle());break;
+			case 1: edited->setDescription(Property::readDescription());break;
+			case 2: edited->setAddress(Property::readAddress());break;
+			case 3: edited->setPrice(Property::readPrice());break;
+			case 4: edited->setRooms(Property::readRooms());break;
+			case 5:
+				//todo floor <= floortotal
+				edited->setFloor(Property::readFloor(edited->getFloorsTotal()));
+				break;
+			case 6: edited->setAreaTotal(Property::readAreaTotal());break;
+			case 7:
+				edited->setAreaLiving(Property::readAreaLiving(edited->getAreaTotal()));
+				break;
+			case 8:
+				edited->setAreaKitchen(Property::readAreaKitchen(edited->getAreaTotal()));
+				break;
+			case 9: edited->setType(Property::readType());break;
+			case 10:edited->setStatus(Property::readStatus()); break;
+			case 11: 
+				edited->setUpdatedAt(std::time(nullptr));
+				property_repo.update([&](const PropertyPtr& p) { return p->getId() == edited->getId(); }, edited);
+				return;
+			case 12: return;
 			default: break;
 			}
 		}
 	}
 
-	template<typename T>
-	static bool between(const T& a, const std::pair<T, T>& pair) {
-		return pair.first <= a && a <= pair.second;
+	static void delete_prop(RealtorPtr realtor)
+	{
+		clear();
+		unsigned int del_id = InputReader::read<unsigned int>("Введите id удаляемого объявления: ", input_config::ERR_UINT);
+
+		bool isFound = property_repo.exists([&](const PropertyPtr& p) { return p->getId() == del_id; });
+
+		property_repo.remove([&](const PropertyPtr& p) { return p->getId() == del_id; });
+
+		clear();
+		pause_clear(std::string((isFound ? "Объявление удалено" : "Объявление не найдено"))
+			+ ". Нажмите любую клавишу для продолжения.");
 	}
 
-	void realtor_all_prop()
+	static void realtor_prop(RealtorPtr realtor)
+	{
+		bool exit = false;
+
+		while (!exit)
+		{
+			int choice = scroll({
+				"Просмотр объявлений",
+				"Добавление",
+				"Редактирование",
+				"Удаление",
+				"Назад"
+				}, ">");
+
+			switch (choice)
+			{
+			case 0: view_my_prop(realtor); break;
+			case 1: add_prop(realtor); break;
+			case 2: edit_prop(realtor); break;
+			case 3: delete_prop(realtor); break;
+			case 4: exit = true; break;
+			default: break;
+			}
+		}
+	}
+
+	static void realtor_all_prop()
 	{
 		view_prop(property_repo);
 	}
 
-	void realtor_report()
+	static void realtor_report()
 	{
 		//создание отчета
 
@@ -374,7 +427,8 @@ private:
 		pause_clear("Нажмите любую клавишу для продолжения.");
 	}
 
-	void realtor(std::shared_ptr<Realtor> realtor)
+	//todo queue
+	static void realtor(RealtorPtr realtor)
 	{
 		bool exit = false;
 
@@ -398,12 +452,12 @@ private:
 		}
 	}
 
-	void admin(std::shared_ptr<Admin> admin)
+	static void admin(std::shared_ptr<Admin> admin)
 	{
 
 	}
 
-	void register_user()
+	static void register_user()
 	{
 		clear();
 		std::string login = InputReader::read<std::string>("Введите новый логин:");
@@ -425,7 +479,7 @@ private:
 		pause_clear("Успешно зарегистрированы. Нажмите любую клавишу для продолжения.");
 	}
 
-	void login()
+	static void login()
 	{
 		clear();
 		std::string login = InputReader::read<std::string>("Введите логин:");
@@ -448,8 +502,20 @@ private:
 		}
 	}
 
+	static void save_data()
+	{
+		realtor_storage.save(realtor_repo.getAll());
+		property_storage.save(property_repo.getAll());
+	}
 public:
-	void run()
+	static BOOL WINAPI ConsoleHandler(DWORD signal) {
+		if (signal == CTRL_CLOSE_EVENT || signal == CTRL_SHUTDOWN_EVENT) {
+			save_data();
+			return TRUE;
+		}
+		return FALSE;
+	}
+	static void run()
 	{
 		bool exit_program = false;
 		while (!exit_program) {
@@ -467,8 +533,13 @@ public:
 			default: clear(); break;
 			}
 		}
-
-		realtor_storage.save(realtor_repo.getAll());
-		property_storage.save(property_repo.getAll());
+		save_data();
 	}
 };
+
+IdGenerator Application::id_gen_prop{ "data/properties/id.bin" };
+StorageManager<Property> Application::property_storage{ "data/properties/properties.bin" };
+Repository<Property> Application::property_repo{ property_storage.load() };
+StorageManager<Realtor> Application::realtor_storage{ "data/realtors/realtors.bin" };
+Repository<Realtor> Application::realtor_repo{ realtor_storage.load() };
+AuthService Application::authService{ realtor_repo, "data/realtors/id.bin" };

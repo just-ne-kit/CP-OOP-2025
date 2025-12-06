@@ -9,7 +9,7 @@ AuthResult AuthService::login(const std::string& name, const std::string& passwo
 	}
 	else
 	{
-		out_user = m_realtorRepository.get([name](const std::shared_ptr<Realtor>& obj) { return name == obj->username(); });
+		out_user = m_realtorRepository.get([name](const RealtorPtr& obj) { return name == obj->username(); });
 		if (out_user == nullptr) return AuthResult::UserNotFound;
 		else if (PasswordHasher::encrypt(password) != out_user->hashedPassword()) return AuthResult::WrongPassword;
 	}
@@ -18,13 +18,15 @@ AuthResult AuthService::login(const std::string& name, const std::string& passwo
 }
 AuthResult AuthService::registerUser(const std::string& name, const std::string& password)
 {
-	if (m_realtorRepository.exists([name](const std::shared_ptr<Realtor>& obj) { return name == obj->username(); })) return AuthResult::AlreadyExists;
+	if (name == "admin") return AuthResult::AlreadyExists;
+
+	if (m_realtorRepository.exists([name](const RealtorPtr& obj) { return name == obj->username(); })) return AuthResult::AlreadyExists;
 
 	unsigned int id = m_usersIdGen.next();
 
-	std::shared_ptr<Realtor> new_user = std::make_shared<Realtor>(id, name, PasswordHasher::encrypt(password), "", "", "", "", 0);
+	RealtorPtr new_user = std::make_shared<Realtor>(id, name, PasswordHasher::encrypt(password), "", "", "", "", 0);
 
-	m_realtorRepository.add(new_user, [](const std::shared_ptr<Realtor>& obj) { return false; });
+	m_realtorRepository.add(new_user, [](const RealtorPtr& obj) { return false; });
 
 	return AuthResult::Success;
 }
