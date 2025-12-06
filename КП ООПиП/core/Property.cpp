@@ -4,7 +4,7 @@
 #include <iostream>
 #include <iomanip>
 
-using namespace prop_config;
+using namespace prop_cfg;
 
 Property::Property()
     : m_id(0), m_realtorId(0), m_price(0.0f),

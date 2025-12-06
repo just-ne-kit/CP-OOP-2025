@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace input_config
+namespace input_cfg
 {
     const std::string ERR_INT = "Необходимо ввести целое число";
     const std::string ERR_UINT = "Необходимо ввести целое число без знака";
@@ -9,36 +9,48 @@ namespace input_config
     const std::string ERR_STR = "Необходимо ввести строку";
 }
 
-namespace user_config
+namespace user_cfg
 {
     const std::size_t USERNAME_LEN = 32;
     const std::size_t HASHED_PASSWORD_LEN = 32;
 }
 
-namespace seller_config
+namespace seller_cfg
 {
-    const std::size_t NAME_LEN = 64;
-    const std::size_t EMAIL_LEN = 64;
+    const std::size_t NAME_MAX_LEN = 64;
+    const std::string NAME_ERR_MSG =
+        input_cfg::ERR_STR + std::string(" не превышающую ") +
+        std::to_string(NAME_MAX_LEN - 1) + " символов\n";
+    
+    const std::size_t EMAIL_MAX_LEN = 64;
+    const std::string EMAIL_ERR_MSG =
+        input_cfg::ERR_STR + std::string(" не превышающую ") +
+        std::to_string(EMAIL_MAX_LEN - 1) + " символов\n";
+    
+    const std::size_t PHONE_MAX_LEN = 32;
+    const std::string PHONE_ERR_MSG =
+        input_cfg::ERR_STR + std::string(" не превышающую ") +
+        std::to_string(PHONE_MAX_LEN - 1) + " символов\n";
 }
 
-namespace prop_config
+namespace prop_cfg
 {
     // Заголовок
     const std::size_t TITLE_MAX_LEN = 64;
     const std::string TITLE_ERR_MSG =
-        input_config::ERR_STR + std::string(" не превышающую ") +
+        input_cfg::ERR_STR + std::string(" не превышающую ") +
         std::to_string(TITLE_MAX_LEN - 1) + " символов\n";
 
     // Описание
     const std::size_t DESCRIPTION_MAX_LEN = 256;
     const std::string DESCRIPTION_ERR_MSG =
-        input_config::ERR_STR + std::string(" не превышающую ") +
+        input_cfg::ERR_STR + std::string(" не превышающую ") +
         std::to_string(DESCRIPTION_MAX_LEN - 1) + " символов\n";
 
     // Адрес
     const std::size_t ADDRESS_MAX_LEN = 128;
     const std::string ADDRESS_ERR_MSG =
-        input_config::ERR_STR + std::string(" не превышающую ") +
+        input_cfg::ERR_STR + std::string(" не превышающую ") +
         std::to_string(ADDRESS_MAX_LEN - 1) + " символов\n";
 
     // Цена
@@ -47,7 +59,7 @@ namespace prop_config
     const std::string PRICE_MIN_MSG = "Введите минимальную стоимость(BYN): ";
     const std::string PRICE_MAX_MSG = "Введите максимальную стоимость(BYN): ";
     const std::string PRICE_ERR_MSG =
-        input_config::ERR_FLOAT + std::string(" от ") +
+        input_cfg::ERR_FLOAT + std::string(" от ") +
         std::to_string(PRICE_MIN) + " до " + std::to_string(PRICE_MAX) + "\n";
 
     // Общая площадь
@@ -56,7 +68,7 @@ namespace prop_config
     const std::string AREA_TOTAL_MIN_MSG = "Введите минимальную площадь(кв. м): ";
     const std::string AREA_TOTAL_MAX_MSG = "Введите максимальную площадь(кв. м): ";
     const std::string AREA_TOTAL_ERR_MSG =
-        input_config::ERR_FLOAT + std::string(" от ") +
+        input_cfg::ERR_FLOAT + std::string(" от ") +
         std::to_string(AREA_TOTAL_MIN) + " до " + std::to_string(AREA_TOTAL_MAX) + "\n";
 
     // Жилая площадь
@@ -65,7 +77,7 @@ namespace prop_config
     const std::string AREA_LIVING_MIN_MSG = "Введите минимальную площадь(кв. м): ";
     const std::string AREA_LIVING_MAX_MSG = "Введите максимальную площадь(кв. м): ";
     const std::string AREA_LIVING_ERR_MSG =
-        input_config::ERR_FLOAT + std::string(" от ") +
+        input_cfg::ERR_FLOAT + std::string(" от ") +
         std::to_string(AREA_LIVING_MIN) + " до " + std::to_string(AREA_LIVING_MAX) + "\n";
 
     // Площадь кухни
@@ -74,7 +86,7 @@ namespace prop_config
     const std::string AREA_KITCHEN_MIN_MSG = "Введите минимальную площадь(кв. м): ";
     const std::string AREA_KITCHEN_MAX_MSG = "Введите максимальную площадь(кв. м): ";
     const std::string AREA_KITCHEN_ERR_MSG =
-        input_config::ERR_FLOAT + std::string(" от ") +
+        input_cfg::ERR_FLOAT + std::string(" от ") +
         std::to_string(AREA_KITCHEN_MIN) + " до " + std::to_string(AREA_KITCHEN_MAX) + "\n";
 
     // Количество комнат
@@ -83,7 +95,7 @@ namespace prop_config
     const std::string ROOMS_MIN_MSG = "Введите минимальное количество комнат: ";
     const std::string ROOMS_MAX_MSG = "Введите максимальное количество комнат: ";
     const std::string ROOMS_ERR_MSG =
-        input_config::ERR_UINT + std::string(" от ") +
+        input_cfg::ERR_UINT + std::string(" от ") +
         std::to_string(ROOMS_MIN) + " до " + std::to_string(ROOMS_MAX) + "\n";
 
     // Этаж
@@ -92,7 +104,7 @@ namespace prop_config
     const std::string FLOOR_MIN_MSG = "Введите минимальный этаж: ";
     const std::string FLOOR_MAX_MSG = "Введите максимальный этаж: ";
     const std::string FLOOR_ERR_MSG =
-        input_config::ERR_UINT + std::string(" от ") +
+        input_cfg::ERR_UINT + std::string(" от ") +
         std::to_string(FLOOR_MIN) + " до " + std::to_string(FLOOR_MAX) + "\n";
 
     // Всего этажей
@@ -101,7 +113,7 @@ namespace prop_config
     const std::string FLOORS_TOTAL_MIN_MSG = "Введите минимальное количество этажей: ";
     const std::string FLOORS_TOTAL_MAX_MSG = "Введите максимальное количество этажей: ";
     const std::string FLOORS_TOTAL_ERR_MSG =
-        input_config::ERR_UINT + std::string(" от ") +
+        input_cfg::ERR_UINT + std::string(" от ") +
         std::to_string(FLOORS_TOTAL_MIN) + " до " + std::to_string(FLOORS_TOTAL_MAX) + "\n";
 
     // Тип недвижимости
@@ -110,7 +122,7 @@ namespace prop_config
     const std::string TYPE_MIN_MSG = "";
     const std::string TYPE_MAX_MSG = "";
     const std::string TYPE_ERR_MSG =
-        input_config::ERR_INT + std::string(" от ") +
+        input_cfg::ERR_INT + std::string(" от ") +
         std::to_string(TYPE_MIN) + " до " + std::to_string(TYPE_MAX) + "\n";
 
     // Статус
@@ -119,6 +131,6 @@ namespace prop_config
     const std::string STATUS_MIN_MSG = "";
     const std::string STATUS_MAX_MSG = "";
     const std::string STATUS_ERR_MSG =
-        input_config::ERR_INT + std::string(" от ") +
+        input_cfg::ERR_INT + std::string(" от ") +
         std::to_string(STATUS_MIN) + " до " + std::to_string(STATUS_MAX) + "\n";
 }

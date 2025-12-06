@@ -73,9 +73,6 @@
     <ClInclude Include="id\IdGenerator.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="core\Ad.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="repositories\Repository.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -83,9 +80,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ui\ConsoleInterface.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="core\Client.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="core\Property.h">

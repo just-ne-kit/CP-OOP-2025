@@ -18,8 +18,8 @@ class User
 {
 protected:
 	unsigned int m_id;
-	char m_username[user_config::USERNAME_LEN];
-	char m_hashedPassword[user_config::HASHED_PASSWORD_LEN];
+	char m_username[user_cfg::USERNAME_LEN];
+	char m_hashedPassword[user_cfg::HASHED_PASSWORD_LEN];
 public:
 	User(unsigned int id,
 		 const std::string &login,

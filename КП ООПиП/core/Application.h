@@ -133,38 +133,38 @@ private:
 
 		void set_price_range() {
 			priceRange = set_pair<float>(
-				prop_config::PRICE_MIN,
-				prop_config::PRICE_MAX,
-				prop_config::PRICE_MIN_MSG,
-				prop_config::PRICE_MAX_MSG,
-				prop_config::PRICE_ERR_MSG);
+				prop_cfg::PRICE_MIN,
+				prop_cfg::PRICE_MAX,
+				prop_cfg::PRICE_MIN_MSG,
+				prop_cfg::PRICE_MAX_MSG,
+				prop_cfg::PRICE_ERR_MSG);
 		}
 
 		void set_area_range() {
 			areaRange = set_pair<float>(
-				prop_config::AREA_TOTAL_MIN,
-				prop_config::AREA_TOTAL_MAX,
-				prop_config::AREA_TOTAL_MIN_MSG,
-				prop_config::AREA_TOTAL_MAX_MSG,
-				prop_config::AREA_TOTAL_ERR_MSG);
+				prop_cfg::AREA_TOTAL_MIN,
+				prop_cfg::AREA_TOTAL_MAX,
+				prop_cfg::AREA_TOTAL_MIN_MSG,
+				prop_cfg::AREA_TOTAL_MAX_MSG,
+				prop_cfg::AREA_TOTAL_ERR_MSG);
 		}
 
 		void set_rooms_range() {
 			roomsRange = set_pair<unsigned int>(
-				prop_config::ROOMS_MIN,
-				prop_config::ROOMS_MAX,
-				prop_config::ROOMS_MIN_MSG,
-				prop_config::ROOMS_MAX_MSG,
-				prop_config::ROOMS_ERR_MSG);
+				prop_cfg::ROOMS_MIN,
+				prop_cfg::ROOMS_MAX,
+				prop_cfg::ROOMS_MIN_MSG,
+				prop_cfg::ROOMS_MAX_MSG,
+				prop_cfg::ROOMS_ERR_MSG);
 		}
 
 		void set_floor_range() {
 			floorRange = set_pair<unsigned int>(
-				prop_config::FLOOR_MIN,
-				prop_config::FLOOR_MAX,
-				prop_config::FLOOR_MIN_MSG,
-				prop_config::FLOOR_MAX_MSG,
-				prop_config::FLOOR_ERR_MSG);
+				prop_cfg::FLOOR_MIN,
+				prop_cfg::FLOOR_MAX,
+				prop_cfg::FLOOR_MIN_MSG,
+				prop_cfg::FLOOR_MAX_MSG,
+				prop_cfg::FLOOR_ERR_MSG);
 		}
 
 		void set_status() {
@@ -205,7 +205,7 @@ private:
 	static void find(const Repository<Property>& repo)
 	{
 		clear();
-		unsigned int id = InputReader::read<unsigned int>("Введите id искомого объявления: ", input_config::ERR_UINT);
+		unsigned int id = InputReader::read<unsigned int>("Введите id искомого объявления: ", input_cfg::ERR_UINT);
 
 		bool isFound = repo.exists([&](const PropertyPtr& p) { return p->getId() == id; });
 
@@ -320,7 +320,7 @@ private:
 			return;
 		}
 
-		unsigned int id = InputReader::read<unsigned int>("Введите id редактированного объявления: ", input_config::ERR_UINT);
+		unsigned int id = InputReader::read<unsigned int>("Введите id редактированного объявления: ", input_cfg::ERR_UINT);
 
 		if (!default_repo.exists([&](const PropertyPtr& p) { return p->getId() == id; })) {
 			pause_clear("У вас нет такого объявления с таким id. Нажмите любую клавишу для продолжения.");
@@ -376,7 +376,7 @@ private:
 	static void delete_prop(RealtorPtr realtor)
 	{
 		clear();
-		unsigned int del_id = InputReader::read<unsigned int>("Введите id удаляемого объявления: ", input_config::ERR_UINT);
+		unsigned int del_id = InputReader::read<unsigned int>("Введите id удаляемого объявления: ", input_cfg::ERR_UINT);
 
 		bool isFound = property_repo.exists([&](const PropertyPtr& p) { return p->getId() == del_id; });
 

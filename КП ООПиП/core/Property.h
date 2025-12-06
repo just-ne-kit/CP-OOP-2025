@@ -6,6 +6,7 @@
 #include <ctime>
 #include <memory>
 #include "config.h"
+#include "Seller.h"
 
 enum class PropertyType {
     Apartment,
@@ -25,20 +26,26 @@ class Property {
 private:
     unsigned int m_id;                                      // ID
     unsigned int m_realtorId;                               // ID риэлтора
-    char m_title[prop_config::TITLE_MAX_LEN];               // Заголовок объявления
-    char m_description[prop_config::DESCRIPTION_MAX_LEN];   // Описание
-    char m_address[prop_config::ADDRESS_MAX_LEN];           // Адрес
+    
+    char m_title[prop_cfg::TITLE_MAX_LEN];               // Заголовок объявления
+    char m_description[prop_cfg::DESCRIPTION_MAX_LEN];   // Описание
+    char m_address[prop_cfg::ADDRESS_MAX_LEN];           // Адрес
+    
     float m_price;                                          // Цена
     float m_areaTotal;                                      // Общая площадь
     float m_areaLiving;                                     // Жилая площадь
     float m_areaKitchen;                                    // Площадь кухни
+    
     unsigned int m_rooms;                                   // Количество комнат
     unsigned int m_floor;                                   // Этаж
     unsigned int m_floorsTotal;                             // Всего этажей в доме
-    PropertyType m_type;                                    // Тип недвижимости
-    Status m_status;                                        // Статус объявления
+    
     std::time_t m_createdAt;                                // Дата создания
     std::time_t m_updatedAt;                                // Дата обновления
+    
+    PropertyType m_type;                                    // Тип недвижимости
+    Status m_status;                                        // Статус объявления
+    Seller m_seller;
 
 public:
     Property();
