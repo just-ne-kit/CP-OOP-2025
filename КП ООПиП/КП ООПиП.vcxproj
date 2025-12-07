@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\Admin.cpp" />
     <ClCompile Include="core\Client.cpp" />
     <ClCompile Include="core\Property.cpp" />
     <ClCompile Include="core\Realtor.cpp" />

@@ -9,9 +9,10 @@ private:
 
 public:
 	Admin() {
-		strcpy_s(m_hashedPassword, PasswordHasher::encrypt(auth_cfg::ADMIN_PASSWORD).c_str());
+		strcpy_s(hashed_password_, PasswordHasher::encrypt(auth_cfg::ADMIN_PASSWORD).c_str());
 	}
 	Role role() const override {
 		return Role::AdminRole;
 	}
+	virtual std::vector<std::string> to_lines() const override;
 };

@@ -3,6 +3,7 @@
 #include "User.h"
 
 class Client : public User {
+
 public:
 	Client();
 	Client(unsigned int id,
@@ -13,5 +14,7 @@ public:
 
 	void serialize(std::ofstream& ofs) const;
 	void deserialize(std::ifstream& ifs);
+
+	virtual std::vector<std::string> to_lines() const override;
 };
 using ClientPtr = std::shared_ptr<Client>;

@@ -51,9 +51,9 @@ Realtor::Realtor(const Realtor &other)
 
 void Realtor::serialize(std::ofstream &ofs) const
 {
-    ofs.write(reinterpret_cast<const char*>(&m_id), sizeof(m_id));
-    ofs.write(reinterpret_cast<const char*>(m_username), sizeof(m_username));
-    ofs.write(reinterpret_cast<const char*>(m_hashedPassword), sizeof(m_hashedPassword));
+    ofs.write(reinterpret_cast<const char*>(&id_), sizeof(id_));
+    ofs.write(reinterpret_cast<const char*>(username_), sizeof(username_));
+    ofs.write(reinterpret_cast<const char*>(hashed_password_), sizeof(hashed_password_));
 
     ofs.write(reinterpret_cast<const char*>(m_lastName), sizeof(m_lastName));
     ofs.write(reinterpret_cast<const char*>(m_firstName), sizeof(m_firstName));
@@ -66,9 +66,9 @@ void Realtor::serialize(std::ofstream &ofs) const
     ofs.write(reinterpret_cast<const char*>(m_properties.data()), adsSize * sizeof(int));
 }
 void Realtor::deserialize(std::ifstream& ifs) {
-    ifs.read(reinterpret_cast<char*>(&m_id), sizeof(m_id));
-    ifs.read(reinterpret_cast<char*>(m_username), sizeof(m_username));
-    ifs.read(reinterpret_cast<char*>(m_hashedPassword), sizeof(m_hashedPassword));
+    ifs.read(reinterpret_cast<char*>(&id_), sizeof(id_));
+    ifs.read(reinterpret_cast<char*>(username_), sizeof(username_));
+    ifs.read(reinterpret_cast<char*>(hashed_password_), sizeof(hashed_password_));
     ifs.read(reinterpret_cast<char*>(m_lastName), sizeof(m_lastName));
     ifs.read(reinterpret_cast<char*>(m_firstName), sizeof(m_firstName));
     ifs.read(reinterpret_cast<char*>(m_middleName), sizeof(m_middleName));
@@ -122,4 +122,9 @@ void Realtor::setPhoneNumber(unsigned int phoneNumber) {
 Role Realtor::role() const
 {
     return Role::RealtorRole;
+}
+
+std::vector<std::string> Realtor::to_lines() const
+{
+    return std::vector<std::string>();
 }

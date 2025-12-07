@@ -27,7 +27,7 @@ AuthResult AuthService::login(const std::string& username, const std::string& pa
             return obj && obj->username() == username;});
 
         if (realtor) {
-            if (PasswordHasher::encrypt(password) != realtor->hashedPassword()) 
+            if (PasswordHasher::encrypt(password) != realtor->hashed_password()) 
                 return AuthResult::WrongPassword;
             
             out_user = realtor;
@@ -40,7 +40,7 @@ AuthResult AuthService::login(const std::string& username, const std::string& pa
             return obj && obj->username() == username; });
 
         if (client) {
-            if (PasswordHasher::encrypt(password) != client->hashedPassword())
+            if (PasswordHasher::encrypt(password) != client->hashed_password())
                 return AuthResult::WrongPassword;
 
             out_user = client;

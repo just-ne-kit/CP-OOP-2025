@@ -51,6 +51,8 @@ public:
 	void setPhoneNumber(unsigned int phoneNumber);
 
 	Role role() const override;
+
+	virtual std::vector<std::string> to_lines() const override;
 };
 
 using RealtorPtr = std::shared_ptr<Realtor>;

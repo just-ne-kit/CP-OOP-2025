@@ -22,3 +22,8 @@ void Client::serialize(std::ofstream& ofs) const {
 void Client::deserialize(std::ifstream& ifs) {
 
 }
+
+std::vector<std::string> Client::to_lines() const
+{
+	return std::vector<std::string>();
+}
