@@ -2,6 +2,8 @@
 
 #include "User.h"
 #include "Property.h"
+#include "Request.h"
+#include "Client.h"
 #include <fstream>
 #include <memory>
 #include "../privileges/Privileges.h"
@@ -30,6 +32,10 @@ public:
 	void editProperty(Repository<Property>& repo) override ;
 	void deleteProperty(Repository<Property>& repo) override ;
 	void report(Repository<Property>& repo) override ;
+
+	void viewRequests(Repository<Request>& request_repo,
+		Repository<Property>& property_repo,
+		Repository<Client>& client_repo);
 };
 
 using RealtorPtr = std::shared_ptr<Realtor>;

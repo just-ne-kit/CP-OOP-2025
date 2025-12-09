@@ -62,18 +62,10 @@ void Client::viewBought(const Repository<Property>& repo, const Repository<Reque
 {
     Repository<Property> boughtRepo;
 
-    Repository<Request> reqRepo = request_repo;
-    reqRepo.remove([&](const RequestPtr& r) { return r->client_id() != id_; });
-
-    for (const auto& req : reqRepo.getAll())
+    // фильтруем только купленные этим клиентом объекты
+    for (const auto& prop : repo.getAll())
     {
-        auto prop = repo.get([&](const PropertyPtr& p) {
-            return p->getStatus() == Status::Sold
-                && p->getId() == req->property_id()
-                && p->getClientId() == id_;
-            });
-
-        if (prop) {
+        if (prop->getStatus() == Status::Sold && prop->getClientId() == id_) {
             boughtRepo.add(prop, [&](const PropertyPtr& p) {
                 return p->getId() == prop->getId();
                 });

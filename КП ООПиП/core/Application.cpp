@@ -80,6 +80,7 @@ void Application::realtor(RealtorPtr realtor) {
         int choice = ConsoleUI::scroll({
             "Мои объявления",
             "Все объявления",
+            "Заявки",
             "Создать отчет",
             "Выйти из учетной записи"
             }, ">");
@@ -87,8 +88,9 @@ void Application::realtor(RealtorPtr realtor) {
         switch (choice) {
         case 0: realtor_prop(realtor); break;
         case 1: realtor->viewAllProperties(property_repo); break;
-        case 2: realtor_report(); break;
-        case 3: exit = true; break;
+        case 2: realtor->viewRequests(request_repo, property_repo, client_repo); break;
+        case 3: realtor_report(); break;
+        case 4: exit = true; break;
         default: break;
         }
     }
@@ -159,7 +161,7 @@ void Application::admin_realtor(AdminPtr admin)
             "Просмотр риэлторов",
             "Создать риэлтора",
             "Удалить риэлтора",
-            "Выйти из учетной записи"
+            "Назад"
             }, ">");
 
         switch (choice) {
@@ -185,9 +187,9 @@ void Application::admin(AdminPtr admin) {
             }, ">");
 
         switch (choice) {
-        case 0: break;
+        case 0: admin_realtor(admin); break;
         case 1: admin_prop(admin); break;
-        case 2: break;
+        case 2: admin->viewClients(client_repo); break;
         case 3: admin_report(); break;
         case 4: exit = true; break;
         default: break;
@@ -224,6 +226,8 @@ void Application::login() {
 void Application::save_data() {
     realtor_storage.save(realtor_repo.getAll());
     property_storage.save(property_repo.getAll());
+    client_storage.save(client_repo.getAll());
+    request_storage.save(request_repo.getAll());
 }
 
 // ================== Console Handler ==================
