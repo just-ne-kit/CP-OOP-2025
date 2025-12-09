@@ -114,12 +114,10 @@ int main() {
 		return -1;
 	}
 	
-
-	//todo setprec(2)
 #endif
-
+	Application app;
 	SetConsoleCtrlHandler(Application::ConsoleHandler, TRUE);
-	Application::run();
+	app.run();
 
 	return 0;
 }

@@ -26,7 +26,8 @@ class Property {
 private:
     unsigned int m_id;                                      // ID
     unsigned int m_realtorId;                               // ID риэлтора
-    
+    unsigned int m_clientId;                               // ID покупателя
+
     char m_title[prop_cfg::TITLE_MAX_LEN];               // Заголовок объявления
     char m_description[prop_cfg::DESCRIPTION_MAX_LEN];   // Описание
     char m_address[prop_cfg::ADDRESS_MAX_LEN];           // Адрес
@@ -63,13 +64,15 @@ public:
              unsigned int floorsTotal,
              PropertyType type,
              Status status,
-             unsigned int realtorId);
+             unsigned int realtorId,
+        unsigned int clientId);
 
     void serialize(std::ofstream& ofs) const;
     void deserialize(std::ifstream& ifs);
 
     unsigned int getId() const;
     unsigned int getRealtorId() const;
+    unsigned int getClientId() const;
     const char* getTitle() const;
     const char* getDescription() const;
     const char* getAddress() const;
@@ -87,6 +90,7 @@ public:
 
     void setId(unsigned int id);
     void setRealtorId(unsigned int id);
+    void setClientId(unsigned int id);
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     void setAddress(const std::string& address);

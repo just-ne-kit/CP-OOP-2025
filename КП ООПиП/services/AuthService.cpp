@@ -15,7 +15,7 @@ bool AuthService::username_exists(const std::string& username) {
 AuthResult AuthService::login(const std::string& username, const std::string& password, std::shared_ptr<User>& out_user)
 {
     if (username == auth_cfg::ADMIN_NAME) {
-        if (PasswordHasher::encrypt(password) != auth_cfg::ADMIN_PASSWORD) 
+        if (PasswordHasher::encrypt(password) != PasswordHasher::encrypt(auth_cfg::ADMIN_PASSWORD))
             return AuthResult::WrongPassword;
         
         out_user = std::make_shared<Admin>();

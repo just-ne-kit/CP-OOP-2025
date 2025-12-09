@@ -34,6 +34,7 @@ public:
     }
 
     bool add(const std::shared_ptr<T>& obj, const Predicate& pred) {
+        if (!obj) return false;
         if (!exists(pred)) {
             m_objects.push_back(obj);
             return true;

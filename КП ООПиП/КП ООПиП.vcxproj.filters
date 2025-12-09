@@ -45,6 +45,12 @@
     <ClCompile Include="core\Admin.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="services\Sort.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Application.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\realtors\realtors.bin">
@@ -63,6 +69,9 @@
       <Filter>Файлы ресурсов</Filter>
     </None>
     <None Include="data\clients\clients.bin">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="data\requests\requests.bin">
       <Filter>Файлы ресурсов</Filter>
     </None>
   </ItemGroup>
@@ -107,6 +116,24 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="core\Client.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="filters\PropertyFilter.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ConsoleUI.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="privileges\Privileges.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="services\PropertyViewer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="services\Sort.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Request.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

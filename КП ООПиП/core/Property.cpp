@@ -7,7 +7,7 @@
 using namespace prop_cfg;
 
 Property::Property()
-    : m_id(0), m_realtorId(0), m_price(0.0f),
+    : m_id(0), m_realtorId(0), m_clientId(0), m_price(0.0f),
       m_areaTotal(0.0f), m_areaLiving(0.0f), m_areaKitchen(0.0f),
       m_rooms(0), m_floor(0), m_floorsTotal(0),
       m_type(PropertyType::Apartment), m_status(Status::Active),
@@ -32,8 +32,9 @@ Property::Property(unsigned int id,
                    unsigned int floorsTotal,
                    PropertyType type,
                    Status status,
-                   unsigned int realtorId)
-    : m_id(id), m_realtorId(realtorId), m_price(static_cast<float>(price)),
+                   unsigned int realtorId,
+                   unsigned int clientId)
+    : m_id(id), m_realtorId(realtorId), m_clientId(), m_price(static_cast<float>(price)),
       m_areaTotal(areaTotal), m_areaLiving(areaLiving), m_areaKitchen(areaKitchen),
       m_rooms(rooms), m_floor(floor), m_floorsTotal(floorsTotal),
       m_type(type), m_status(status),
@@ -52,6 +53,7 @@ Property::Property(unsigned int id,
 void Property::serialize(std::ofstream& ofs) const {
     ofs.write(reinterpret_cast<const char*>(&m_id), sizeof(m_id));
     ofs.write(reinterpret_cast<const char*>(&m_realtorId), sizeof(m_realtorId));
+    ofs.write(reinterpret_cast<const char*>(&m_clientId), sizeof(m_clientId));
     ofs.write(reinterpret_cast<const char*>(m_title), sizeof(m_title));
     ofs.write(reinterpret_cast<const char*>(m_description), sizeof(m_description));
     ofs.write(reinterpret_cast<const char*>(m_address), sizeof(m_address));
@@ -75,6 +77,7 @@ void Property::serialize(std::ofstream& ofs) const {
 void Property::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(&m_id), sizeof(m_id));
     ifs.read(reinterpret_cast<char*>(&m_realtorId), sizeof(m_realtorId));
+    ifs.read(reinterpret_cast<char*>(&m_clientId), sizeof(m_clientId));
     ifs.read(reinterpret_cast<char*>(m_title), sizeof(m_title));
     ifs.read(reinterpret_cast<char*>(m_description), sizeof(m_description));
     ifs.read(reinterpret_cast<char*>(m_address), sizeof(m_address));
@@ -109,25 +112,31 @@ void Property::setSeller(const Seller& seller) { m_seller = seller; }
 
 unsigned int Property::getId() const { return m_id; }
 unsigned int Property::getRealtorId() const { return m_realtorId; }
+unsigned int Property::getClientId() const { return m_clientId; }
+unsigned int Property::getRooms() const { return m_rooms; }
+unsigned int Property::getFloor() const { return m_floor; }
+unsigned int Property::getFloorsTotal() const { return m_floorsTotal; }
+
 const char* Property::getTitle() const { return m_title; }
 const char* Property::getDescription() const { return m_description; }
 const char* Property::getAddress() const { return m_address; }
+
 float Property::getPrice() const { return m_price; }
 float Property::getAreaTotal() const { return m_areaTotal; }
 float Property::getAreaLiving() const { return m_areaLiving; }
 float Property::getAreaKitchen() const { return m_areaKitchen; }
-unsigned int Property::getRooms() const { return m_rooms; }
-unsigned int Property::getFloor() const { return m_floor; }
-unsigned int Property::getFloorsTotal() const { return m_floorsTotal; }
+
 PropertyType Property::getType() const { return m_type; }
 Status Property::getStatus() const { return m_status; }
 std::time_t Property::getCreatedAt() const { return m_createdAt; }
 std::time_t Property::getUpdatedAt() const { return m_updatedAt; }
 
-void Property::setId(unsigned int id)
-{
-    m_id = id;
-}
+void Property::setId(unsigned int id) { m_id = id; }
+void Property::setClientId(unsigned int id) { m_clientId = id; }
+void Property::setRealtorId(unsigned int realtorId) { m_realtorId = realtorId; }
+void Property::setRooms(unsigned int rooms) { m_rooms = rooms; }
+void Property::setFloor(unsigned int floor) { m_floor = floor; }
+void Property::setFloorsTotal(unsigned int floors) { m_floorsTotal = floors; }
 
 void Property::setTitle(const std::string& title) {
     std::strncpy(m_title, title.c_str(), sizeof(m_title) - 1);
@@ -141,26 +150,17 @@ void Property::setAddress(const std::string& address) {
     std::strncpy(m_address, address.c_str(), sizeof(m_address) - 1);
     m_address[sizeof(m_address) - 1] = '\0';
 }
-void Property::setPrice(float price) { m_price = static_cast<float>(price); }
 
+void Property::setPrice(float price) { m_price = static_cast<float>(price); }
 void Property::setAreaTotal(float area) { m_areaTotal = area; }
 void Property::setAreaLiving(float area) { m_areaLiving = area; }
 void Property::setAreaKitchen(float area) { m_areaKitchen = area; }
-void Property::setRooms(unsigned int rooms) { m_rooms = rooms; }
-void Property::setFloor(unsigned int floor) { m_floor = floor; }
-void Property::setFloorsTotal(unsigned int floors) { m_floorsTotal = floors; }
+
 void Property::setType(PropertyType type) { m_type = type; }
 void Property::setStatus(Status status) { m_status = status; }
-void Property::setRealtorId(unsigned int realtorId) { m_realtorId = realtorId; }
 void Property::setCreatedAt(std::time_t createdAt) { m_createdAt = createdAt; }
 void Property::setUpdatedAt(std::time_t updatedAt) { m_updatedAt = updatedAt; }
 
-unsigned int Property::readRooms() {
-    return InputReader::read<unsigned int>(
-        ROOMS_MIN, ROOMS_MAX,
-        "Введите количество комнат: ",
-        ROOMS_ERR_MSG);
-}
 
 std::string Property::readTitle() {
      return InputReader::read<std::string>(
@@ -168,14 +168,12 @@ std::string Property::readTitle() {
         "Введите заголовок объявления: ",
         TITLE_ERR_MSG);
 }
-
 std::string Property::readDescription() {
     return InputReader::read<std::string>(
         DESCRIPTION_MAX_LEN - 1,
         "Введите описание: ",
         DESCRIPTION_ERR_MSG);
 }
-
 std::string Property::readAddress() {
     return InputReader::read<std::string>(
         ADDRESS_MAX_LEN - 1,
@@ -189,45 +187,47 @@ float Property::readPrice() {
         "Введите цену (BYN): ",
         PRICE_ERR_MSG);
 }
-
 float Property::readAreaTotal() {
     return InputReader::read<float>(
         AREA_TOTAL_MIN, AREA_TOTAL_MAX,
         "Введите общую площадь (кв. м): ",
         AREA_TOTAL_ERR_MSG);
 }
-
-float Property::readAreaLiving(float areaTotal) {
+float Property::readAreaLiving(float max_area) {
     while (true) {
         float living = InputReader::read<float>(
             AREA_LIVING_MIN, AREA_LIVING_MAX,
             "Введите жилую площадь (кв. м): ",
             AREA_LIVING_ERR_MSG);
-        if (living <= areaTotal) return living;
-        std::cout << "Ошибка. Жилая площадь не может превышать общую!" << std::endl;
+        if (living <= max_area) return living;
+        std::cout << "Ошибка. Жилая площадь не может превышать " << max_area << " (кв. м)" << std::endl;
     }
 }
-
-float Property::readAreaKitchen(float areaTotal) {
+float Property::readAreaKitchen(float max_area) {
     while (true) {
         float kitchen = InputReader::read<float>(
             AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
             "Введите площадь кухни (кв. м): ",
             AREA_KITCHEN_ERR_MSG);
 
-        if (kitchen <= areaTotal) return kitchen;
+        if (kitchen <= max_area) return kitchen;
 
-        std::cout << "Ошибка. Площадь кухни не может превышать общую!" << std::endl;
+        std::cout << "Ошибка. Площадь кухни не может превышать " << max_area << " (кв. м)" << std::endl;
     }
 }
 
+unsigned int Property::readRooms() {
+    return InputReader::read<unsigned int>(
+        ROOMS_MIN, ROOMS_MAX,
+        "Введите количество комнат: ",
+        ROOMS_ERR_MSG);
+}
 unsigned int Property::readFloorsTotal() {
     return InputReader::read<unsigned int>(
         FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
         "Введите количество этажей в доме: ",
         FLOORS_TOTAL_ERR_MSG);
 }
-
 unsigned int Property::readFloor(unsigned int floorsTotal) {
     while (true) {
         unsigned int floor = InputReader::read<unsigned int>(
@@ -235,7 +235,7 @@ unsigned int Property::readFloor(unsigned int floorsTotal) {
             "Введите этаж: ",
             FLOOR_ERR_MSG);
         if (floor <= floorsTotal) return floor;
-        std::cout << "Ошибка. Этаж не может быть больше количества этажей!" << std::endl;
+        std::cout << "Ошибка. Этаж не может быть больше количества этажей" << std::endl;
     }
 }
 
@@ -252,7 +252,6 @@ PropertyType Property::readType() {
 
     return static_cast<PropertyType>(typeChoice - 1);
 }
-
 Status Property::readStatus() {
     std::cout << "Выберите статус объявления:\n";
     std::cout << "1 - Активно\n";
@@ -273,16 +272,16 @@ Property Property::create(unsigned int id, unsigned int realtorId) {
     prop.m_id = id;
     prop.m_realtorId = realtorId;
 
-    prop.m_rooms = readRooms();
     prop.setTitle(readTitle());
     prop.setDescription(readDescription());
     prop.setAddress(readAddress());
-    prop.m_price = readPrice();
 
+    prop.m_price = readPrice();
     prop.m_areaTotal = readAreaTotal();
     prop.m_areaLiving = readAreaLiving(prop.m_areaTotal);
-    prop.m_areaKitchen = readAreaKitchen(prop.m_areaTotal);
+    prop.m_areaKitchen = readAreaKitchen(prop.m_areaTotal - prop.m_areaLiving);
 
+    prop.m_rooms = readRooms();
     prop.m_floorsTotal = readFloorsTotal();
     prop.m_floor = readFloor(prop.m_floorsTotal);
 
@@ -292,7 +291,7 @@ Property Property::create(unsigned int id, unsigned int realtorId) {
     prop.m_createdAt = std::time(nullptr);
     prop.m_updatedAt = std::time(nullptr);
 
-    std::cout << "Данные продавца:\n";
+    std::cout << "\nДанные продавца:\n";
     std::string sellerName = Seller::read_name();
     std::string sellerEmail = Seller::read_email();
     std::string sellerPhone = Seller::read_phone();

@@ -4,55 +4,32 @@
 #include "Property.h"
 #include <fstream>
 #include <memory>
+#include "../privileges/Privileges.h"
 
-class Realtor : public User
+class Realtor : public User, public RealtorPriv
 {
 private:
-	char m_lastName[32];   // Фамилия
-	char m_firstName[32];  // Имя
-	char m_middleName[32]; // Отчество
-	char m_email[32];
-	unsigned int m_phoneNumber; // (12) 345-67-89
-
-	std::vector<unsigned int> m_properties;
-
+	Repository<Property> ownProperties(const Repository<Property>& repo) const;
 public:
 	Realtor();  
-	Realtor(unsigned int id,
-		const std::string& login,
-		const std::string& hashedPassword);
+	Realtor(unsigned int id, const std::string& username, const std::string& hashed_password);
     Realtor(unsigned int id,
-			const std::string& login,
-			const std::string& hashedPassword,
-            const std::string &lastName,
-            const std::string &firstName,
-            const std::string &middleName,
+			const std::string& username,
+			const std::string& hashed_password,
+            const std::string &name,
             const std::string &email,
-            unsigned int phoneNumber);
-    Realtor(const Realtor &other);
+			const std::string& phoneNumber);
+    Realtor(const Realtor &realtor);
 
-	void serialize(std::ofstream &ofs) const;
-	void deserialize(std::ifstream &ifs);
-
-	void addProperty(unsigned int id);
-	void removeProperty(unsigned int id);
-
-	const char *lastName() const;
-	const char *firstName() const;
-	const char *middleName() const;
-	const char *email() const;
-	unsigned int phoneNumber() const;
-	const std::vector<unsigned int> &properties() const;
-
-	void setLastName(const std::string &lastName);
-	void setFirstName(const std::string &firstName);
-	void setMiddleName(const std::string &middleName);
-	void setEmail(const std::string &email);
-	void setPhoneNumber(unsigned int phoneNumber);
-
-	Role role() const override;
-
+	virtual Role role() const override;
 	virtual std::vector<std::string> to_lines() const override;
+
+	void viewAllProperties(Repository<Property>& repo);
+	void viewProperties(const Repository<Property>& repo) override ;
+	void addProperty(IdGenerator& id_gen, Repository<Property>& repo) override ;
+	void editProperty(Repository<Property>& repo) override ;
+	void deleteProperty(Repository<Property>& repo) override ;
+	void report(Repository<Property>& repo) override ;
 };
 
 using RealtorPtr = std::shared_ptr<Realtor>;
