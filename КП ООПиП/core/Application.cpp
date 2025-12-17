@@ -1,11 +1,8 @@
 ﻿#include "Application.h"
 #include "../ui/ConsoleUI.h"
-
+#include "../ui/InputReader.h"
 
 Application* Application::instance = nullptr;
-
-
-// ================== Sign on ==================
 
 void Application::register_user(AuthResult(AuthService::* sign_in)(const std::string&, const std::string&)) {
     ConsoleUI::clear();
@@ -43,8 +40,6 @@ void Application::register_realtor() {
     register_user(&AuthService::register_realtor);
 }
 
-// ================== Realtor ==================
-
 void Application::realtor_prop(RealtorPtr realtor) {
     bool exit = false;
 
@@ -68,11 +63,6 @@ void Application::realtor_prop(RealtorPtr realtor) {
     }
 }
 
-void Application::realtor_report() {
-    // TODO: генерация отчёта
-    ConsoleUI::pause_clear("Нажмите любую клавишу для продолжения.");
-}
-
 void Application::realtor(RealtorPtr realtor) {
     bool exit = false;
 
@@ -89,14 +79,12 @@ void Application::realtor(RealtorPtr realtor) {
         case 0: realtor_prop(realtor); break;
         case 1: realtor->viewAllProperties(property_repo); break;
         case 2: realtor->viewRequests(request_repo, property_repo, client_repo); break;
-        case 3: realtor_report(); break;
+        case 3: realtor->report(property_repo); break;
         case 4: exit = true; break;
         default: break;
         }
     }
 }
-
-// ================== Client ==================
 
 void Application::client(ClientPtr client)
 {
@@ -109,6 +97,7 @@ void Application::client(ClientPtr client)
             "Отправить запрос на покупку",
             "Отменить запрос на покупку",
             "Купленные объекты",
+            "Редактировать учетную запись",
             "Выйти из учетной записи"
             }, ">");
 
@@ -118,16 +107,11 @@ void Application::client(ClientPtr client)
         case 2: client->add(property_repo, request_repo); break;
         case 3: client->discard(request_repo); break;
         case 4: client->viewBought(property_repo, request_repo); break;
-        case 5: exit = true; break;
+        case 5: client->edit(); break;
+        case 6: exit = true; break;
         default: break;
         }
     }
-}
-
-// ================== Admin ==================
-
-void Application::admin_report() {
-    // TODO: генерация отчёта
 }
 
 void Application::admin_prop(AdminPtr admin)
@@ -160,6 +144,7 @@ void Application::admin_realtor(AdminPtr admin)
         int choice = ConsoleUI::scroll({
             "Просмотр риэлторов",
             "Создать риэлтора",
+            "Редактировать риэлтора",
             "Удалить риэлтора",
             "Назад"
             }, ">");
@@ -167,8 +152,9 @@ void Application::admin_realtor(AdminPtr admin)
         switch (choice) {
         case 0: admin->viewRealtors(realtor_repo); break;
         case 1: register_realtor(); break;
-        case 2: admin->removeRealtors(realtor_repo); break;
-        case 3: exit = true; break;
+        case 2: admin->editRealtors(realtor_repo); break;
+        case 3: admin->removeRealtors(realtor_repo); break;
+        case 4: exit = true; break;
         default: break;
         }
     }
@@ -190,14 +176,12 @@ void Application::admin(AdminPtr admin) {
         case 0: admin_realtor(admin); break;
         case 1: admin_prop(admin); break;
         case 2: admin->viewClients(client_repo); break;
-        case 3: admin_report(); break;
+        case 3: admin->report(realtor_repo, client_repo, property_repo); break;
         case 4: exit = true; break;
         default: break;
         }
     }
 }
-
-// ================== Sign in ==================
 
 void Application::login() {
     ConsoleUI::clear();
@@ -221,16 +205,12 @@ void Application::login() {
     }
 }
 
-// ================== Data ==================
-
 void Application::save_data() {
     realtor_storage.save(realtor_repo.getAll());
     property_storage.save(property_repo.getAll());
     client_storage.save(client_repo.getAll());
     request_storage.save(request_repo.getAll());
 }
-
-// ================== Console Handler ==================
 
 BOOL WINAPI Application::ConsoleHandler(DWORD signal) {
     if (signal == CTRL_CLOSE_EVENT || signal == CTRL_SHUTDOWN_EVENT) {
@@ -240,26 +220,36 @@ BOOL WINAPI Application::ConsoleHandler(DWORD signal) {
     return FALSE;
 }
 
-// ================== Run ==================
-
 void Application::run() {
-    bool exit_program = false;
-    while (!exit_program) {
-        int choice = ConsoleUI::scroll({
-            "Регистрация",
-            "Вход",
-            "Выход из программы\n\n\n"
-            "\nУправление:\n"
-            "  ^ / v  - стрелки для перемещения по пунктам меню\n"
-            "  Enter  - выбор пункта\n"
-            }, ">");
+    try {
+        property_repo = Repository<Property>(property_storage.load());
+        realtor_repo = Repository<Realtor>(realtor_storage.load());
+        client_repo = Repository<Client>(client_storage.load());
+        request_repo = Repository<Request>(request_storage.load());
 
-        switch (choice) {
-        case 0: register_client(); break;
-        case 1: login(); break;
-        case 2: exit_program = true; break;
-        default: ConsoleUI::clear(); break;
+        bool exit_program = false;
+        while (!exit_program) {
+            int choice = ConsoleUI::scroll({
+                "Регистрация",
+                "Вход",
+                "Выход из программы\n\n\n"
+                "\nУправление:\n"
+                "  ^ / v  - стрелки для перемещения по пунктам меню\n"
+                "  Enter  - выбор пункта\n"
+                }, ">");
+
+            switch (choice) {
+            case 0: register_client(); break;
+            case 1: login(); break;
+            case 2: exit_program = true; break;
+            default: ConsoleUI::clear(); break;
+            }
         }
+        save_data();
     }
-    save_data();
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+        ConsoleUI::pause_clear("Нажмите любую клавишу для выхода из программы.");
+        return;
+    }
 }

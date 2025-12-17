@@ -60,7 +60,7 @@ namespace prop_cfg
 
     // ÷ена
     const float PRICE_MIN = 0.0f;
-    const float PRICE_MAX = 100'000'000.0f;
+    const float PRICE_MAX = 10'000'000.0f;
     const std::string PRICE_MIN_MSG = "¬ведите минимальную стоимость(BYN): ";
     const std::string PRICE_MAX_MSG = "¬ведите максимальную стоимость(BYN): ";
     const std::string PRICE_ERR_MSG =
@@ -78,7 +78,7 @@ namespace prop_cfg
 
     // ∆ила€ площадь
     const float AREA_LIVING_MIN = 0.0f;
-    const float AREA_LIVING_MAX = 5'000.0f;
+    const float AREA_LIVING_MAX = 10'000.0f;
     const std::string AREA_LIVING_MIN_MSG = "¬ведите минимальную площадь(кв. м): ";
     const std::string AREA_LIVING_MAX_MSG = "¬ведите максимальную площадь(кв. м): ";
     const std::string AREA_LIVING_ERR_MSG =
@@ -87,7 +87,7 @@ namespace prop_cfg
 
     // ѕлощадь кухни
     const float AREA_KITCHEN_MIN = 0.0f;
-    const float AREA_KITCHEN_MAX = 500.0f;
+    const float AREA_KITCHEN_MAX = 10'000.0f;
     const std::string AREA_KITCHEN_MIN_MSG = "¬ведите минимальную площадь(кв. м): ";
     const std::string AREA_KITCHEN_MAX_MSG = "¬ведите максимальную площадь(кв. м): ";
     const std::string AREA_KITCHEN_ERR_MSG =

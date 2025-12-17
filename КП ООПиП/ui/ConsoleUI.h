@@ -12,7 +12,6 @@ public:
 
     static void clear() {
 #ifdef _WIN32
-        // приоритет на ANSI escape
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
         DWORD dwMode = 0;
         if (GetConsoleMode(hOut, &dwMode)) {

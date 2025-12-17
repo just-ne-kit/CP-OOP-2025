@@ -1,13 +1,12 @@
 ﻿#pragma once
 
-#include "../services/Sort.h"
-#include "../core/Property.h"
+#include <conio.h>
+#include <windows.h>
+
+#include "Property.h"
+#include "Request.h"
 #include "../storage/StorageManager.h"
 #include "../services/AuthService.h"
-#include "../ui/InputReader.h"
-#include "conio.h"
-#include "../filters/PropertyFilter.h"
-#include "Request.h"
 
 class Application
 {
@@ -31,9 +30,8 @@ private:
     void admin_realtor(AdminPtr admin);
 
     void realtor_prop(RealtorPtr realtor);
-    void realtor_report();
+
     void realtor(RealtorPtr realtor);
-    void admin_report();
     void admin(AdminPtr admin);
     void client(ClientPtr client);
     
@@ -47,19 +45,13 @@ private:
     static Application* instance;
 
 public:
-    Application()
-        : id_gen_prop("data/properties/id.bin"),
+    Application() : 
+        id_gen_prop     ("data/properties/id.bin"),
         property_storage("data/properties/properties.bin"),
-        property_repo(property_storage.load()),
-        realtor_storage("data/realtors/realtors.bin"),
-        realtor_repo(realtor_storage.load()),
-        client_storage("data/clients/clients.bin"),
-        client_repo(client_storage.load()),
-        request_storage("data/requests/requests.bin"),
-        request_repo(request_storage.load()),
-        authService(client_repo, realtor_repo,
-            "data/clients/id.bin", "data/realtors/id.bin")
-    {
+        realtor_storage ("data/realtors/realtors.bin"),
+        client_storage  ("data/clients/clients.bin"),
+        request_storage ("data/requests/requests.bin"),
+        authService     (client_repo, realtor_repo, "data/clients/id.bin", "data/realtors/id.bin") {
         instance = this;
     }
 

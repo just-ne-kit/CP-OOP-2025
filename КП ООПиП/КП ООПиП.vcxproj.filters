@@ -91,9 +91,6 @@
     <ClInclude Include="storage\StorageManager.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ConsoleInterface.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="core\Property.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -124,16 +121,16 @@
     <ClInclude Include="ui\ConsoleUI.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="privileges\Privileges.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="services\PropertyViewer.h">
+    <ClInclude Include="services\PropertyService.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="services\Sort.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="core\Request.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="core\utils.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

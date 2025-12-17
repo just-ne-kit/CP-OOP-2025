@@ -1,11 +1,11 @@
 #pragma once
 
 #include "User.h"
-#include "../privileges/Privileges.h"
-
 #include "Request.h"
+#include "Property.h"
+#include "../repositories/Repository.h"
 
-class Client : public User , public ClientPriv
+class Client : public User
 {
 public:
 	Client();
@@ -20,11 +20,14 @@ public:
 
 	virtual Role role() const override;
 
-	virtual std::vector<std::string> to_lines() const override;
-	void viewProperties(const Repository<Property>& repo) override;
+	virtual std::vector<std::string> to_lines() const;
+	void viewProperties(const Repository<Property>& repo);
 	void viewRequests(const Repository<Property>& repo, const Repository<Request>& request_repo);
 	void viewBought(const Repository<Property>& repo, const Repository<Request>& request_repo);
 	void discard(Repository<Request>& request_repo);
 	void add(Repository<Property>& repo, Repository<Request>& request_repo);
+	void edit();
+
+	std::string to_row(const std::vector<size_t>& sizes) const;
 };
 using ClientPtr = std::shared_ptr<Client>;

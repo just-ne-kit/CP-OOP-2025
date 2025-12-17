@@ -96,14 +96,14 @@ public:
 	}
 
 	void set_status() {
-		statusValue = Property::readStatus();
+		statusValue = Property::read_status();
 	}
 
 	void apply_filters(Repository<Property>& repo) {
-		if (price)  repo.remove([&](const auto& a) { return !between(a->getPrice(), priceRange); });
-		if (area)   repo.remove([&](const auto& a) { return !between(a->getAreaTotal(), areaRange); });
-		if (rooms)  repo.remove([&](const auto& a) { return !between(a->getRooms(), roomsRange); });
-		if (floor)  repo.remove([&](const auto& a) { return !between(a->getFloor(), floorRange); });
-		if (status) repo.remove([&](const auto& a) { return a->getStatus() != statusValue; });
+		if (price)  repo.remove([&](const auto& a) { return !between(a->price(), priceRange); });
+		if (area)   repo.remove([&](const auto& a) { return !between(a->area_total(), areaRange); });
+		if (rooms)  repo.remove([&](const auto& a) { return !between(a->rooms(), roomsRange); });
+		if (floor)  repo.remove([&](const auto& a) { return !between(a->floor(), floorRange); });
+		if (status) repo.remove([&](const auto& a) { return a->status() != statusValue; });
 	}
 };

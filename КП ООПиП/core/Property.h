@@ -24,111 +24,95 @@ enum class Status {
 
 class Property {
 private:
-    unsigned int m_id;                                      // ID
-    unsigned int m_realtorId;                               // ID риэлтора
-    unsigned int m_clientId;                               // ID покупателя
+    unsigned int id_;                                
+    unsigned int realtor_id_;                        
+    unsigned int client_id_;                         
 
-    char m_title[prop_cfg::TITLE_MAX_LEN];               // Заголовок объявления
-    char m_description[prop_cfg::DESCRIPTION_MAX_LEN];   // Описание
-    char m_address[prop_cfg::ADDRESS_MAX_LEN];           // Адрес
+    char title_[prop_cfg::TITLE_MAX_LEN];            
+    char description_[prop_cfg::DESCRIPTION_MAX_LEN];
+    char address_[prop_cfg::ADDRESS_MAX_LEN];        
     
-    float m_price;                                          // Цена
-    float m_areaTotal;                                      // Общая площадь
-    float m_areaLiving;                                     // Жилая площадь
-    float m_areaKitchen;                                    // Площадь кухни
+    float price_;                                    
+    float area_total_;                               
+    float area_living_;                              
+    float area_kitchen_;                             
     
-    unsigned int m_rooms;                                   // Количество комнат
-    unsigned int m_floor;                                   // Этаж
-    unsigned int m_floorsTotal;                             // Всего этажей в доме
+    unsigned int rooms_;                            
+    unsigned int floor_;                            
+    unsigned int floors_total_;                      
     
-    std::time_t m_createdAt;                                // Дата создания
-    std::time_t m_updatedAt;                                // Дата обновления
+    std::time_t created_at_;                         
+    std::time_t updated_at_;                         
     
-    PropertyType m_type;                                    // Тип недвижимости
-    Status m_status;                                        // Статус объявления
-    Seller m_seller;
+    PropertyType type_;                             
+    Status status_;                                 
+    Seller seller_;
 
 public:
     Property();
-    Property(unsigned int id,
-             const std::string& title,
-             const std::string& description,
-             const std::string& address,
-             double price,
-             const std::string& currency,
-             float areaTotal,
-             float areaLiving,
-             float areaKitchen,
-             unsigned int rooms,
-             unsigned int floor,
-             unsigned int floorsTotal,
-             PropertyType type,
-             Status status,
-             unsigned int realtorId,
-        unsigned int clientId);
 
     void serialize(std::ofstream& ofs) const;
     void deserialize(std::ifstream& ifs);
 
-    unsigned int getId() const;
-    unsigned int getRealtorId() const;
-    unsigned int getClientId() const;
-    const char* getTitle() const;
-    const char* getDescription() const;
-    const char* getAddress() const;
-    float getPrice() const;
-    float getAreaTotal() const;
-    float getAreaLiving() const;
-    float getAreaKitchen() const;
-    unsigned int getRooms() const;
-    unsigned int getFloor() const;
-    unsigned int getFloorsTotal() const;
-    PropertyType getType() const;
-    Status getStatus() const;
-    std::time_t getCreatedAt() const;
-    std::time_t getUpdatedAt() const;
+    unsigned int id() const;
+    unsigned int realtor_id() const;
+    unsigned int client_id() const;
+    const char* title() const;
+    const char* description() const;
+    const char* address() const;
+    float price() const;
+    float area_total() const;
+    float area_living() const;
+    float area_kitchen() const;
+    unsigned int rooms() const;
+    unsigned int floor() const;
+    unsigned int floors_total() const;
+    PropertyType type() const;
+    Status status() const;
+    std::time_t created_at() const;
+    std::time_t updated_at() const;
+    Seller seller() const;
 
-    void setId(unsigned int id);
-    void setRealtorId(unsigned int id);
-    void setClientId(unsigned int id);
-    void setTitle(const std::string& title);
-    void setDescription(const std::string& description);
-    void setAddress(const std::string& address);
-    void setPrice(float price);
-    void setAreaTotal(float area);
-    void setAreaLiving(float area);
-    void setAreaKitchen(float area);
-    void setRooms(unsigned int rooms);
-    void setFloor(unsigned int floor);
-    void setFloorsTotal(unsigned int floors);
-    void setType(PropertyType type);
-    void setStatus(Status status);
-    void setCreatedAt(std::time_t createdAt);
-    void setUpdatedAt(std::time_t updatedAt);
+    void set_id(unsigned int id);
+    void set_realtor_id(unsigned int id);
+    void set_client_id(unsigned int id);
+    void set_title(const std::string& title);
+    void set_description(const std::string& description);
+    void set_address(const std::string& address);
+    void set_price(float price);
+    void set_area_total(float area);
+    void set_area_living(float area);
+    void set_area_kitchen(float area);
+    void set_rooms(unsigned int rooms);
+    void set_floor(unsigned int floor);
+    void set_floors_total(unsigned int floors);
+    void set_type(PropertyType type);
+    void set_status(Status status);
+    void set_created_at(std::time_t created_at);
+    void set_updated_at(std::time_t updated_at);
+    void set_seller(const Seller& seller);
 
-    Seller getSeller() const;
-    void setSeller(const Seller& seller);
+    static unsigned int read_rooms();
+    static std::string read_title();
+    static std::string read_description();
+    static std::string read_address();
+    static float read_price();
+    static float read_area_total();
+    static float read_area_living(float area_total);
+    static float read_area_kitchen(float area_total);
+    static unsigned int read_floors_total();
+    static unsigned int read_floor(unsigned int floors_total);
+    static PropertyType read_type();
+    static Status read_status();
 
-
-    static unsigned int readRooms();
-    static std::string readTitle();
-    static std::string readDescription();
-    static std::string readAddress();
-    static float readPrice();
-    static float readAreaTotal();
-    static float readAreaLiving(float areaTotal);
-    static float readAreaKitchen(float areaTotal);
-    static unsigned int readFloorsTotal();
-    static unsigned int readFloor(unsigned int floorsTotal);
-    static PropertyType readType();
-    static Status readStatus();
-
-    static Property create(unsigned int id, unsigned int realtorId);
+    static Property create(unsigned int id, unsigned int realtor_id);
 
     std::vector<std::string> to_lines() const;
     std::string to_str() const;
 
-    friend std::ostream& operator<<(std::ostream& out, const Property& prop);
+    friend std::ostream& operator<<(std::ostream& out, const Property& property);
+
+    std::string to_row(const std::vector<size_t>& sizes) const;
 };
 
 using PropertyPtr = std::shared_ptr<Property>;

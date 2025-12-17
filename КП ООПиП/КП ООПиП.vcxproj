@@ -154,16 +154,15 @@
     <ClInclude Include="core\Realtor.h" />
     <ClInclude Include="core\Request.h" />
     <ClInclude Include="core\Seller.h" />
+    <ClInclude Include="core\utils.h" />
     <ClInclude Include="filters\PropertyFilter.h" />
     <ClInclude Include="id\IdGenerator.h" />
-    <ClInclude Include="privileges\Privileges.h" />
     <ClInclude Include="repositories\Repository.h" />
     <ClInclude Include="security\PasswordHasher.h" />
     <ClInclude Include="services\AuthService.h" />
-    <ClInclude Include="services\PropertyViewer.h" />
+    <ClInclude Include="services\PropertyService.h" />
     <ClInclude Include="services\Sort.h" />
     <ClInclude Include="storage\StorageManager.h" />
-    <ClInclude Include="ui\ConsoleInterface.h" />
     <ClInclude Include="ui\ConsoleUI.h" />
     <ClInclude Include="ui\InputReader.h" />
   </ItemGroup>

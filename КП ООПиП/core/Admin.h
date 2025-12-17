@@ -3,13 +3,9 @@
 #include "Client.h"
 #include "Realtor.h"
 #include "../repositories/Repository.h"
-#include "../security/PasswordHasher.h"
-#include "../privileges/Privileges.h"
 
-class Admin : public User, public AdminPriv
+class Admin : public User
 {
-private:
-
 public:
 	Admin();
 
@@ -20,12 +16,15 @@ public:
 
 	virtual std::vector<std::string> to_lines() const override;
 
-	void viewProperties(const Repository<Property>& repo) override;
-	void editProperty(Repository<Property>& repo) override;
-	void deleteProperty(Repository<Property>& repo) override;
-	void report(Repository<Property>& repo) override;
+	void viewProperties(const Repository<Property>& repo);
+	void editProperty(Repository<Property>& repo);
+	void deleteProperty(Repository<Property>& repo);
+	void report(Repository<Realtor>& realtorRepo,
+				Repository<Client>& clientRepo,
+				Repository<Property>& propertyRepo);
 
 	void viewRealtors(const Repository<Realtor>& default_repo);
+	void editRealtors(Repository<Realtor>& default_repo);
 	void removeRealtors(Repository<Realtor>& default_repo);
 	void viewClients(Repository<Client>& repo);
 };

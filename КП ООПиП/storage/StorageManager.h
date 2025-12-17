@@ -25,18 +25,18 @@ StorageManager<T>::StorageManager(const std::string& filename)
 template<class T>
 void StorageManager<T>::save(const std::vector<std::shared_ptr<T>>& objects) const {
     std::ofstream ofs(m_filename, std::ios::binary);
-    if (!ofs) throw std::runtime_error("Не удалось открыть файл для записи");
+    if (!ofs) throw std::runtime_error("Не удалось открыть файл " + m_filename + " для записи");
 
     for (const auto& obj : objects) {
         obj->serialize(ofs);
-        if (!ofs) throw std::runtime_error("Ошибка при записи объекта в файл");
+        if (!ofs) throw std::runtime_error("Ошибка при записи объекта в файл " + m_filename);
     }
 }
 
 template<class T>
 std::vector<std::shared_ptr<T>> StorageManager<T>::load() const {
     std::ifstream ifs(m_filename, std::ios::binary);
-    if (!ifs) throw std::runtime_error("Не удалось открыть файл для чтения");
+    if (!ifs) throw std::runtime_error("Не удалось открыть файл " + m_filename + " для чтения");
 
     std::vector<std::shared_ptr<T>> objects;
 

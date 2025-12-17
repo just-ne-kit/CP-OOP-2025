@@ -36,7 +36,6 @@ public:
     virtual std::vector<std::string> to_lines() const = 0;
 	virtual void serialize(std::ofstream& ofs) const;
 	virtual void deserialize(std::ifstream& ifs);
-	//bool operator==(const User &user); todo delete func
 
 	unsigned int id() const;
 	const char *username() const;
@@ -46,9 +45,9 @@ public:
     const char* email() const;
     const char* phone() const;
 
-	void setName(const std::string& name);
-	void setEmail(const std::string& email);
-	void setPhone(const std::string& phone);
+	void set_name(const std::string& name);
+	void set_email(const std::string& email);
+	void set_phone(const std::string& phone);
 
     static std::string read_name();
     static std::string read_email();

@@ -40,13 +40,6 @@ void User::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(phone_), sizeof(phone_));
 }
 
-//bool User::operator==(const User &user)
-//{
-//	return this->hashed_password_ == user.hashed_password_ &&
-//		this->id_ == user.id_ &&
-//		this->username_ == user.username_;
-//}
-
 unsigned int User::id() const { return id_; }
 const char * User::username() const { return username_; }
 const char * User::hashed_password() const { return hashed_password_; }
@@ -55,15 +48,15 @@ const char * User::name() const { return  name_; }
 const char * User::email() const { return email_; }
 const char * User::phone() const { return phone_; }
 
-void User::setName(const std::string& name) {
+void User::set_name(const std::string& name) {
     std::strncpy(this->name_, name.c_str(), common_cfg::NAME_MAX_LEN - 1);
     this->name_[common_cfg::NAME_MAX_LEN - 1] = '\0';
 }
-void User::setEmail(const std::string& email) {
+void User::set_email(const std::string& email) {
     std::strncpy(this->email_, email.c_str(), common_cfg::EMAIL_MAX_LEN - 1);
     this->email_[common_cfg::EMAIL_MAX_LEN - 1] = '\0';
 }
-void User::setPhone(const std::string& phone) {
+void User::set_phone(const std::string& phone) {
     std::strncpy(this->phone_, phone.c_str(), common_cfg::PHONE_MAX_LEN - 1);
     this->phone_[common_cfg::PHONE_MAX_LEN - 1] = '\0';
 }

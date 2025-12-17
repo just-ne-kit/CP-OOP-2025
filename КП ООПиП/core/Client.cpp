@@ -1,4 +1,7 @@
 #include "Client.h"
+#include "../services/PropertyService.h"
+#include <sstream>
+#include "utils.h"
 
 Client::Client()
     : User() {
@@ -36,10 +39,10 @@ std::vector<std::string> Client::to_lines() const
 void Client::viewProperties(const Repository<Property>& repo) {
     Repository<Property> activeRepo = repo;
     activeRepo.remove([&](const PropertyPtr& p) {
-        return p->getStatus() != Status::Active;
+        return p->status() != Status::Active;
         });
 
-    PropertyViewer::view(activeRepo);
+    PropertyService::view(activeRepo);
 }
 
 void Client::viewRequests(const Repository<Property>& repo, const Repository<Request>& request_repo) {
@@ -50,24 +53,23 @@ void Client::viewRequests(const Repository<Property>& repo, const Repository<Req
 
     for (const auto& obj : reqRepo.getAll())
     {
-        auto ptr = repo.get([&](const PropertyPtr& p) { return p->getStatus() == Status::Active && p->getId() == obj->property_id(); });
+        auto ptr = repo.get([&](const PropertyPtr& p) { return p->status() == Status::Active && p->id() == obj->property_id(); });
         
         if (ptr)
-            activeRepo.add(ptr, [&](const PropertyPtr& p) { return p->getId() == ptr->getId(); });
+            activeRepo.add(ptr, [&](const PropertyPtr& p) { return p->id() == ptr->id(); });
     }
 
-    PropertyViewer::view(activeRepo);
+    PropertyService::view(activeRepo);
 }
 void Client::viewBought(const Repository<Property>& repo, const Repository<Request>& request_repo)
 {
     Repository<Property> boughtRepo;
 
-    // фильтруем только купленные этим клиентом объекты
     for (const auto& prop : repo.getAll())
     {
-        if (prop->getStatus() == Status::Sold && prop->getClientId() == id_) {
+        if (prop->status() == Status::Sold && prop->client_id() == id_) {
             boughtRepo.add(prop, [&](const PropertyPtr& p) {
-                return p->getId() == prop->getId();
+                return p->id() == prop->id();
                 });
         }
     }
@@ -77,7 +79,7 @@ void Client::viewBought(const Repository<Property>& repo, const Repository<Reque
         return;
     }
 
-    PropertyViewer::view(boughtRepo);
+    PropertyService::view(boughtRepo);
 }
 
 void Client::discard(Repository<Request>& repo)
@@ -127,7 +129,7 @@ void Client::add(Repository<Property>& property_repo, Repository<Request>& reque
     );
 
     PropertyPtr property = property_repo.get([&](const PropertyPtr& p) {
-        return p->getId() == id && p->getStatus() == Status::Active;
+        return p->id() == id && p->status() == Status::Active;
         });
 
     if (!property) {
@@ -135,9 +137,9 @@ void Client::add(Repository<Property>& property_repo, Repository<Request>& reque
         return;
     }
 
-    RequestPtr request = std::make_shared<Request>(Request(id_, property->getId(), property->getRealtorId()));
+    RequestPtr request = std::make_shared<Request>(Request(id_, property->id(), property->realtor_id()));
     bool success = request_repo.add(request, [&](const RequestPtr& r) {
-        return r->client_id() == id_ && r->property_id() == property->getId();
+        return r->client_id() == id_ && r->property_id() == property->id();
         });
 
     if (!success) {
@@ -146,4 +148,60 @@ void Client::add(Repository<Property>& property_repo, Repository<Request>& reque
     }
 
     ConsoleUI::pause_clear("Запрос успешно отправлен. Нажмите любую клавишу для продолжения.");
+}
+
+std::string Client::to_row(const std::vector<size_t>& sizes) const {
+    std::ostringstream oss;
+    oss << "|";
+
+    std::vector<std::string> fields = {
+        std::to_string(id_),   // ID клиента
+        name_,                 // Имя
+        email_,                // Email
+        phone_                 // Телефон
+    };
+
+    for (size_t i = 0; i < fields.size() && i < sizes.size(); ++i) {
+        std::string field = utils::shorten(fields[i], sizes[i]);
+        oss << std::left << std::setw(sizes[i]) << field << "|";
+    }
+
+    return oss.str();
+}
+
+void Client::edit()
+{
+    int choice = 0;
+    bool exit = false;
+
+    Client draft(*this);
+
+    while (!exit) {
+        std::vector<std::string> v = {
+            std::string("Имя: ") + draft.name(),
+            std::string("Email: ") + draft.email(),
+            std::string("Телефон: ") + draft.phone(),
+            "Закончить редактирование",
+            "Выход"
+        };
+
+        choice = ConsoleUI::scroll(v, ">", choice, "Выберите поле для редактирования\n");
+        ConsoleUI::clear();
+
+        switch (choice) {
+        case 0: draft.set_name(Client::read_name()); break;
+        case 1: draft.set_email(Client::read_email()); break;
+        case 2: draft.set_phone(Client::read_phone()); break;
+        case 3:
+            this->set_name(draft.name());
+            this->set_email(draft.email());
+            this->set_phone(draft.phone());
+            ConsoleUI::pause_clear("Изменения сохранены.");
+            return;
+        case 4:
+            ConsoleUI::pause_clear("Редактирование отменено.");
+            return;
+        default: break;
+        }
+    }
 }

@@ -3,95 +3,64 @@
 #include "../ui/InputReader.h"
 #include <iostream>
 #include <iomanip>
+#include "utils.h"
 
 using namespace prop_cfg;
 
 Property::Property()
-    : m_id(0), m_realtorId(0), m_clientId(0), m_price(0.0f),
-      m_areaTotal(0.0f), m_areaLiving(0.0f), m_areaKitchen(0.0f),
-      m_rooms(0), m_floor(0), m_floorsTotal(0),
-      m_type(PropertyType::Apartment), m_status(Status::Active),
-      m_createdAt(std::time(nullptr)), m_updatedAt(std::time(nullptr))
+    : id_(0), realtor_id_(0), client_id_(0), price_(0.0f),
+      area_total_(0.0f), area_living_(0.0f), area_kitchen_(0.0f),
+      rooms_(0), floor_(0), floors_total_(0),
+      type_(PropertyType::Apartment), status_(Status::Active),
+      created_at_(std::time(nullptr)), updated_at_(std::time(nullptr))
 {
-    m_title[0] = '\0';
-    m_description[0] = '\0';
-    m_address[0] = '\0';
-}
-
-Property::Property(unsigned int id,
-                   const std::string& title,
-                   const std::string& description,
-                   const std::string& address,
-                   double price,
-                   const std::string& currency,
-                   float areaTotal,
-                   float areaLiving,
-                   float areaKitchen,
-                   unsigned int rooms,
-                   unsigned int floor,
-                   unsigned int floorsTotal,
-                   PropertyType type,
-                   Status status,
-                   unsigned int realtorId,
-                   unsigned int clientId)
-    : m_id(id), m_realtorId(realtorId), m_clientId(), m_price(static_cast<float>(price)),
-      m_areaTotal(areaTotal), m_areaLiving(areaLiving), m_areaKitchen(areaKitchen),
-      m_rooms(rooms), m_floor(floor), m_floorsTotal(floorsTotal),
-      m_type(type), m_status(status),
-      m_createdAt(std::time(nullptr)), m_updatedAt(std::time(nullptr))
-{
-    std::strncpy(m_title, title.c_str(), sizeof(m_title) - 1);
-    m_title[sizeof(m_title) - 1] = '\0';
-
-    std::strncpy(m_description, description.c_str(), sizeof(m_description) - 1);
-    m_description[sizeof(m_description) - 1] = '\0';
-
-    std::strncpy(m_address, address.c_str(), sizeof(m_address) - 1);
-    m_address[sizeof(m_address) - 1] = '\0';
+    title_[0] = '\0';
+    description_[0] = '\0';
+    address_[0] = '\0';
 }
 
 void Property::serialize(std::ofstream& ofs) const {
-    ofs.write(reinterpret_cast<const char*>(&m_id), sizeof(m_id));
-    ofs.write(reinterpret_cast<const char*>(&m_realtorId), sizeof(m_realtorId));
-    ofs.write(reinterpret_cast<const char*>(&m_clientId), sizeof(m_clientId));
-    ofs.write(reinterpret_cast<const char*>(m_title), sizeof(m_title));
-    ofs.write(reinterpret_cast<const char*>(m_description), sizeof(m_description));
-    ofs.write(reinterpret_cast<const char*>(m_address), sizeof(m_address));
-    ofs.write(reinterpret_cast<const char*>(&m_price), sizeof(m_price));
-    ofs.write(reinterpret_cast<const char*>(&m_areaTotal), sizeof(m_areaTotal));
-    ofs.write(reinterpret_cast<const char*>(&m_areaLiving), sizeof(m_areaLiving));
-    ofs.write(reinterpret_cast<const char*>(&m_areaKitchen), sizeof(m_areaKitchen));
-    ofs.write(reinterpret_cast<const char*>(&m_rooms), sizeof(m_rooms));
-    ofs.write(reinterpret_cast<const char*>(&m_floor), sizeof(m_floor));
-    ofs.write(reinterpret_cast<const char*>(&m_floorsTotal), sizeof(m_floorsTotal));
-    ofs.write(reinterpret_cast<const char*>(&m_type), sizeof(m_type));
-    ofs.write(reinterpret_cast<const char*>(&m_status), sizeof(m_status));
-    ofs.write(reinterpret_cast<const char*>(&m_createdAt), sizeof(m_createdAt));
-    ofs.write(reinterpret_cast<const char*>(&m_updatedAt), sizeof(m_updatedAt));
+    ofs.write(reinterpret_cast<const char*>(&id_), sizeof(id_));
+    ofs.write(reinterpret_cast<const char*>(&realtor_id_), sizeof(realtor_id_));
+    ofs.write(reinterpret_cast<const char*>(&client_id_), sizeof(client_id_));
+    ofs.write(reinterpret_cast<const char*>(title_), sizeof(title_));
+    ofs.write(reinterpret_cast<const char*>(description_), sizeof(description_));
+    ofs.write(reinterpret_cast<const char*>(address_), sizeof(address_));
+    ofs.write(reinterpret_cast<const char*>(&price_), sizeof(price_));
+    ofs.write(reinterpret_cast<const char*>(&area_total_), sizeof(area_total_));
+    ofs.write(reinterpret_cast<const char*>(&area_living_), sizeof(area_living_));
+    ofs.write(reinterpret_cast<const char*>(&area_kitchen_), sizeof(area_kitchen_));
+    ofs.write(reinterpret_cast<const char*>(&rooms_), sizeof(rooms_));
+    ofs.write(reinterpret_cast<const char*>(&floor_), sizeof(floor_));
+    ofs.write(reinterpret_cast<const char*>(&floors_total_), sizeof(floors_total_));
+    ofs.write(reinterpret_cast<const char*>(&type_), sizeof(type_));
+    ofs.write(reinterpret_cast<const char*>(&status_), sizeof(status_));
+    ofs.write(reinterpret_cast<const char*>(&created_at_), sizeof(created_at_));
+    ofs.write(reinterpret_cast<const char*>(&updated_at_), sizeof(updated_at_));
 
-    ofs.write(reinterpret_cast<const char*>(m_seller.name()), common_cfg::NAME_MAX_LEN);
-    ofs.write(reinterpret_cast<const char*>(m_seller.email()), common_cfg::EMAIL_MAX_LEN);
-    ofs.write(reinterpret_cast<const char*>(m_seller.phone()), common_cfg::PHONE_MAX_LEN);
+    ofs.write(reinterpret_cast<const char*>(seller_.name()), common_cfg::NAME_MAX_LEN);
+    ofs.write(reinterpret_cast<const char*>(seller_.email()), common_cfg::EMAIL_MAX_LEN);
+    ofs.write(reinterpret_cast<const char*>(seller_.phone()), common_cfg::PHONE_MAX_LEN);
 }
 
 void Property::deserialize(std::ifstream& ifs) {
-    ifs.read(reinterpret_cast<char*>(&m_id), sizeof(m_id));
-    ifs.read(reinterpret_cast<char*>(&m_realtorId), sizeof(m_realtorId));
-    ifs.read(reinterpret_cast<char*>(&m_clientId), sizeof(m_clientId));
-    ifs.read(reinterpret_cast<char*>(m_title), sizeof(m_title));
-    ifs.read(reinterpret_cast<char*>(m_description), sizeof(m_description));
-    ifs.read(reinterpret_cast<char*>(m_address), sizeof(m_address));
-    ifs.read(reinterpret_cast<char*>(&m_price), sizeof(m_price));
-    ifs.read(reinterpret_cast<char*>(&m_areaTotal), sizeof(m_areaTotal));
-    ifs.read(reinterpret_cast<char*>(&m_areaLiving), sizeof(m_areaLiving));
-    ifs.read(reinterpret_cast<char*>(&m_areaKitchen), sizeof(m_areaKitchen));
-    ifs.read(reinterpret_cast<char*>(&m_rooms), sizeof(m_rooms));
-    ifs.read(reinterpret_cast<char*>(&m_floor), sizeof(m_floor));
-    ifs.read(reinterpret_cast<char*>(&m_floorsTotal), sizeof(m_floorsTotal));
-    ifs.read(reinterpret_cast<char*>(&m_type), sizeof(m_type));
-    ifs.read(reinterpret_cast<char*>(&m_status), sizeof(m_status));
-    ifs.read(reinterpret_cast<char*>(&m_createdAt), sizeof(m_createdAt));
-    ifs.read(reinterpret_cast<char*>(&m_updatedAt), sizeof(m_updatedAt));
+    ifs.read(reinterpret_cast<char*>(&id_), sizeof(id_));
+    ifs.read(reinterpret_cast<char*>(&realtor_id_), sizeof(realtor_id_));
+    ifs.read(reinterpret_cast<char*>(&client_id_), sizeof(client_id_));
+    ifs.read(reinterpret_cast<char*>(title_), sizeof(title_));
+    ifs.read(reinterpret_cast<char*>(description_), sizeof(description_));
+    ifs.read(reinterpret_cast<char*>(address_), sizeof(address_));
+    ifs.read(reinterpret_cast<char*>(&price_), sizeof(price_));
+    ifs.read(reinterpret_cast<char*>(&area_total_), sizeof(area_total_));
+    ifs.read(reinterpret_cast<char*>(&area_living_), sizeof(area_living_));
+    ifs.read(reinterpret_cast<char*>(&area_kitchen_), sizeof(area_kitchen_));
+    ifs.read(reinterpret_cast<char*>(&rooms_), sizeof(rooms_));
+    ifs.read(reinterpret_cast<char*>(&floor_), sizeof(floor_));
+    ifs.read(reinterpret_cast<char*>(&floors_total_), sizeof(floors_total_));
+    ifs.read(reinterpret_cast<char*>(&type_), sizeof(type_));
+    ifs.read(reinterpret_cast<char*>(&status_), sizeof(status_));
+    ifs.read(reinterpret_cast<char*>(&created_at_), sizeof(created_at_));
+    ifs.read(reinterpret_cast<char*>(&updated_at_), sizeof(updated_at_));
 
     char name[common_cfg::NAME_MAX_LEN];
     char email[common_cfg::EMAIL_MAX_LEN];
@@ -101,99 +70,99 @@ void Property::deserialize(std::ifstream& ifs) {
     ifs.read(reinterpret_cast<char*>(email), common_cfg::EMAIL_MAX_LEN);
     ifs.read(reinterpret_cast<char*>(phone), common_cfg::PHONE_MAX_LEN);
 
-    m_seller.setName(std::string(name));
-    m_seller.setEmail(std::string(email));
-    m_seller.setPhone(std::string(phone));
+    seller_.set_name(std::string(name));
+    seller_.set_email(std::string(email));
+    seller_.set_phone(std::string(phone));
 }
 
-Seller Property::getSeller() const { return m_seller; }
-void Property::setSeller(const Seller& seller) { m_seller = seller; }
+Seller Property::seller() const { return seller_; }
+void Property::set_seller(const Seller& seller) { seller_ = seller; }
 
 
-unsigned int Property::getId() const { return m_id; }
-unsigned int Property::getRealtorId() const { return m_realtorId; }
-unsigned int Property::getClientId() const { return m_clientId; }
-unsigned int Property::getRooms() const { return m_rooms; }
-unsigned int Property::getFloor() const { return m_floor; }
-unsigned int Property::getFloorsTotal() const { return m_floorsTotal; }
+unsigned int Property::id() const { return id_; }
+unsigned int Property::realtor_id() const { return realtor_id_; }
+unsigned int Property::client_id() const { return client_id_; }
+unsigned int Property::rooms() const { return rooms_; }
+unsigned int Property::floor() const { return floor_; }
+unsigned int Property::floors_total() const { return floors_total_; }
 
-const char* Property::getTitle() const { return m_title; }
-const char* Property::getDescription() const { return m_description; }
-const char* Property::getAddress() const { return m_address; }
+const char* Property::title() const { return title_; }
+const char* Property::description() const { return description_; }
+const char* Property::address() const { return address_; }
 
-float Property::getPrice() const { return m_price; }
-float Property::getAreaTotal() const { return m_areaTotal; }
-float Property::getAreaLiving() const { return m_areaLiving; }
-float Property::getAreaKitchen() const { return m_areaKitchen; }
+float Property::price() const { return price_; }
+float Property::area_total() const { return area_total_; }
+float Property::area_living() const { return area_living_; }
+float Property::area_kitchen() const { return area_kitchen_; }
 
-PropertyType Property::getType() const { return m_type; }
-Status Property::getStatus() const { return m_status; }
-std::time_t Property::getCreatedAt() const { return m_createdAt; }
-std::time_t Property::getUpdatedAt() const { return m_updatedAt; }
+PropertyType Property::type() const { return type_; }
+Status Property::status() const { return status_; }
+std::time_t Property::created_at() const { return created_at_; }
+std::time_t Property::updated_at() const { return updated_at_; }
 
-void Property::setId(unsigned int id) { m_id = id; }
-void Property::setClientId(unsigned int id) { m_clientId = id; }
-void Property::setRealtorId(unsigned int realtorId) { m_realtorId = realtorId; }
-void Property::setRooms(unsigned int rooms) { m_rooms = rooms; }
-void Property::setFloor(unsigned int floor) { m_floor = floor; }
-void Property::setFloorsTotal(unsigned int floors) { m_floorsTotal = floors; }
+void Property::set_id(unsigned int id) { id_ = id; }
+void Property::set_client_id(unsigned int id) { client_id_ = id; }
+void Property::set_realtor_id(unsigned int realtorId) { realtor_id_ = realtorId; }
+void Property::set_rooms(unsigned int rooms) { rooms_ = rooms; }
+void Property::set_floor(unsigned int floor) { floor_ = floor; }
+void Property::set_floors_total(unsigned int floors) { floors_total_ = floors; }
 
-void Property::setTitle(const std::string& title) {
-    std::strncpy(m_title, title.c_str(), sizeof(m_title) - 1);
-    m_title[sizeof(m_title) - 1] = '\0';
+void Property::set_title(const std::string& title) {
+    std::strncpy(title_, title.c_str(), sizeof(title_) - 1);
+    title_[sizeof(title_) - 1] = '\0';
 }
-void Property::setDescription(const std::string& description) {
-    std::strncpy(m_description, description.c_str(), sizeof(m_description) - 1);
-    m_description[sizeof(m_description) - 1] = '\0';
+void Property::set_description(const std::string& description) {
+    std::strncpy(description_, description.c_str(), sizeof(description_) - 1);
+    description_[sizeof(description_) - 1] = '\0';
 }
-void Property::setAddress(const std::string& address) {
-    std::strncpy(m_address, address.c_str(), sizeof(m_address) - 1);
-    m_address[sizeof(m_address) - 1] = '\0';
+void Property::set_address(const std::string& address) {
+    std::strncpy(address_, address.c_str(), sizeof(address_) - 1);
+    address_[sizeof(address_) - 1] = '\0';
 }
 
-void Property::setPrice(float price) { m_price = static_cast<float>(price); }
-void Property::setAreaTotal(float area) { m_areaTotal = area; }
-void Property::setAreaLiving(float area) { m_areaLiving = area; }
-void Property::setAreaKitchen(float area) { m_areaKitchen = area; }
+void Property::set_price(float price) { price_ = static_cast<float>(price); }
+void Property::set_area_total(float area) { area_total_ = area; }
+void Property::set_area_living(float area) { area_living_ = area; }
+void Property::set_area_kitchen(float area) { area_kitchen_ = area; }
 
-void Property::setType(PropertyType type) { m_type = type; }
-void Property::setStatus(Status status) { m_status = status; }
-void Property::setCreatedAt(std::time_t createdAt) { m_createdAt = createdAt; }
-void Property::setUpdatedAt(std::time_t updatedAt) { m_updatedAt = updatedAt; }
+void Property::set_type(PropertyType type) { type_ = type; }
+void Property::set_status(Status status) { status_ = status; }
+void Property::set_created_at(std::time_t createdAt) { created_at_ = createdAt; }
+void Property::set_updated_at(std::time_t updatedAt) { updated_at_ = updatedAt; }
 
 
-std::string Property::readTitle() {
+std::string Property::read_title() {
      return InputReader::read<std::string>(
         TITLE_MAX_LEN - 1,
         "Введите заголовок объявления: ",
         TITLE_ERR_MSG);
 }
-std::string Property::readDescription() {
+std::string Property::read_description() {
     return InputReader::read<std::string>(
         DESCRIPTION_MAX_LEN - 1,
         "Введите описание: ",
         DESCRIPTION_ERR_MSG);
 }
-std::string Property::readAddress() {
+std::string Property::read_address() {
     return InputReader::read<std::string>(
         ADDRESS_MAX_LEN - 1,
         "Введите адрес: ",
         ADDRESS_ERR_MSG);
 }
 
-float Property::readPrice() {
+float Property::read_price() {
     return InputReader::read<float>(
         PRICE_MIN, PRICE_MAX,
         "Введите цену (BYN): ",
         PRICE_ERR_MSG);
 }
-float Property::readAreaTotal() {
+float Property::read_area_total() {
     return InputReader::read<float>(
         AREA_TOTAL_MIN, AREA_TOTAL_MAX,
         "Введите общую площадь (кв. м): ",
         AREA_TOTAL_ERR_MSG);
 }
-float Property::readAreaLiving(float max_area) {
+float Property::read_area_living(float max_area) {
     while (true) {
         float living = InputReader::read<float>(
             AREA_LIVING_MIN, AREA_LIVING_MAX,
@@ -203,7 +172,7 @@ float Property::readAreaLiving(float max_area) {
         std::cout << "Ошибка. Жилая площадь не может превышать " << max_area << " (кв. м)" << std::endl;
     }
 }
-float Property::readAreaKitchen(float max_area) {
+float Property::read_area_kitchen(float max_area) {
     while (true) {
         float kitchen = InputReader::read<float>(
             AREA_KITCHEN_MIN, AREA_KITCHEN_MAX,
@@ -216,19 +185,19 @@ float Property::readAreaKitchen(float max_area) {
     }
 }
 
-unsigned int Property::readRooms() {
+unsigned int Property::read_rooms() {
     return InputReader::read<unsigned int>(
         ROOMS_MIN, ROOMS_MAX,
         "Введите количество комнат: ",
         ROOMS_ERR_MSG);
 }
-unsigned int Property::readFloorsTotal() {
+unsigned int Property::read_floors_total() {
     return InputReader::read<unsigned int>(
         FLOORS_TOTAL_MIN, FLOORS_TOTAL_MAX,
         "Введите количество этажей в доме: ",
         FLOORS_TOTAL_ERR_MSG);
 }
-unsigned int Property::readFloor(unsigned int floorsTotal) {
+unsigned int Property::read_floor(unsigned int floorsTotal) {
     while (true) {
         unsigned int floor = InputReader::read<unsigned int>(
             FLOOR_MIN, FLOOR_MAX,
@@ -239,7 +208,7 @@ unsigned int Property::readFloor(unsigned int floorsTotal) {
     }
 }
 
-PropertyType Property::readType() {
+PropertyType Property::read_type() {
     std::cout << "Выберите тип недвижимости:\n";
     std::cout << "1 - Квартира\n";
     std::cout << "2 - Дом\n";
@@ -252,7 +221,7 @@ PropertyType Property::readType() {
 
     return static_cast<PropertyType>(typeChoice - 1);
 }
-Status Property::readStatus() {
+Status Property::read_status() {
     std::cout << "Выберите статус объявления:\n";
     std::cout << "1 - Активно\n";
     std::cout << "2 - Продано\n";
@@ -269,34 +238,32 @@ Status Property::readStatus() {
 Property Property::create(unsigned int id, unsigned int realtorId) {
     Property prop;
 
-    prop.m_id = id;
-    prop.m_realtorId = realtorId;
+    prop.id_ = id;
+    prop.realtor_id_ = realtorId;
 
-    prop.setTitle(readTitle());
-    prop.setDescription(readDescription());
-    prop.setAddress(readAddress());
+    prop.set_title(read_title());
+    prop.set_description(read_description());
+    prop.set_address(read_address());
 
-    prop.m_price = readPrice();
-    prop.m_areaTotal = readAreaTotal();
-    prop.m_areaLiving = readAreaLiving(prop.m_areaTotal);
-    prop.m_areaKitchen = readAreaKitchen(prop.m_areaTotal - prop.m_areaLiving);
+    prop.price_ = read_price();
+    prop.area_total_ = read_area_total();
+    prop.area_living_ = read_area_living(prop.area_total_);
+    prop.area_kitchen_ = read_area_kitchen(prop.area_total_ - prop.area_living_);
 
-    prop.m_rooms = readRooms();
-    prop.m_floorsTotal = readFloorsTotal();
-    prop.m_floor = readFloor(prop.m_floorsTotal);
+    prop.rooms_ = read_rooms();
+    prop.floors_total_ = read_floors_total();
+    prop.floor_ = read_floor(prop.floors_total_);
 
-    prop.m_type = readType();
+    prop.type_ = read_type();
 
-    prop.m_status = Status::Active;
-    prop.m_createdAt = std::time(nullptr);
-    prop.m_updatedAt = std::time(nullptr);
+    prop.status_ = Status::Active;
+    prop.created_at_ = std::time(nullptr);
+    prop.updated_at_ = std::time(nullptr);
 
     std::cout << "\nДанные продавца:\n";
-    std::string sellerName = Seller::read_name();
-    std::string sellerEmail = Seller::read_email();
-    std::string sellerPhone = Seller::read_phone();
-    Seller seller(sellerName, sellerEmail, sellerPhone);
-    prop.setSeller(seller);
+    Seller seller;
+    std::cin >> seller;
+    prop.set_seller(seller);
 
     return prop;
 }
@@ -305,23 +272,22 @@ std::vector<std::string> Property::to_lines() const {
     std::vector<std::string> lines;
     lines.reserve(16);
 
-    lines.push_back("ID: " + std::to_string(getId()));
-    lines.push_back("Риэлтор ID: " + std::to_string(getRealtorId()));
-    lines.push_back("Заголовок: " + std::string(getTitle()));
-    lines.push_back("Описание: " + std::string(getDescription()));
-    lines.push_back("Адрес: " + std::string(getAddress()));
+    lines.push_back("ID: " + std::to_string(id()));
+    lines.push_back("Риэлтор ID: " + std::to_string(realtor_id()));
+    lines.push_back("Заголовок: " + std::string(title()));
+    lines.push_back("Описание: " + std::string(description()));
+    lines.push_back("Адрес: " + std::string(address()));
 
-    lines.push_back("Цена: " + std::to_string(getPrice()) + " BYN");
+    lines.push_back("Цена: " + utils::float_to_str(price()) + " BYN");
+    
+    lines.push_back("Комнат: " + std::to_string(rooms()));
+    lines.push_back("Этаж: " + std::to_string(floor()) + " из " + std::to_string(floors_total()));
+    lines.push_back("Общая площадь: " + utils::float_to_str(area_total()) + " кв.м");
+    lines.push_back("Жилая площадь: " + utils::float_to_str(area_living()) + " кв.м");
+    lines.push_back("Площадь кухни: " + utils::float_to_str(area_kitchen()) + " кв.м");
 
-    lines.push_back("Комнат: " + std::to_string(getRooms()));
-    lines.push_back("Этаж: " + std::to_string(getFloor()) + " из " + std::to_string(getFloorsTotal()));
-    lines.push_back("Общая площадь: " + std::to_string(getAreaTotal()) + " кв.м");
-    lines.push_back("Жилая площадь: " + std::to_string(getAreaLiving()) + " кв.м");
-    lines.push_back("Площадь кухни: " + std::to_string(getAreaKitchen()) + " кв.м");
-
-    // Тип
     std::string typeStr = "Тип: ";
-    switch (getType()) {
+    switch (type()) {
     case PropertyType::Apartment: typeStr += "Квартира"; break;
     case PropertyType::House:     typeStr += "Дом"; break;
     case PropertyType::Office:    typeStr += "Офис"; break;
@@ -329,9 +295,8 @@ std::vector<std::string> Property::to_lines() const {
     }
     lines.push_back(typeStr);
 
-    // Статус
     std::string statusStr = "Статус: ";
-    switch (getStatus()) {
+    switch (status()) {
     case Status::Active:   statusStr += "Активно"; break;
     case Status::Sold:     statusStr += "Продано"; break;
     case Status::Rented:   statusStr += "Сдано в аренду"; break;
@@ -339,13 +304,12 @@ std::vector<std::string> Property::to_lines() const {
     }
     lines.push_back(statusStr);
 
-    // Даты
-    std::time_t created = getCreatedAt();
-    std::time_t updated = getUpdatedAt();
+    std::time_t created = created_at();
+    std::time_t updated = updated_at();
     lines.push_back("Создано: " + std::string(std::ctime(&created)));
     lines.push_back("Обновлено: " + std::string(std::ctime(&updated)));
 
-    auto sellerLines = m_seller.to_lines();
+    auto sellerLines = seller_.to_lines();
     lines.insert(lines.end(), sellerLines.begin(), sellerLines.end());
 
     return lines;
@@ -366,5 +330,71 @@ std::string Property::to_str() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Property& prop) {
-    return os << prop.to_str();
+    return os << prop.to_str(); 
+}
+
+std::string property_type_to_str(PropertyType type) {
+    switch (type) {
+    case PropertyType::Apartment: return "Квартира";
+    case PropertyType::House:     return "Дом";
+    case PropertyType::Office:    return "Офис";
+    case PropertyType::Land:      return "Земельный участок";
+    }
+    return "Неизвестно";
+}
+
+std::string status_to_str(Status status) {
+    switch (status) {
+    case Status::Active:   return "Активно";
+    case Status::Sold:     return "Продано";
+    case Status::Rented:   return "Сдано в аренду";
+    case Status::Archived: return "Архивировано";
+    }
+    return "Неизвестно";
+}
+
+std::string time_to_str(const std::time_t& t) {
+    std::string s = std::ctime(&t);
+    if (!s.empty() && s.back() == '\n') {
+        s.pop_back();
+    }
+    return s;
+}
+
+std::string Property::to_row(const std::vector<size_t>& sizes) const {
+    std::ostringstream oss;
+    oss << "|";
+
+    std::vector<std::string> fields = {
+        std::to_string(id_),
+        std::to_string(realtor_id_),
+        std::to_string(client_id_),
+        std::string(title_),
+        std::string(description_),
+        std::string(address_),
+        utils::float_to_str(price_),
+        utils::float_to_str(area_total_),
+        utils::float_to_str(area_living_),
+        utils::float_to_str(area_kitchen_),
+        std::to_string(rooms_),
+        std::to_string(floor_),
+        std::to_string(floors_total_),
+        property_type_to_str(type_),
+        status_to_str(status_),
+        time_to_str(created_at_),
+        time_to_str(updated_at_),
+        seller_.name(),
+        seller_.email(),
+        seller_.phone()
+    };
+
+    for (size_t i = 0; i < fields.size() && i < sizes.size(); ++i) {
+        std::string field = fields[i];
+
+        field = utils::shorten(field, sizes[i]);
+
+        oss << std::left << std::setw(sizes[i]) << field << "|";
+    }
+
+    return oss.str();
 }

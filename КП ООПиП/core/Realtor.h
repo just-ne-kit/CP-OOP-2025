@@ -2,13 +2,13 @@
 
 #include "User.h"
 #include "Property.h"
-#include "Request.h"
 #include "Client.h"
+#include "Request.h"
 #include <fstream>
 #include <memory>
-#include "../privileges/Privileges.h"
+#include "../id/IdGenerator.h"
 
-class Realtor : public User, public RealtorPriv
+class Realtor : public User
 {
 private:
 	Repository<Property> ownProperties(const Repository<Property>& repo) const;
@@ -27,15 +27,17 @@ public:
 	virtual std::vector<std::string> to_lines() const override;
 
 	void viewAllProperties(Repository<Property>& repo);
-	void viewProperties(const Repository<Property>& repo) override ;
-	void addProperty(IdGenerator& id_gen, Repository<Property>& repo) override ;
-	void editProperty(Repository<Property>& repo) override ;
-	void deleteProperty(Repository<Property>& repo) override ;
-	void report(Repository<Property>& repo) override ;
+	void viewProperties(const Repository<Property>& repo);
+	void addProperty(IdGenerator& id_gen, Repository<Property>& repo);
+	void editProperty(Repository<Property>& repo);
+	void deleteProperty(Repository<Property>& repo);
+	void report(Repository<Property>& repo);
 
 	void viewRequests(Repository<Request>& request_repo,
 		Repository<Property>& property_repo,
 		Repository<Client>& client_repo);
+
+	std::string to_row(const std::vector<size_t>& sizes) const;
 };
 
 using RealtorPtr = std::shared_ptr<Realtor>;
